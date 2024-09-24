@@ -1771,6 +1771,9 @@ Thanks! -- The WordPress Team"
 			error_log( '    Scraping home page...' );
 		}
 
+		// Remove all template redirects during loopback otherwise it could lead to a false negative.
+		remove_all_actions( 'template_redirect' );
+
 		$needle_start = "###### wp_scraping_result_start:$scrape_key ######";
 		$needle_end   = "###### wp_scraping_result_end:$scrape_key ######";
 		$url          = add_query_arg( $scrape_params, home_url( '/' ) );
