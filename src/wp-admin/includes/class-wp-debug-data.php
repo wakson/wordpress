@@ -77,7 +77,7 @@ class WP_Debug_Data {
 		$info = array(
 			'wp-core'             => array(),
 			'wp-paths-sizes'      => array(),
-			'wp-dropins'          => array(),
+			'wp-dropins'          => self::get_wp_dropins(),
 			'wp-active-theme'     => array(),
 			'wp-parent-theme'     => array(),
 			'wp-themes-inactive'  => array(),
@@ -171,17 +171,6 @@ class WP_Debug_Data {
 				'fields' => array(),
 			);
 		}
-
-		$info['wp-dropins'] = array(
-			'label'       => __( 'Drop-ins' ),
-			'show_count'  => true,
-			'description' => sprintf(
-				/* translators: %s: wp-content directory name. */
-				__( 'Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins.' ),
-				'<code>' . str_replace( ABSPATH, '', WP_CONTENT_DIR ) . '</code>'
-			),
-			'fields'      => array(),
-		);
 
 		$info['wp-active-theme'] = array(
 			'label'  => __( 'Active Theme' ),
@@ -333,20 +322,6 @@ class WP_Debug_Data {
 					'value' => $loading,
 					'debug' => 'loading...',
 				),
-			);
-		}
-
-		// Get a list of all drop-in replacements.
-		$dropins = get_dropins();
-
-		// Get dropins descriptions.
-		$dropin_descriptions = _get_dropins();
-
-		foreach ( $dropins as $dropin_key => $dropin ) {
-			$info['wp-dropins']['fields'][ sanitize_text_field( $dropin_key ) ] = array(
-				'label' => $dropin_key,
-				'value' => $dropin_descriptions[ $dropin_key ][0],
-				'debug' => 'true',
 			);
 		}
 
@@ -841,6 +816,41 @@ class WP_Debug_Data {
 	}
 
 	/**
+	 * Gets the WordPress drop-in section of the debug data.
+	 *
+	 * @since 6.7.0
+	 *
+	 * @return array
+	 */
+	public static function get_wp_dropins(): array {
+		// Get a list of all drop-in replacements.
+		$dropins = get_dropins();
+
+		// Get drop-ins descriptions.
+		$dropin_descriptions = _get_dropins();
+
+		$fields = array();
+		foreach ( $dropins as $dropin_key => $dropin ) {
+			$fields[ sanitize_text_field( $dropin_key ) ] = array(
+				'label' => $dropin_key,
+				'value' => $dropin_descriptions[ $dropin_key ][0],
+				'debug' => 'true',
+			);
+		}
+
+		return array(
+			'label'       => __( 'Drop-ins' ),
+			'show_count'  => true,
+			'description' => sprintf(
+				/* translators: %s: wp-content directory name. */
+				__( 'Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins.' ),
+				'<code>' . str_replace( ABSPATH, '', WP_CONTENT_DIR ) . '</code>'
+			),
+			'fields'      => $fields,
+		);
+	}
+
+	/**
 	 * Gets the WordPress server section of the debug data.
 	 *
 	 * @since 6.7.0
@@ -1328,6 +1338,15 @@ class WP_Debug_Data {
 			$wp_environment_type = __( 'Undefined' );
 		}
 
+		// Check DB_COLLATE.
+		if ( defined( 'DB_COLLATE' ) && DB_COLLATE ) {
+			$wp_db_collate = DB_COLLATE;
+		} elseif ( defined( 'DB_COLLATE' ) && empty( DB_COLLATE ) ) {
+			$wp_db_collate = __( 'Defined, but empty' );
+		} else {
+			$wp_db_collate = __( 'Undefined' );
+		}
+
 		$fields = array(
 			'ABSPATH'             => array(
 				'label'   => 'ABSPATH',
@@ -1417,8 +1436,8 @@ class WP_Debug_Data {
 			),
 			'DB_COLLATE'          => array(
 				'label' => 'DB_COLLATE',
-				'value' => ( defined( 'DB_COLLATE' ) ? DB_COLLATE : __( 'Undefined' ) ),
-				'debug' => ( defined( 'DB_COLLATE' ) ? DB_COLLATE : 'undefined' ),
+				'value' => $wp_db_collate,
+				'debug' => $wp_db_collate,
 			),
 		);
 
