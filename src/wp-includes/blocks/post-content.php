@@ -8,6 +8,8 @@
 /**
  * Renders the `core/post-content` block on the server.
  *
+ * @since 5.8.0
+ *
  * @param array    $attributes Block attributes.
  * @param string   $content    Block default content.
  * @param WP_Block $block      Block instance.
@@ -23,19 +25,10 @@ function render_block_core_post_content( $attributes, $content, $block ) {
 	$post_id = $block->context['postId'];
 
 	if ( isset( $seen_ids[ $post_id ] ) ) {
-		if ( ! is_admin() ) {
-			trigger_error(
-				sprintf(
-					// translators: %s is a post ID (integer).
-					__( 'Could not render Post Content block with post ID: <code>%s</code>. Block cannot be rendered inside itself.' ),
-					$post_id
-				),
-				E_USER_WARNING
-			);
-		}
+		// WP_DEBUG_DISPLAY must only be honored when WP_DEBUG. This precedent
+		// is set in `wp_debug_mode()`.
+		$is_debug = WP_DEBUG && WP_DEBUG_DISPLAY;
 
-		$is_debug = defined( 'WP_DEBUG' ) && WP_DEBUG &&
-			defined( 'WP_DEBUG_DISPLAY' ) && WP_DEBUG_DISPLAY;
 		return $is_debug ?
 			// translators: Visible only in the front end, this warning takes the place of a faulty block.
 			__( '[block rendering halted]' ) :
@@ -44,11 +37,15 @@ function render_block_core_post_content( $attributes, $content, $block ) {
 
 	$seen_ids[ $post_id ] = true;
 
-	if ( ! in_the_loop() ) {
-		the_post();
+	// When inside the main loop, we want to use queried object
+	// so that `the_preview` for the current post can apply.
+	// We force this behavior by omitting the third argument (post ID) from the `get_the_content`.
+	$content = get_the_content();
+	// Check for nextpage to display page links for paginated posts.
+	if ( has_block( 'core/nextpage' ) ) {
+		$content .= wp_link_pages( array( 'echo' => 0 ) );
 	}
 
-	$content = get_the_content( null, false, $post_id );
 	/** This filter is documented in wp-includes/post-template.php */
 	$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 	unset( $seen_ids[ $post_id ] );
@@ -68,6 +65,8 @@ function render_block_core_post_content( $attributes, $content, $block ) {
 
 /**
  * Registers the `core/post-content` block on the server.
+ *
+ * @since 5.8.0
  */
 function register_block_core_post_content() {
 	register_block_type_from_metadata(

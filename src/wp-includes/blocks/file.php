@@ -6,19 +6,41 @@
  */
 
 /**
- * When the `core/file` block is rendering, check if we need to enqueue the `'wp-block-library-file` script.
+ * When the `core/file` block is rendering, check if we need to enqueue the `wp-block-file-view` script.
  *
- * @param array $attributes The block attributes.
- * @param array $content    The block content.
+ * @since 5.8.0
+ *
+ * @param array    $attributes The block attributes.
+ * @param string   $content    The block content.
+ * @param WP_Block $block      The parsed block.
  *
  * @return string Returns the block content.
  */
 function render_block_core_file( $attributes, $content ) {
+	// If it's interactive, enqueue the script module and add the directives.
 	if ( ! empty( $attributes['displayPreview'] ) ) {
-		// Check if it's already enqueued, so we don't add the inline script multiple times.
-		if ( ! wp_script_is( 'wp-block-library-file' ) ) {
-			wp_enqueue_script( 'wp-block-library-file', plugins_url( 'file/frontend.js', __FILE__ ) );
-		}
+		wp_enqueue_script_module( '@wordpress/block-library/file/view' );
+
+		$processor = new WP_HTML_Tag_Processor( $content );
+		$processor->next_tag();
+		$processor->set_attribute( 'data-wp-interactive', 'core/file' );
+		$processor->next_tag( 'object' );
+		$processor->set_attribute( 'data-wp-bind--hidden', '!state.hasPdfPreview' );
+		$processor->set_attribute( 'hidden', true );
+
+		$filename     = $processor->get_attribute( 'aria-label' );
+		$has_filename = ! empty( $filename ) && 'PDF embed' !== $filename;
+		$label        = $has_filename ? sprintf(
+			/* translators: %s: filename. */
+			__( 'Embed of %s.' ),
+			$filename
+		) : __( 'PDF embed' );
+
+		// Update object's aria-label attribute if present in block HTML.
+		// Match an aria-label attribute from an object tag.
+		$processor->set_attribute( 'aria-label', $label );
+
+		return $processor->get_updated_html();
 	}
 
 	return $content;
@@ -26,6 +48,8 @@ function render_block_core_file( $attributes, $content ) {
 
 /**
  * Registers the `core/file` block on server.
+ *
+ * @since 5.8.0
  */
 function register_block_core_file() {
 	register_block_type_from_metadata(

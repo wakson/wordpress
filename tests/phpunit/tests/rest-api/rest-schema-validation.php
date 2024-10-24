@@ -4,9 +4,7 @@
  *
  * @package    WordPress
  * @subpackage REST API
- */
-
-/**
+ *
  * @group restapi
  */
 class WP_Test_REST_Schema_Validation extends WP_UnitTestCase {
@@ -157,9 +155,9 @@ class WP_Test_REST_Schema_Validation extends WP_UnitTestCase {
 	 */
 	public function test_format_validation_is_applied_if_missing_type() {
 		if ( PHP_VERSION_ID >= 80000 ) {
-			$this->expectException( 'PHPUnit_Framework_Error_Warning' ); // For the undefined index.
+			$this->expectWarning(); // For the undefined index.
 		} else {
-			$this->expectException( 'PHPUnit_Framework_Error_Notice' );
+			$this->expectNotice(); // For the undefined index.
 		}
 
 		$this->setExpectedIncorrectUsage( 'rest_validate_value_from_schema' );
@@ -1020,6 +1018,17 @@ class WP_Test_REST_Schema_Validation extends WP_UnitTestCase {
 		$error = rest_validate_value_from_schema( 'some random string', $schema );
 		$this->assertWPError( $error );
 		$this->assertSame( 'Invalid date.', $error->get_error_message() );
+	}
+
+	/**
+	 * @ticket 60184
+	 */
+	public function test_epoch() {
+		$schema = array(
+			'type'   => 'string',
+			'format' => 'date-time',
+		);
+		$this->assertTrue( rest_validate_value_from_schema( '1970-01-01T00:00:00Z', $schema ) );
 	}
 
 	public function test_object_or_string() {
