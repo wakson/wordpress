@@ -109,7 +109,7 @@ This slows the tests down it can take an hour for the report to be created
 You can pass options call, but you need to use 2 -- in the call. But only the tests run will show as covered. This be good to see if you have all the paths in function/class covered 
 
 ```
- npm run test:test-coverage -- -- --filter Tests_Formatting_BalanceTags
+ npm run test:coverage -- -- --filter Tests_Formatting_BalanceTags
 ```
 #### To restart the development environment
 
