@@ -2131,7 +2131,9 @@ function get_plugin_page_hook( $plugin_page, $parent_page ) {
 }
 
 /**
- * @since 6.7.0
+ * Checks if admin page exists, if the user would have the required capabilities.
+ *
+ * @since tba
  *
  * @global string $admin_page_parent
  * @global string $plugin_page
