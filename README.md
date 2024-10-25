@@ -94,6 +94,23 @@ npm run test:php -- --filter <test name>
 npm run test:php -- --group <group name or ticket number>
 ```
 
+#### To run the coverage report
+An online version can be found at https://app.codecov.io/gh/WordPress/wordpress-develop
+
+These command run to create HTML coverage report:
+
+```
+npm run test:test-coverage
+```
+Notes:
+
+This slows the tests down it can take an hour for the report to be created
+
+You can pass options call, but you need to use 2 -- in the call. But only the tests run will show as covered. This be good to see if you have all the paths in function/class covered 
+
+```
+ npm run test:test-coverage -- -- --filter Tests_Formatting_BalanceTags
+```
 #### To restart the development environment
 
 You may want to restart the environment if you've made changes to the configuration in the `docker-compose.yml` or `.env` files. Restart the environment with:

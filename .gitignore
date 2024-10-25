@@ -105,3 +105,6 @@ wp-tests-config.php
 
 # Visual regression test diffs
 tests/visual-regression/specs/__snapshots__
+
+# phpUnit coverage reports target nad cache
+/coverage
