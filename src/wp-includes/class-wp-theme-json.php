@@ -4535,7 +4535,7 @@ class WP_Theme_JSON {
 	 * @since 6.6.0
 	 * @since 6.8.0 Added the `$blocks_metadata` parameter.
 	 *
-	 * @param array $blocks_metadata Optional list of selectors per block.
+	 * @param array $blocks_metadata Optional. List of metadata per block. Default is the metadata for all blocks.
 	 * @return array Valid block style variations by block type.
 	 */
 	protected static function get_valid_block_style_variations( $blocks_metadata = array() ) {
