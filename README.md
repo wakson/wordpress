@@ -86,11 +86,6 @@ These commands run the PHP and end-to-end test suites, respectively:
 npm run test:php
 npm run test:e2e
 ```
-This command opens an PHP bash shell to allow running PHPUnit commands interactively:
-
-```
-npm run test:bash
-```
 
 You can pass extra parameters into the PHP tests by adding `--` and then the [command-line options](https://docs.phpunit.de/en/10.4/textui.html#command-line-options):
 
@@ -102,12 +97,19 @@ npm run test:php -- --group <group name or ticket number>
 #### To run the coverage report
 An online version can be found at https://app.codecov.io/gh/WordPress/wordpress-develop
 
-These commands run to create coverage reports:
+These command run to create HTML coverage report:
 
 ```
-npm run test:php_html
-npm run test:php_php
-npm run test:php_text
+npm run test:test-coverage
+```
+Notes:
+
+This slows the tests down it can take an hour for the report to be created
+
+You can pass options call, but you need to use 2 -- in the call. But only the tests run will show as covered. This be good to see if you have all the paths in function/class covered 
+
+```
+ npm run test:test-coverage -- -- --filter Tests_Formatting_BalanceTags
 ```
 #### To restart the development environment
 
