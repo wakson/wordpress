@@ -3392,7 +3392,7 @@ function wp_get_image_mime( $file ) {
 				 * HEIC/HEIF images and image sequences/animations may have other strings here
 				 * like mif1, msf1, etc. For now fall back to using finfo_file() to detect these.
 				 */
-				 if ( extension_loaded( 'fileinfo' ) ) {
+				if ( extension_loaded( 'fileinfo' ) ) {
 					$fileinfo  = finfo_open( FILEINFO_MIME_TYPE );
 					$mime_type = finfo_file( $fileinfo, $file );
 					finfo_close( $fileinfo );
