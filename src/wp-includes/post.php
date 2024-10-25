@@ -3689,10 +3689,9 @@ function wp_delete_post( $post_id = 0, $force_delete = false ) {
 		return $check;
 	}
 
-
 	/**
 	 * Fires before a post is deleted, at the start of wp_delete_post().
-	 * 
+	 *
 	 * The dynamic portion of the hook name, `$post->post_type`, refers to
 	 * the post type slug.
 	 *
