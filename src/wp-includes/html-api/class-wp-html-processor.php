@@ -5343,6 +5343,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				 */
 				$this->state->stack_of_open_elements     = new WP_HTML_Open_Elements();
 				$this->state->active_formatting_elements = new WP_HTML_Active_Formatting_Elements();
+				$this->state->insertion_mode             = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
 
 				$this->breadcrumbs          = array();
 				$this->bytes_already_parsed = 0;
@@ -5381,7 +5382,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return true;
 		}
 
-		while ( $this->next_token() ) {
+		while ( var_dump( $this->next_token() ) ) {
 			echo 'bm starts at ' . $bookmark_starts_at . ' and current token starts at ' . $this->bookmarks[ $this->state->current_token->bookmark_name ]->start . "\n";
 			if ( $bookmark_starts_at === $this->bookmarks[ $this->state->current_token->bookmark_name ]->start ) {
 				while ( isset( $this->current_element ) && WP_HTML_Stack_Event::POP === $this->current_element->operation ) {
