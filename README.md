@@ -95,7 +95,7 @@ npm run test:php -- --group <group name or ticket number>
 ```
 
 #### Generating a code coverage report
-An online version can be found at https://app.codecov.io/gh/WordPress/wordpress-develop
+Code coverage reports are [generated daily](https://github.com/WordPress/wordpress-develop/actions/workflows/test-coverage.yml) and [submitted to Codecov.io](https://app.codecov.io/gh/WordPress/wordpress-develop).
 
 These command run to create HTML coverage report:
 
