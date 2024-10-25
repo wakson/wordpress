@@ -591,7 +591,7 @@ class WP_HTML_Tag_Processor {
 	 * @since 6.2.0
 	 * @var int
 	 */
-	private $bytes_already_parsed = 0;
+	protected $bytes_already_parsed = 0;
 
 	/**
 	 * Byte offset in input document where current token starts.
@@ -945,6 +945,8 @@ class WP_HTML_Tag_Processor {
 	private function base_class_next_token(): bool {
 		$was_at = $this->bytes_already_parsed;
 		$this->after_tag();
+
+		var_dump( $was_at, $this->parser_state );
 
 		// Don't proceed if there's nothing more to scan.
 		if (
@@ -2542,6 +2544,7 @@ class WP_HTML_Tag_Processor {
 	 * @return bool Whether the internal cursor was successfully moved to the bookmark's location.
 	 */
 	public function seek( $bookmark_name ): bool {
+		var_dump( $bookmark_name, $this->bookmarks );
 		if ( ! array_key_exists( $bookmark_name, $this->bookmarks ) ) {
 			_doing_it_wrong(
 				__METHOD__,
