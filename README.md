@@ -100,7 +100,7 @@ An online version can be found at https://app.codecov.io/gh/WordPress/wordpress-
 These command run to create HTML coverage report:
 
 ```
-npm run test:test-coverage
+npm run test:coverage
 ```
 Notes:
 
