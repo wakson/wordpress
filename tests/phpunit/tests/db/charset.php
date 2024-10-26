@@ -772,6 +772,80 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Set of table definitions for testing wpdb::get_table_charset and wpdb::get_column_charset
+	 *
+	 *
+	 * @var array
+	 * @return array
+	 */
+	protected $table_and_column_defs = array(
+		array(
+			'definition'      => '( a INT, b FLOAT )',
+			'table_expected'  => false,
+			'column_expected' => array(
+				'a' => false,
+				'b' => false,
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b TEXT CHARACTER SET big5 )',
+			'table_expected'  => 'big5',
+			'column_expected' => array(
+				'a' => 'big5',
+				'b' => 'big5',
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b BINARY )',
+			'table_expected'  => 'binary',
+			'column_expected' => array(
+				'a' => 'big5',
+				'b' => false,
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET latin1, b BLOB )',
+			'table_expected'  => 'binary',
+			'column_expected' => array(
+				'a' => 'latin1',
+				'b' => false,
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET latin1, b TEXT CHARACTER SET koi8r )',
+			'table_expected'  => 'koi8r',
+			'column_expected' => array(
+				'a' => 'latin1',
+				'b' => 'koi8r',
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET utf8mb3, b TEXT CHARACTER SET utf8mb3 )',
+			'table_expected'  => 'utf8',
+			'column_expected' => array(
+				'a' => 'utf8',
+				'b' => 'utf8',
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET utf8, b TEXT CHARACTER SET utf8mb4 )',
+			'table_expected'  => 'utf8',
+			'column_expected' => array(
+				'a' => 'utf8',
+				'b' => 'utf8mb4',
+			),
+		),
+		array(
+			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b TEXT CHARACTER SET koi8r )',
+			'table_expected'  => 'ascii',
+			'column_expected' => array(
+				'a' => 'big5',
+				'b' => 'koi8r',
+			),
+		),
+	);
+
+	/**
 	 * @ticket 21212
 	 */
 	public function data_get_table_charset() {
