@@ -700,7 +700,7 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	/**
 	 * Data provider for strip_invalid_text_for_column test cases.
 	 *
-	 * @return array
+	 * @return array[]
 	 */
 	public function data_strip_invalid_text_for_column() {
 		return array(
