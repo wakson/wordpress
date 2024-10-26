@@ -774,9 +774,6 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	/**
 	 * Set of table definitions for testing wpdb::get_table_charset and wpdb::get_column_charset
 	 *
-	 *
-	 * @var array
-	 * @return array
 	 */
 	protected $table_and_column_defs = array(
 		array(
