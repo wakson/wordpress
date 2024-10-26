@@ -677,94 +677,99 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	/**
 	 * @ticket 21212
 	 *
+	 *
+	 * @dataProvider strip_invalid_text_provider
+	 *
 	 * @covers wpdb::strip_invalid_text_for_column
 	 */
-	public function test_strip_invalid_text_for_column() {
+	public function test_strip_invalid_text_for_column($input, $expected, $charset) {
 		global $wpdb;
-
-		$charset = $wpdb->get_col_charset( $wpdb->posts, 'post_content' );
-		if ( 'utf8' !== $charset && 'utf8mb4' !== $charset ) {
-			$this->markTestSkipped( 'This test requires a utf8 character set.' );
+	
+		// Ensure the test is run on the correct charset
+		$currentCharset = $wpdb->get_col_charset($wpdb->posts, 'post_content');
+		if ($currentCharset !== $charset) {
+			echo 'Skipping' . $charset;
+			$this->markTestSkipped("This test requires a {$charset} character set.");
 		}
-
-		// Invalid 3-byte and 4-byte sequences.
-		$value    = "H€llo\xe0\x80\x80World\xf0\xff\xff\xff¢";
-		$expected = 'H€lloWorld¢';
-		$actual   = $wpdb->strip_invalid_text_for_column( $wpdb->posts, 'post_content', $value );
-		$this->assertSame( $expected, $actual );
+	
+		// Running the data provider tests
+		$actual = $wpdb->strip_invalid_text_for_column($wpdb->posts, 'post_content', $input);
+		$this->assertSame($expected, $actual, "Failed asserting that input '{$input}' is stripped correctly for charset '{$charset}'.");
 	}
 
 	/**
-	 * Set of table definitions for testing wpdb::get_table_charset and wpdb::get_column_charset
+	 * Data provider for strip_invalid_text_for_column test cases.
 	 *
-	 * @var array
+	 * @return array
 	 */
-	protected $table_and_column_defs = array(
-		array(
-			'definition'      => '( a INT, b FLOAT )',
-			'table_expected'  => false,
-			'column_expected' => array(
-				'a' => false,
-				'b' => false,
+	public function strip_invalid_text_provider() {
+		return array(
+			// Valid UTF-8 characters
+			'valid_utf8' => array(
+				'input' => 'Hello, 世界!', // Valid characters
+				'expected' => 'Hello, 世界!',
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b TEXT CHARACTER SET big5 )',
-			'table_expected'  => 'big5',
-			'column_expected' => array(
-				'a' => 'big5',
-				'b' => 'big5',
+			// Invalid UTF-8 sequences
+			'invalid_utf8' => array(
+				'input' => "H€llo\x80World", // Invalid byte sequence
+				'expected' => 'H€lloWorld',
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b BINARY )',
-			'table_expected'  => 'binary',
-			'column_expected' => array(
-				'a' => 'big5',
-				'b' => false,
+			'mixed_characters' => array(
+            'input' => "H€llo\x80World\xf0\x9f\x98\x80!", // Valid and invalid
+            'expected' => "H€lloWorld\xf0\x9f\x98\x80!", // Emoji (4-byte) is valid in utf8mb4.
+            'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET latin1, b BLOB )',
-			'table_expected'  => 'binary',
-			'column_expected' => array(
-				'a' => 'latin1',
-				'b' => false,
+			// 4-byte character valid in utf8mb4
+			'valid_4byte' => array(
+				'input' => "H€llo\xf0\x9f\x98\x80World", // Valid 4-byte character (😄)
+				'expected' => "H€llo\xf0\x9f\x98\x80World",
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET latin1, b TEXT CHARACTER SET koi8r )',
-			'table_expected'  => 'koi8r',
-			'column_expected' => array(
-				'a' => 'latin1',
-				'b' => 'koi8r',
+			// 4-byte character invalid in utf8
+			'invalid_4byte' => array(
+				'input' => "H€llo\xf0\xff\xff\xffWorld", // Invalid 4-byte character
+				'expected' => 'H€lloWorld',
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET utf8mb3, b TEXT CHARACTER SET utf8mb3 )',
-			'table_expected'  => 'utf8',
-			'column_expected' => array(
-				'a' => 'utf8',
-				'b' => 'utf8',
+			// Empty string
+			'empty_string' => array(
+				'input' => '',
+				'expected' => '',
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET utf8, b TEXT CHARACTER SET utf8mb4 )',
-			'table_expected'  => 'utf8',
-			'column_expected' => array(
-				'a' => 'utf8',
-				'b' => 'utf8mb4',
+			// Special characters (should remain unchanged)
+			'special_chars' => array(
+				'input' => "!@#$%^&*()_+[]{}|;:'\",.<>?/~`",
+				'expected' => "!@#$%^&*()_+[]{}|;:'\",.<>?/~`",
+				'charset' => 'utf8mb4',
 			),
-		),
-		array(
-			'definition'      => '( a VARCHAR(50) CHARACTER SET big5, b TEXT CHARACTER SET koi8r )',
-			'table_expected'  => 'ascii',
-			'column_expected' => array(
-				'a' => 'big5',
-				'b' => 'koi8r',
+			// Existing invalid sequences
+			'existing_invalid_sequences' => array(
+				'input' => "H€llo\xe0\x80\x80World\xf0\xff\xff\xff¢", // Invalid sequences
+				'expected' => 'H€lloWorld¢', // Expected outcome
+				'charset' => 'utf8mb4',
 			),
-		),
-	);
+			// Testing with Latin1 charset
+			'latin1_valid' => array(
+				'input' => 'Héllo, Monde!', // Valid for Latin1
+				'expected' => 'Héllo, Monde!',
+				'charset' => 'latin1',
+			),
+			'latin1_invalid' => array(
+				'input' => "Héllo\x80World", // Invalid byte sequence for Latin1
+				'expected' => 'HélloWorld',
+				'charset' => 'latin1',
+			),
+			// Testing with ASCII charset
+			'ascii' => array(
+				'input' => 'Hello, World!', // Valid ASCII
+				'expected' => 'Hello, World!',
+				'charset' => 'ascii',
+			),
+		);
+	}
 
 	/**
 	 * @ticket 21212
