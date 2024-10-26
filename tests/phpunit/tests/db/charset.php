@@ -678,7 +678,7 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	 * @ticket 21212
 	 *
 	 *
-	 * @dataProvider strip_invalid_text_provider
+	 * @dataProvider data_strip_invalid_text_for_column
 	 *
 	 * @covers wpdb::strip_invalid_text_for_column
 	 */
@@ -702,7 +702,7 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function strip_invalid_text_provider() {
+	public function data_strip_invalid_text_for_column() {
 		return array(
 			// Valid UTF-8 characters
 			'valid_utf8' => array(
