@@ -686,8 +686,8 @@ class Tests_DB_Charset extends WP_UnitTestCase {
 		global $wpdb;
 
 		// Ensure the test is run on the correct charset
-		$currentCharset = $wpdb->get_col_charset( $wpdb->posts, 'post_content' );
-		if ( $currentCharset !== $charset ) {
+		$current_charset = $wpdb->get_col_charset( $wpdb->posts, 'post_content' );
+		if ( $current_charset !== $charset ) {
 			echo 'Skipping' . $charset;
 			$this->markTestSkipped( "This test requires a {$charset} character set." );
 		}
