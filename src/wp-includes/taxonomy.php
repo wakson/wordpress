@@ -2841,7 +2841,6 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = false ) {
 	 */
 	do_action( 'pre_set_object_terms', $object_id, $terms, $taxonomy, $append, $old_tt_ids );
 
-
 	$tt_ids     = array();
 	$new_tt_ids = array();
 
