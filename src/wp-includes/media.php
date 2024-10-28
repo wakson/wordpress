@@ -5661,7 +5661,7 @@ function wp_getimagesize( $filename, ?array &$image_info = null ) {
 	$image_mime_type = wp_get_image_mime( $filename );
 
 	// Not an image?
-	if ( ! $image_mime_type ) {
+	if ( false === $image_mime_type ) {
 		return false;
 	}
 
