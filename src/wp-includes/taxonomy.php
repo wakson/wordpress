@@ -2825,6 +2825,23 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = false ) {
 		$old_tt_ids = array();
 	}
 
+	/**
+	 * Fires before terms are assigned to an object.
+	 *
+	 * This action allows manipulation or monitoring of terms assigned to a specified
+	 * object, such as a post, before the terms are set.
+	 *
+	 * @since 6.7.0
+	 *
+	 * @param int    $object_id  The ID of the object being updated.
+	 * @param array  $terms      An array of term IDs or slugs to be assigned to the object.
+	 * @param string $taxonomy   The taxonomy for the terms.
+	 * @param bool   $append     Whether to append the new terms to the existing terms.
+	 * @param array  $old_tt_ids The previous array of term taxonomy IDs.
+	 */
+	do_action( 'pre_set_object_terms', $object_id, $terms, $taxonomy, $append, $old_tt_ids );
+
+
 	$tt_ids     = array();
 	$new_tt_ids = array();
 
