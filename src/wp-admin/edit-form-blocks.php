@@ -68,9 +68,9 @@ $preload_paths = array(
 	'/wp/v2/settings',
 	array( '/wp/v2/settings', 'OPTIONS' ),
 	'/wp/v2/global-styles/themes/' . $stylesheet . '?context=view',
-	'/wp/v2/global-styles/themes/' . $stylesheet . '/variations?context=view'
+	'/wp/v2/global-styles/themes/' . $stylesheet . '/variations?context=view',
 	'/wp/v2/themes?context=edit&status=active',
-	array( '/wp/v2/global-styles/' . WP_Theme_JSON_Resolver::get_user_global_styles_post_id(), 'OPTIONS' )
+	array( '/wp/v2/global-styles/' . WP_Theme_JSON_Resolver::get_user_global_styles_post_id(), 'OPTIONS' ),
 	'/wp/v2/global-styles/' . WP_Theme_JSON_Resolver::get_user_global_styles_post_id() . '?context=edit',
 );
 
