@@ -291,7 +291,10 @@ function wp_create_image_subsizes( $file, $attachment_id ) {
 		 * If the original image's dimensions are over the threshold,
 		 * scale the image and use it as the "full" size.
 		 */
-		if ( $threshold && ( $image_meta['width'] > $threshold || $image_meta['height'] > $threshold ) ) {
+		if (
+			( $threshold && ( $image_meta['width'] > $threshold || $image_meta['height'] > $threshold ) ) ||
+			( 'image/heic' === $imagesize['mime'] && $image_meta['width'] <= $threshold )
+		) {
 			$editor = wp_get_image_editor( $file );
 
 			if ( is_wp_error( $editor ) ) {
