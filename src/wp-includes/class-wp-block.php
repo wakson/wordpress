@@ -157,7 +157,7 @@ class WP_Block {
 	 * If the block has inner blocks, the method recursively processes them by creating new instances of `WP_Block`
 	 * for each inner block and updating their context based on the block's `provides_context` property.
 	 *
-	 * @since 6.7.0
+	 * @since 6.8.0
 	 */
 	public function refresh_context_dependents() {
 		$this->context = $this->available_context;
@@ -186,7 +186,7 @@ class WP_Block {
 	 * If the block has inner blocks, this method initializes a new `WP_Block_List` for them, ensuring the
 	 * correct content and context are updated for each nested block.
 	 *
-	 * @since 6.7.0
+	 * @since 6.8.0
 	 */
 	public function refresh_parsed_block_dependents() {
 		if ( ! empty( $this->parsed_block['innerBlocks'] ) ) {
