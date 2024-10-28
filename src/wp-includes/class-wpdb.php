@@ -3278,7 +3278,6 @@ class wpdb {
 		return $charset;
 	}
 
-
 	/**
 	 * Retrieves the character set for the given column.
 	 *
