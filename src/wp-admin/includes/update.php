@@ -717,7 +717,7 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 	printf(
 		/* translators: 1: Date the plugin was closed, 2: Reason the plugin was closed. */
 		__( 'This plugin has been closed as of %1$s and is no longer available for new installs. %2$s.' ),
-		date_i18n( get_option( 'date_format' ), strtotime( $response->closed_at ) ),
+		date_i18n( get_option( 'date_format' ), strtotime( $response->closed_on ) ),
 		$closure_reason_text
 	);
 
@@ -740,7 +740,7 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 	 *     @type string $slug          Plugin slug.
 	 *     @type string $plugin        Plugin basename.
 	 *     @type string $url           Plugin URL.
-	 *     @type string $closed_at     The date of which the plugin was closed.
+	 *     @type string $closed_on     The date of which the plugin was closed.
 	 *     @type string $closed_reason A code which represents the reason the plugin was closed.
 	 * }
 	 */
