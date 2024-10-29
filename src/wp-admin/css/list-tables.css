@@ -1299,10 +1299,14 @@ ul.cat-checklist input[name="post_category[]"]:indeterminate::before {
 .upgrade .plugins tr:last-of-type th,
 .plugins tr.active + tr.inactive.update th,
 .plugins tr.active + tr.inactive.update td,
+.plugins tr.active + tr.inactive.closed th,
+.plugins tr.active + tr.inactive.closed td,
 .plugins .updated td,
 .plugins .updated th,
 .plugins tr.active + tr.inactive.updated th,
-.plugins tr.active + tr.inactive.updated td {
+.plugins tr.active + tr.inactive.updated td,
+.plugins tr.active + tr.inactive.closed th,
+.plugins tr.active + tr.inactive.closed td {
 	box-shadow: none;
 }
 
