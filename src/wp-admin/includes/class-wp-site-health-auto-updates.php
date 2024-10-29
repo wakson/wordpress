@@ -66,7 +66,7 @@ class WP_Site_Health_Auto_Updates {
 	 * @param string $constant         The name of the constant to check.
 	 * @param bool|string|array $value The value that the constant should be, if set,
 	 *                                 or an array of acceptable values.
-	 * @return array The test results.
+	 * @return ?array The test results. Null if the test passed.
 	 */
 	public function test_constants( $constant, $value ) {
 		$acceptable_values = (array) $value;
@@ -82,6 +82,8 @@ class WP_Site_Health_Auto_Updates {
 				'severity'    => 'fail',
 			);
 		}
+
+		return null;
 	}
 
 	/**
@@ -89,7 +91,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return array The test results.
+	 * @return ?array The test results. Null if the test passed.
 	 */
 	public function test_wp_version_check_attached() {
 		if ( ( ! is_multisite() || is_main_site() && is_network_admin() )
@@ -104,6 +106,8 @@ class WP_Site_Health_Auto_Updates {
 				'severity'    => 'fail',
 			);
 		}
+
+		return null;
 	}
 
 	/**
@@ -111,7 +115,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return array The test results.
+	 * @return ?array The test results. Null if the test passed.
 	 */
 	public function test_filters_automatic_updater_disabled() {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
@@ -125,6 +129,8 @@ class WP_Site_Health_Auto_Updates {
 				'severity'    => 'fail',
 			);
 		}
+
+		return null;
 	}
 
 	/**
@@ -156,7 +162,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return array|false The test results. False if the auto-updates failed.
+	 * @return array|false The test results. False if auto-updates didn't previously fail.
 	 */
 	public function test_if_failed_update() {
 		$failed = get_site_option( 'auto_core_update_failed' );
@@ -397,7 +403,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return array|false The test results. False if it isn't a development version.
+	 * @return array|false|null The test results. False if it isn't a development version. Null if the test passed.
 	 */
 	public function test_accepts_dev_updates() {
 		require ABSPATH . WPINC . '/version.php'; // $wp_version; // x.y.z
@@ -428,6 +434,8 @@ class WP_Site_Health_Auto_Updates {
 				'severity'    => 'fail',
 			);
 		}
+
+		return null;
 	}
 
 	/**
@@ -435,7 +443,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return array The test results.
+	 * @return ?array The test results. Null if the test passed.
 	 */
 	public function test_accepts_minor_updates() {
 		if ( defined( 'WP_AUTO_UPDATE_CORE' ) && false === WP_AUTO_UPDATE_CORE ) {
@@ -460,5 +468,7 @@ class WP_Site_Health_Auto_Updates {
 				'severity'    => 'fail',
 			);
 		}
+
+		return null;
 	}
 }
