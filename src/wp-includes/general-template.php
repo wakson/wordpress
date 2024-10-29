@@ -419,7 +419,7 @@ function wp_logout_url( $redirect = '' ) {
 		$args['redirect_to'] = urlencode( $redirect );
 	}
 
-	$logout_url = add_query_arg( $args, site_url( 'wp-login.php?action=logout', 'login' ) );
+	$logout_url = add_query_arg( $args, network_site_url( 'wp-login.php?action=logout', 'login' ) );
 	$logout_url = wp_nonce_url( $logout_url, 'log-out' );
 
 	/**
@@ -444,7 +444,7 @@ function wp_logout_url( $redirect = '' ) {
  * @return string The login URL. Not HTML-encoded.
  */
 function wp_login_url( $redirect = '', $force_reauth = false ) {
-	$login_url = site_url( 'wp-login.php', 'login' );
+	$login_url = network_site_url( 'wp-login.php', 'login' );
 
 	if ( ! empty( $redirect ) ) {
 		$login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
