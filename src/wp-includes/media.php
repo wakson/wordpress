@@ -6233,7 +6233,7 @@ function wp_high_priority_element_flag( $value = null ) {
  * @return string[] An array of mime type mappings.
  */
 function wp_get_image_editor_output_format( $filename, $mime_type ) {
-	$heic_images = array(
+	$default_output_format = array(
 		'image/heic'          => 'image/jpeg',
 		'image/heif'          => 'image/jpeg',
 		'image/heic-sequence' => 'image/jpeg',
@@ -6260,5 +6260,5 @@ function wp_get_image_editor_output_format( $filename, $mime_type ) {
 	 * @param string $filename  Path to the image.
 	 * @param string $mime_type The source image mime type.
 	 */
-	return apply_filters( 'image_editor_output_format', $heic_images, $filename, $mime_type );
+	return apply_filters( 'image_editor_output_format', $default_output_format, $filename, $mime_type );
 }
