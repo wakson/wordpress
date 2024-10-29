@@ -224,7 +224,7 @@ class WP_Navigation_Block_Renderer {
 	 * @since 6.5.0
 	 *
 	 * @param array $attributes The block attributes.
-	 * @return WP_Block_List Returns the inner blocks for the navigation block.
+	 * @return ?WP_Block_List Returns the inner blocks for the navigation block.
 	 */
 	private static function get_inner_blocks_from_navigation_post( $attributes ) {
 		$navigation_post = get_post( $attributes['ref'] );
@@ -251,6 +251,9 @@ class WP_Navigation_Block_Renderer {
 			// context which could be refined.
 			return new WP_Block_List( $blocks, $attributes );
 		}
+
+		// Return null if there are no valid posts.
+		return null;
 	}
 
 	/**
@@ -1269,7 +1272,7 @@ function block_core_navigation_parse_blocks_from_menu_items( $menu_items, $menu_
  *
  * @deprecated 6.3.0 Use WP_Navigation_Fallback::get_classic_menu_fallback() instead.
  *
- * @return object WP_Term The classic navigation.
+ * @return ?\WP_Term The classic navigation.
  */
 function block_core_navigation_get_classic_menu_fallback() {
 
@@ -1306,6 +1309,8 @@ function block_core_navigation_get_classic_menu_fallback() {
 		);
 		return $classic_nav_menus[0];
 	}
+
+	return null;
 }
 
 /**
