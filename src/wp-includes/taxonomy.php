@@ -2799,7 +2799,8 @@ function wp_insert_term( $term, $taxonomy, $args = array() ) {
 function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = false ) {
 	global $wpdb;
 
-	$object_id = (int) $object_id;
+	$object_id  = (int) $object_id;
+	$old_tt_ids = array();
 
 	if ( ! taxonomy_exists( $taxonomy ) ) {
 		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
@@ -2809,20 +2810,6 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = false ) {
 		$terms = array();
 	} elseif ( ! is_array( $terms ) ) {
 		$terms = array( $terms );
-	}
-
-	if ( ! $append ) {
-		$old_tt_ids = wp_get_object_terms(
-			$object_id,
-			$taxonomy,
-			array(
-				'fields'                 => 'tt_ids',
-				'orderby'                => 'none',
-				'update_term_meta_cache' => false,
-			)
-		);
-	} else {
-		$old_tt_ids = array();
 	}
 
 	/**
@@ -2840,6 +2827,18 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = false ) {
 	 * @param array  $old_tt_ids The previous array of term taxonomy IDs.
 	 */
 	do_action( 'pre_set_object_terms', $object_id, $terms, $taxonomy, $append, $old_tt_ids );
+
+	if ( ! $append ) {
+		$old_tt_ids = wp_get_object_terms(
+			$object_id,
+			$taxonomy,
+			array(
+				'fields'                 => 'tt_ids',
+				'orderby'                => 'none',
+				'update_term_meta_cache' => false,
+			)
+		);
+	}
 
 	$tt_ids     = array();
 	$new_tt_ids = array();
