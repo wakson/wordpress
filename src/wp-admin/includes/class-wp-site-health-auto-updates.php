@@ -91,7 +91,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return ?array The test results or null if the test passed.
+	 * @return ?array The test results, or null if the test passed.
 	 */
 	public function test_wp_version_check_attached() {
 		if ( ( ! is_multisite() || is_main_site() && is_network_admin() )
@@ -115,7 +115,7 @@ class WP_Site_Health_Auto_Updates {
 	 *
 	 * @since 5.2.0
 	 *
-	 * @return ?array The test results or null if the test passed.
+	 * @return ?array The test results, or null if the test passed.
 	 */
 	public function test_filters_automatic_updater_disabled() {
 		/** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
