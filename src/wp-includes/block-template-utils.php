@@ -1167,10 +1167,16 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 		 * If the query has found some user templates, those have priority
 		 * over the theme-provided ones, so we skip querying and building them.
 		 */
-		$query['slug__not_in'] = wp_list_pluck( $query_result, 'slug' );
-		$template_files        = _get_block_templates_files( $template_type, $query );
+		$template_files_query = $query;
+		unset( $template_files_query['post_type'] );
+		$template_files = _get_block_templates_files( $template_type, $template_files_query );
 		foreach ( $template_files as $template_file ) {
-			$query_result[] = _build_block_template_result_from_file( $template_file, $template_type );
+			if (
+				! isset( $query['post_type'] ) ||
+				( isset( $query['post_type'] ) && isset( $template_file['postTypes'] ) && in_array( $query['post_type'], $template_file['postTypes'], true ) )
+			) {
+				$query_result[] = _build_block_template_result_from_file( $template_file, $template_type );
+			}
 		}
 
 		if ( 'wp_template' === $template_type ) {
