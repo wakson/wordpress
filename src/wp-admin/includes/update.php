@@ -678,7 +678,7 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 	);
 
 	$closure_reasons = [
-		'security-issue'                => _x( 'An unfixed security issue is known to exist within the plugin.', 'Plugin closure reason' ),
+		'security-issue'                => _x( 'A security issue is known to exist within the plugin.', 'Plugin closure reason' ),
 		'author-request'                => _x( 'The author of this plugin no longer supports it, and requested the plugin be closed.', 'Plugin closure reason' ),
 		'guideline-violation'           => _x( 'The plugin has been suspended due to a Guideline Violation.', 'Plugin closure reason' ),
 		'licensing-trademark-violation' => _x( 'The plugin has been suspended due to a Licensing/Trademark Violation', 'Plugin closure reason' ),
