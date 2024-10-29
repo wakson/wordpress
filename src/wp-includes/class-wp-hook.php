@@ -80,9 +80,9 @@ final class WP_Hook implements Iterator, ArrayAccess {
 	 * @param int      $accepted_args The number of arguments the function accepts.
 	 */
 	public function add_filter( $hook_name, $callback, $priority, $accepted_args ) {
-		// Ensure the priority is be numeric, if it wasn't, set to the default priority.
+		// Ensure the priority is numeric, if it wasn't, set to the default priority.
 		if ( ! is_numeric( $priority ) ) {
-			_doing_it_wrong( 
+			_doing_it_wrong(
 				'add_filter',
 				sprintf(
 					/* translators: 1: 'add_action()'. 2: 'add_filter()'. */
@@ -91,7 +91,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 					'<code>add_filter()</code>'
 				),
 				'6.8'
-			); 
+			);
 			$priority = 10;
 		}
 
