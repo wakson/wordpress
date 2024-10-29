@@ -446,7 +446,6 @@ function wp_plugin_update_rows() {
 			add_action( "after_plugin_row_{$plugin_file}", 'wp_plugin_closed_row', 10, 2 );
 		}
 	}
-
 }
 
 /**
@@ -674,10 +673,10 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 		esc_attr( $plugin_slug . '-closed' ),
 		esc_attr( $plugin_slug ),
 		esc_attr( $file ),
-		esc_attr( $wp_list_table->get_column_count() ),
+		esc_attr( $wp_list_table->get_column_count() )
 	);
 
-	$closure_reasons = [
+	$closure_reasons = array(
 		'security-issue'                => _x( 'A security issue is known to exist within the plugin.', 'Plugin closure reason' ),
 		'author-request'                => _x( 'The author of this plugin no longer supports it, and requested the plugin be closed.', 'Plugin closure reason' ),
 		'guideline-violation'           => _x( 'The plugin has been suspended due to a Guideline Violation.', 'Plugin closure reason' ),
@@ -685,7 +684,7 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 		'merged-into-core'              => _x( 'This plugin is no longer required, as the functionality is now provided by WordPress.', 'Plugin closure reason' ),
 		'unused'                        => _x( 'This plugin is unused.', 'Plugin closure reason' ),
 		'unknown'                       => _x( 'The reason is unknown.', 'Plugin closure reason' ),
-	];
+	);
 
 	/* translators: %s: is an error code returned by WordPress.org, this is a fallback for when no reason is known. */
 	$unknown_closure_reason                    = _x( 'The plugin has been closed due to: %s.', 'Plugin closure reason' );
