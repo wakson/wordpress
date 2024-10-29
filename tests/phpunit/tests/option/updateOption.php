@@ -162,7 +162,7 @@ class Tests_Option_UpdateOption extends WP_UnitTestCase {
 		$this->assertSame( $before, get_num_queries() );
 		$this->assertSame( $value, 'bar' );
 	}
-	
+
 	/**
 	 * @ticket 48393
 	 *

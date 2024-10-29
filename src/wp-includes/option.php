@@ -923,7 +923,7 @@ function update_option( $option, $value, $autoload = null ) {
 	 *
 	 * See https://core.trac.wordpress.org/ticket/38903
 	 */
-	if ( ( $value === $old_value || $serialized_value === maybe_serialize( $old_value ) ) && ( is_null( $autoload ) || $raw_autoload === $requested_autoload ) ) {
+	if ( ( $value === $old_value || maybe_serialize( $old_value ) === $serialized_value ) && ( is_null( $autoload ) || $raw_autoload === $requested_autoload ) ) {
 		return false;
 	}
 
