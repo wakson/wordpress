@@ -989,7 +989,7 @@ class WP_Theme_JSON {
 		$schema_styles_blocks   = array();
 		$schema_settings_blocks = array();
 
-		$used_blocks = self::get_used_blocks( $input );
+		$used_blocks       = self::get_used_blocks( $input );
 		$valid_used_blocks = array_intersect( $used_blocks, $valid_block_names );
 
 		/*
