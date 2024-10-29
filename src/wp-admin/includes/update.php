@@ -687,6 +687,10 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 		'unknown'                       => _x( 'The reason is unknown.', 'Plugin closure reason' ),
 	];
 
+	/* translators: %s: is an error code returned by WordPress.org, this is a fallback for when no reason is known. */
+	$unknown_closure_reason                    = _x( 'The plugin has been closed due to: %s.', 'Plugin closure reason' );
+	$closure_reasons['unknown-closure-reason'] = $unknown_closure_reason;
+
 	/**
 	 * Filters the list of plugin closure reasons.
 	 *
@@ -697,16 +701,24 @@ function wp_plugin_closed_row( $file, $plugin_data ) {
 	 */
 	$closure_reasons = apply_filters( 'plugin_closure_reasons', $closure_reasons );
 
-	// We must always have an unknown reason.
-	if ( ! isset( $closure_reasons['unknown'] ) ) {
-		$closure_reasons['unknown'] = _x( 'Unknown', 'Plugin closure reason' );
+	if ( isset( $closure_reasons[ $response->closed_reason ] ) ) {
+		$closure_reason_text = $closure_reasons[ $response->closed_reason ];
+	} else {
+		if ( isset( $closure_reasons['unknown-closure-reason'] ) ) {
+			$unknown_closure_reason = $closure_reasons['unknown-closure-reason'];
+		}
+
+		$closure_reason_text = sprintf(
+			$unknown_closure_reason,
+			'<code>' . esc_html( $response->closed_reason ) . '</code>'
+		);
 	}
 
 	printf(
 		/* translators: 1: Date the plugin was closed, 2: Reason the plugin was closed. */
 		__( 'This plugin has been closed as of %1$s and is no longer available for new installs. %2$s.' ),
 		date_i18n( get_option( 'date_format' ), strtotime( $response->closed_at ) ),
-		isset( $closure_reasons[ $response->closed_reason ] ) ? $closure_reasons[ $response->closed_reason ] : $closure_reasons['unknown']
+		$closure_reason_text
 	);
 
 	/**
