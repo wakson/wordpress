@@ -337,6 +337,7 @@ function wp_update_plugins( $extra_stats = array() ) {
 	$updates->response     = array();
 	$updates->translations = array();
 	$updates->no_update    = array();
+	$updates->closed       = array();
 
 	$doing_cron = wp_doing_cron();
 
@@ -462,6 +463,7 @@ function wp_update_plugins( $extra_stats = array() ) {
 		$updates->response     = $response['plugins'];
 		$updates->translations = $response['translations'];
 		$updates->no_update    = $response['no_update'];
+		$updates->closed       = $response['closed'];
 	}
 
 	// Support updates for any plugins using the `Update URI` header field.
@@ -519,8 +521,8 @@ function wp_update_plugins( $extra_stats = array() ) {
 
 		$update = (object) $update;
 
-		// Is it valid? We require at least a version.
-		if ( ! isset( $update->version ) ) {
+		// Is it valid? We require at least a version for non-closed plugins.
+		if ( ! isset( $update->version ) && ! isset( $update->closed ) ) {
 			continue;
 		}
 
@@ -529,7 +531,7 @@ function wp_update_plugins( $extra_stats = array() ) {
 		$update->plugin = $plugin_file;
 
 		// WordPress needs the version field specified as 'new_version'.
-		if ( ! isset( $update->new_version ) ) {
+		if ( ! isset( $update->new_version ) && isset( $update->version ) ) {
 			$update->new_version = $update->version;
 		}
 
@@ -547,7 +549,9 @@ function wp_update_plugins( $extra_stats = array() ) {
 
 		unset( $updates->no_update[ $plugin_file ], $updates->response[ $plugin_file ] );
 
-		if ( version_compare( $update->new_version, $plugin_data['Version'], '>' ) ) {
+		if ( isset( $update->closed ) ) {
+			$updates->closed[ $plugin_file ] = $update;
+		} elseif ( version_compare( $update->new_version, $plugin_data['Version'], '>' ) ) {
 			$updates->response[ $plugin_file ] = $update;
 		} else {
 			$updates->no_update[ $plugin_file ] = $update;
@@ -564,6 +568,7 @@ function wp_update_plugins( $extra_stats = array() ) {
 
 	array_walk( $updates->response, $sanitize_plugin_update_payload );
 	array_walk( $updates->no_update, $sanitize_plugin_update_payload );
+	array_walk( $updates->closed, $sanitize_plugin_update_payload );
 
 	set_site_transient( 'update_plugins', $updates );
 }
