@@ -206,7 +206,6 @@ class WP_Term_Query {
 			'number'                 => '',
 			'offset'                 => '',
 			'fields'                 => 'all',
-			'count'                  => false,
 			'name'                   => '',
 			'slug'                   => '',
 			'term_taxonomy_id'       => '',
