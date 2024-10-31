@@ -118,6 +118,10 @@ $preload_paths = array(
 	),
 );
 
+if ( ! empty( $_GET['postId'] ) ) {
+	$preload_paths[] = add_query_arg( 'context', 'edit', rest_get_route_for_post( $_GET['postId'] ) );
+}
+
 block_editor_rest_api_preload( $preload_paths, $block_editor_context );
 
 wp_add_inline_script(
