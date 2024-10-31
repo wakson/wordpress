@@ -71,6 +71,13 @@ $preload_paths = array(
 	'/wp/v2/global-styles/themes/' . $active_theme . '/variations?context=view',
 	'/wp/v2/themes?context=edit&status=active',
 	array( '/wp/v2/global-styles/' . WP_Theme_JSON_Resolver::get_user_global_styles_post_id(), 'OPTIONS' ),
+	/*
+	 * Preload the global styles path with the correct context based on user caps.
+	 * NOTE: There is an equivalent conditional check in the client-side code to fetch
+	 * the global styles entity using the appropriate context value.
+	 * See the call to `canUser()`, under `useGlobalStylesUserConfig()` in `packages/edit-site/src/components/use-global-styles-user-config/index.js`.
+	 * Please ensure that the equivalent check is kept in sync with this preload path.
+	 */
 	'/wp/v2/global-styles/' . WP_Theme_JSON_Resolver::get_user_global_styles_post_id() . '?context=' . $global_styles_endpoint_context,
 );
 
