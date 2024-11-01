@@ -18,8 +18,8 @@ Description: Used to style blocks in the editor.
 /*--------------------------------------------------------------
 1.0 General Typography
 --------------------------------------------------------------*/
+
 .editor-styles-wrapper,
-.editor-styles-wrapper p,
 .edit-post-visual-editor .editor-block-list__block,
 .edit-post-visual-editor .editor-block-list__block p,
 .editor-default-block-appender textarea.editor-default-block-appender__content {
