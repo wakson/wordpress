@@ -128,7 +128,18 @@ if ( $block_editor_context->post ) {
 	$route_for_post = rest_get_route_for_post( $block_editor_context->post );
 	if ( $route_for_post ) {
 		$preload_paths[] = add_query_arg( 'context', 'edit', $route_for_post );
+		if ( $block_editor_context->post->post_type === 'page' ) {
+			$preload_paths[] = add_query_arg(
+				'slug',
+				// @see https://github.com/WordPress/gutenberg/blob/489f6067c623926bce7151a76755bb68d8e22ea7/packages/edit-site/src/components/sync-state-with-url/use-init-edited-entity-from-url.js#L139-L140
+				'page-' . $block_editor_context->post->post_name,
+				'/wp/v2/templates/lookup'
+			);
+		}
 	}
+} else {
+	$preload_paths[] = '/wp/v2/templates/lookup?slug=front-page';
+	$preload_paths[] = '/wp/v2/templates/lookup?slug=home';
 }
 
 block_editor_rest_api_preload( $preload_paths, $block_editor_context );
