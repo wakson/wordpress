@@ -6601,7 +6601,9 @@ function wp_delete_attachment( $post_id, $force_delete = false ) {
 	 */
 	do_action( 'delete_attachment', $post_id, $post );
 
-	if ( ( ! empty( $attachment_taxonomies = get_object_taxonomies( $post->post_type ) ) ) ) {
+	$attachment_taxonomies = get_object_taxonomies( $post->post_type );
+
+	if ( ! empty( $attachment_taxonomies ) ) {
 		wp_delete_object_term_relationships( $post_id, $attachment_taxonomies );
 	}
 
