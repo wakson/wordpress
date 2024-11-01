@@ -88,7 +88,7 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
 }
 
 /**
- * Replace multiple cache values only if they already exist.
+ * Replaces multiple cache values only if they already exist.
  *
  * @param array  $data   Associative array of cache keys and their new values.
  * @param string $group  Optional. The cache group. Defaults to 'default'.
