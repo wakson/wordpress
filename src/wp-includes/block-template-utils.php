@@ -207,28 +207,18 @@ function get_default_block_template_types() {
 	);
 
 	// Add a title and description to post format templates.
-	$post_formats = array(
-		'aside',
-		'audio',
-		'chat',
-		'gallery',
-		'image',
-		'link',
-		'quote',
-		'status',
-		'video',
-	);
-	foreach ( $post_formats as $post_format ) {
-		$default_template_types[ 'taxonomy-post_format-post-format-' . $post_format ] = array(
+	$post_formats = get_post_format_strings();
+	foreach ( $post_formats as $post_format_slug => $post_format_name ) {
+		$default_template_types[ 'taxonomy-post_format-post-format-' . $post_format_slug ] = array(
 			'title'       => sprintf(
 				/* translators: %s: Post format name. */
 				_x( 'Post Format: %s', 'Template name' ),
-				get_post_format_string( $post_format )
+				$post_format_name
 			),
 			'description' => sprintf(
 				/* translators: %s: Post format name. */
 				__( 'Displays the %s Post Format archive.' ),
-				get_post_format_string( $post_format )
+				$post_format_name
 			),
 		);
 	}
