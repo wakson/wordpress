@@ -940,7 +940,7 @@ class WP_Theme_JSON_Resolver {
 			_wp_array_set( $resolved_theme_json_data, $path, $resolved_url['href'] );
 		}
 
-		return new WP_Theme_JSON_Gutenberg( $resolved_theme_json_data );
+		return new WP_Theme_JSON( $resolved_theme_json_data );
 	}
 
 	/**
