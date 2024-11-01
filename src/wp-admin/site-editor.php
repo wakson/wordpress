@@ -59,7 +59,10 @@ foreach ( get_default_block_template_types() as $slug => $template_type ) {
 $context_settings = array( 'name' => 'core/edit-site' );
 
 if ( ! empty( $_GET['postId'] ) ) {
-	$context_settings['post'] = get_post( $_GET['postId'] );
+	$post_id = (int) $_GET['postId'];
+	if ( $post_id ) {
+		$context_settings['post'] = get_post( $post_id );
+	}
 }
 
 $block_editor_context = new WP_Block_Editor_Context( $context_settings );
@@ -128,7 +131,7 @@ if ( $block_editor_context->post ) {
 	$route_for_post = rest_get_route_for_post( $block_editor_context->post );
 	if ( $route_for_post ) {
 		$preload_paths[] = add_query_arg( 'context', 'edit', $route_for_post );
-		if ( $block_editor_context->post->post_type === 'page' ) {
+		if ( 'page' === $block_editor_context->post->post_type ) {
 			$preload_paths[] = add_query_arg(
 				'slug',
 				// @see https://github.com/WordPress/gutenberg/blob/489f6067c623926bce7151a76755bb68d8e22ea7/packages/edit-site/src/components/sync-state-with-url/use-init-edited-entity-from-url.js#L139-L140
