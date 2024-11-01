@@ -56,7 +56,13 @@ foreach ( get_default_block_template_types() as $slug => $template_type ) {
 	$indexed_template_types[] = $template_type;
 }
 
-$block_editor_context = new WP_Block_Editor_Context( array( 'name' => 'core/edit-site' ) );
+$context_settings = array( 'name' => 'core/edit-site' );
+
+if ( ! empty( $_GET['postId'] ) ) {
+	$context_settings['post'] = get_post( $_GET['postId'] );
+}
+
+$block_editor_context = new WP_Block_Editor_Context( $context_settings );
 $custom_settings      = array(
 	'siteUrl'                   => site_url(),
 	'postsPerPage'              => get_option( 'posts_per_page' ),
@@ -118,8 +124,11 @@ $preload_paths = array(
 	),
 );
 
-if ( ! empty( $_GET['postId'] ) ) {
-	$preload_paths[] = add_query_arg( 'context', 'edit', rest_get_route_for_post( $_GET['postId'] ) );
+if ( $block_editor_context->post ) {
+	$route_for_post = rest_get_route_for_post( $block_editor_context->post );
+	if ( $route_for_post ) {
+		$preload_paths[] = add_query_arg( 'context', 'edit', $route_for_post );
+	}
 }
 
 block_editor_rest_api_preload( $preload_paths, $block_editor_context );
