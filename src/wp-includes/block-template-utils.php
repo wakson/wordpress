@@ -1172,7 +1172,8 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 		/*
 		 * We need to unset the post_type query param because some templates
 		 * would be excluded otherwise, like `page.html` when looking for
-		 * `page` templates.
+		 * `page` templates. We need all templates so we can exclude duplicates
+		 * from plugin-registered templates.
 		 * See: https://github.com/WordPress/gutenberg/issues/65584
 		 */
 		unset( $template_files_query['post_type'] );
