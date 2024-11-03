@@ -1163,11 +1163,18 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 	}
 
 	if ( ! isset( $query['wp_id'] ) ) {
+		$template_files_query = $query;
 		/*
 		 * If the query has found some user templates, those have priority
 		 * over the theme-provided ones, so we skip querying and building them.
 		 */
-		$template_files_query = $query;
+		$template_files_query['slug__not_in'] = wp_list_pluck( $query_result, 'slug' );
+		/*
+		 * We need to unset the post_type query param because some templates
+		 * would be excluded otherwise, like `page.html` when looking for
+		 * `page` templates.
+		 * See: https://github.com/WordPress/gutenberg/issues/65584
+		 */
 		unset( $template_files_query['post_type'] );
 		$template_files = _get_block_templates_files( $template_type, $template_files_query );
 		foreach ( $template_files as $template_file ) {
