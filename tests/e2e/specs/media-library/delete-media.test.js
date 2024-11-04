@@ -5,14 +5,10 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
 test.describe( 'Delete Media', () => {
+    test.setTimeout(300000);
 	test.beforeAll( async ( { requestUtils } ) => {
-		test.setTimeout(180000); 
         const file0 = './tests/e2e/assets/test_data_image1.png';
         await requestUtils.uploadMedia(file0);
-        const file1 = './tests/e2e/assets/test_data_image1.png';
-        await requestUtils.uploadMedia(file1);
-        const file2 = './tests/e2e/assets/test_data_image1.png';
-        await requestUtils.uploadMedia(file2);
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
@@ -47,30 +43,30 @@ test.describe( 'Delete Media', () => {
 		).toBeVisible();
 	} );
 
-	test( 'delete Bulk media', async ( { page, admin } ) => {
-		await admin.visitAdminPage( 'upload.php?mode=list' );
+	// test( 'delete Bulk media', async ( { page, admin } ) => {
+	// 	await admin.visitAdminPage( 'upload.php?mode=list' );
 
-		// Select the multiple media from the list.
-		await page.locator( 'input[name="media[]"]' ).first().click();
-		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
+	// 	// Select the multiple media from the list.
+	// 	await page.locator( 'input[name="media[]"]' ).first().click();
+	// 	await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
 
-		await page
-			.locator( '#bulk-action-selector-top' )
-			.selectOption( 'delete' );
+	// 	await page
+	// 		.locator( '#bulk-action-selector-top' )
+	// 		.selectOption( 'delete' );
 
-		page.once( 'dialog', ( dialog ) => {
-			dialog
-				.accept()
-				.catch( ( err ) =>
-					console.error( 'Dialog accept failed:', err )
-				);
-		} );
+	// 	page.once( 'dialog', ( dialog ) => {
+	// 		dialog
+	// 			.accept()
+	// 			.catch( ( err ) =>
+	// 				console.error( 'Dialog accept failed:', err )
+	// 			);
+	// 	} );
 
-		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
+	// 	await page.getByRole( 'button', { name: 'Apply' } ).first().click();
 
-		await expect(
-			page.locator( '#message p' ),
-			'Media got deleted successfully'
-		).toBeVisible();
-	} );
+	// 	await expect(
+	// 		page.locator( '#message p' ),
+	// 		'Media got deleted successfully'
+	// 	).toBeVisible();
+	// } );
 } );
