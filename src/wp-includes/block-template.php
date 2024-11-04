@@ -102,8 +102,18 @@ function locate_block_template( $template, $type, array $templates ) {
 	if ( $block_template ) {
 		$_wp_current_template_id = $block_template->id;
 
-		if ( empty( $block_template->content ) && is_user_logged_in() ) {
-			$_wp_current_template_content = wp_render_empty_block_template_warning( $block_template );
+		if ( empty( $block_template->content ) ) {
+			if ( is_user_logged_in() ) {
+				$_wp_current_template_content = wp_render_empty_block_template_warning( $block_template );
+			} else {
+				if ( $block_template->has_theme_file ) {
+					// Show contents from theme template if user is not logged in.
+					$theme_template = _get_block_template_file( 'wp_template', $block_template->slug );
+					$_wp_current_template_content = file_get_contents( $theme_template['path'] );
+				} else {
+					$_wp_current_template_content = $block_template->content;
+				}
+			}
 		} elseif ( ! empty( $block_template->content ) ) {
 			$_wp_current_template_content = $block_template->content;
 		}
