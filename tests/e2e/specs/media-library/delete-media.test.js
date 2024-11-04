@@ -7,9 +7,9 @@ import path from 'path';
 test.describe( 'Delete Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		const files = [
-			path.resolve( process.cwd(), 'assets/test_data_image1.jpeg' ),
-			path.resolve( process.cwd(), 'uploads/test_data_image2.jpeg' ),
-			path.resolve( process.cwd(), 'uploads/test_data_image3.jpeg' ),
+			'./test/e2e/assets/test_data_image1.jpeg',
+			'./test/e2e/assets/test_data_image2.jpeg',
+			'./test/e2e/assets/test_data_image3.jpeg'
 		];
 		for ( const file of files ) {
 			await requestUtils.uploadMedia( file );
