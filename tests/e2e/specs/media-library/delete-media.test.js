@@ -8,9 +8,9 @@ test.describe( 'Delete Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		test.setTimeout(180000); 
 		const files = [
-			'./tests/e2e/assets/test_data_image1.jpeg',
-			'./tests/e2e/assets/test_data_image2.jpeg',
-			'./tests/e2e/assets/test_data_image3.jpeg'
+			'./tests/e2e/assets/test_data_image1.png',
+			'./tests/e2e/assets/test_data_image2.png',
+			'./tests/e2e/assets/test_data_image3.png'
 		];
 		for ( const file of files ) {
 			await requestUtils.uploadMedia( file );
