@@ -3787,7 +3787,16 @@ class wpdb {
 		$query = ltrim( $query, "\r\n\t (" );
 
 		// Strip everything between parentheses except nested selects.
-		$query = preg_replace( '/\((?!\s*select)[^(]*?\)/is', '()', $query );
+		$replaced_query = preg_replace( '/\((?!\s*select)(?:[^()]+|(?R))*+\)/i', '()', $query );
+		if ( null === $replaced_query ) {
+			$replaced_query = preg_replace( '/\((?!\s*select)[^()]+\)/i', '()', $query );
+		}
+
+		if ( null === $replaced_query ) {
+			$replaced_query = preg_replace( '/\((?!\s*select)[^()]+\)/i', '()', substr( $query, 0, min( strlen( $query ), 1000000 ) ) );
+		}
+
+		$query = $replaced_query;
 
 		// Quickly match most common queries.
 		if ( preg_match(
