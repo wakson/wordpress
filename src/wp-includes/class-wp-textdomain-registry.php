@@ -153,6 +153,16 @@ class WP_Textdomain_Registry {
 	 * @param string $path   Language directory path.
 	 */
 	public function set_custom_path( $domain, $path ) {
+		// If just-in-time loading was triggered before, reset the entry so it can be tried again.
+
+		if ( isset( $this->all[ $domain ] ) ) {
+			$this->all[ $domain ] = array_filter( $this->all[ $domain ] );
+		}
+
+		if ( empty( $this->current[ $domain ] ) ) {
+			unset( $this->current[ $domain ] );
+		}
+
 		$this->custom_paths[ $domain ] = rtrim( $path, '/' );
 	}
 
