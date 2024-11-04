@@ -28,6 +28,7 @@ function _add_template_loader_filters() {
 function wp_render_empty_block_template_warning( $block_template ) {
 	wp_enqueue_style( 'wp-empty-template-alert' );
 	return sprintf(
+		/* translators: %1$s: Block template title. %2$s: Empty template warning message. %3$s: Edit post link. %4$s: Edit button label. */
 		'<div id="wp-empty-template-alert">
 			<div class="icon">
 				<span class="dashicons dashicons-warning"></span>
@@ -45,7 +46,7 @@ function wp_render_empty_block_template_warning( $block_template ) {
 			</div>
 		</div>',
 		$block_template->title,
-		__( 'This page is blank because the template might have been deleted or has no content yet. You can reset or edit this template in the Site Editor.' ),
+		__( 'This page is blank because your theme\'s template is currently empty. It may have been accidentally deleted, but don\'t worry! You can easily reset or edit this template in the <a href="https://wordpress.org/documentation/article/site-editor/">site editor</a>.' ),
 		get_edit_post_link( $block_template->wp_id, 'site-editor' ),
 		__( 'Edit Template' )
 	);
