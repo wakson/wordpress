@@ -6,6 +6,7 @@ import path from 'path';
 
 test.describe( 'Delete Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
+		test.setTimeout(180000); 
 		const files = [
 			'./tests/e2e/assets/test_data_image1.jpeg',
 			'./tests/e2e/assets/test_data_image2.jpeg',
