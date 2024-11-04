@@ -7,8 +7,14 @@ import path from 'path';
 test.describe( 'Delete Media', () => {
     test.setTimeout(300000);
 	test.beforeAll( async ( { requestUtils } ) => {
-        const file0 = './tests/e2e/assets/test_data_image1.png';
-        await requestUtils.uploadMedia(file0);
+        await requestUtils.deleteAllMedia();
+
+		uploadedMedia = await requestUtils.uploadMedia(
+			path.resolve(
+				process.cwd(),
+				'test/e2e/assets/test_data_image1.png'
+			)
+		);
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
