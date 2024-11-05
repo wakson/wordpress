@@ -47,9 +47,10 @@ test.describe( 'Delete Media', () => {
 			.locator( "tr[id^='post-'] a[aria-label^='Delete']" )
 			.first()
 			.click();
-
-      const deletionMessage = page.locator('#message p');
-      await expect(deletionMessage).toBeVisible();
+        
+        await page.waitForSelector('#message')
+        const deletionMessage = page.locator('#message p');
+        await expect(deletionMessage).toBeVisible();
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
@@ -71,7 +72,7 @@ test.describe( 'Delete Media', () => {
 		} );
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
-        await page.waitForTimeout(2000);
+        await page.waitForSelector('#message')
         const deletionMessage = page.locator('#message p');
         await expect(deletionMessage).toBeVisible();
 	} );
