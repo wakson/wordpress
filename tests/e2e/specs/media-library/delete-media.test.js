@@ -48,7 +48,7 @@ test.describe( 'Delete Media', () => {
 			.first()
 			.click();
         
-        const deletionMessage = page.locator('#message p', { hasText: '2 media files permanently deleted.' });
+        const deletionMessage = page.locator('#message p', { hasText: 'Media file permanently deleted.' });
         await expect(deletionMessage).toBeVisible({ timeout: 10000 });
 	} );
 
