@@ -20,15 +20,16 @@ test.describe( 'Delete Media', () => {
             );
         }
 	} );
-    test.beforeEach( async ( { page } ) => {
-		await page.goto("wp-admin/upload.php?mode=list")
-        await page.waitForTimeout(2000);
-	} );
+    // test.beforeEach( async ( { page } ) => {
+	// 	await page.goto("wp-admin/upload.php?mode=list")
+    //     await page.waitForTimeout(2000);
+	// } );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
 	} );
 
 	test( 'delete single media', async ( { page, admin } ) => {
+        await admin.visitAdminPage("upload.php?mode=list")
 		// Hover on the first media.
 		await page
 			.locator(
@@ -48,14 +49,13 @@ test.describe( 'Delete Media', () => {
 			.locator( "tr[id^='post-'] a[aria-label^='Delete']" )
 			.first()
 			.click({timeout: 5000});
-
-        
+        await page.waitForTimeout(2000);
         const deletionMessage = page.locator('#message p');
         await expect(deletionMessage).toContainText('permanently deleted');
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
-
+        await admin.visitAdminPage("upload.php?mode=list")
 		// Select the multiple media from the list.
 		await page.locator( 'input[name="media[]"]' ).first().click();
 		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
