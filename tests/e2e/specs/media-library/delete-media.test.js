@@ -7,7 +7,7 @@ import path from 'path';
 test.describe( 'Sort Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
-		const files = [ 'test/e2e/assets/test_data_image1.png', 'test/e2e/assets/test.csv' ];
+		const files = [ 'tests/e2e/assets/test_data_image1.png', 'tests/e2e/assets/test.csv' ];
 
 		for ( const file of files ) {
 			await requestUtils.uploadMedia(
