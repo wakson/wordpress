@@ -9,7 +9,7 @@ test.describe( 'Delete Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
         await requestUtils.deleteAllMedia();
 
-		uploadedMedia = await requestUtils.uploadMedia(
+		await requestUtils.uploadMedia(
 			path.resolve(
 				process.cwd(),
 				'tests/e2e/assets/test_data_image1.png'
