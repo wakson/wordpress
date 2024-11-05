@@ -20,8 +20,10 @@ test.describe( 'Delete Media', () => {
             );
         }
 	} );
-    test.beforeEach( async ( { page } ) => {
-		await page.goto("wp-admin/upload.php?mode=list")
+    test.beforeEach( async ( { page,admin } ) => {
+		// await page.goto("wp-admin/upload.php?mode=list")
+        await admin.visitAdminPage("upload.php?mode=list")
+
         await page.waitForTimeout(2000);
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
@@ -48,7 +50,6 @@ test.describe( 'Delete Media', () => {
 			.first()
 			.click();
         
-        await page.waitForTimeout(1000)
         const deletionMessage = page.locator("//div[@id='message']/p[contains(text(), 'Media file permanently deleted')]");
 		await expect(deletionMessage).toBeVisible({ timeout: 20000 });
 	} );
@@ -73,7 +74,6 @@ test.describe( 'Delete Media', () => {
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
         
-        await page.waitForTimeout(1000)
         const deletionMessage = page.locator("//div[@id='message']/p[contains(text(), '2 media files permanently deleted')]");
 		await expect(deletionMessage).toBeVisible({ timeout: 20000 });
 	} );
