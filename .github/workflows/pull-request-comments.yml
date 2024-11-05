@@ -128,6 +128,8 @@ jobs:
             const fs = require( 'fs' );
             const issue_number = Number( fs.readFileSync( './NR' ) );
 
+            console.log( context );
+
             // Comments are only added after the first successful build. Check for the presence of a comment and bail early.
             const commentInfo = {
               owner: context.repo.owner,
@@ -177,7 +179,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
-            console.log( context.payload );
+            console.log( context );
             const { owner, repo } = context.repo;
             const { number } = context.issue;
 
