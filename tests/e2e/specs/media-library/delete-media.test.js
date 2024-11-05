@@ -4,47 +4,43 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
-test.describe( 'Delete Media', () => {
-    test.setTimeout(30000);
+test.describe( 'Sort Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
-        await requestUtils.deleteAllMedia();
-        const files = [
-            'tests/e2e/assets/test_data_image1.png',
-            'tests/e2e/assets/test_data_image2.png',
-            'tests/e2e/assets/test_data_image3.png'
-        ];
+		await requestUtils.deleteAllMedia();
+		const files = [ 'test/e2e/assets/test_data_image1.png', 'test/e2e/assets/test.csv' ];
 
-        for (const file of files) {
-            await requestUtils.uploadMedia(
-                path.resolve(process.cwd(), file)
-            );
-        }
+		for ( const file of files ) {
+			await requestUtils.uploadMedia(
+				path.resolve( process.cwd(), file )
+			);
+		}
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
 	} );
 
-	test( 'delete Bulk media', async ( { page, admin } ) => {
-        await admin.visitAdminPage("upload.php?mode=list")
-		// Select the multiple media from the list.
-		await page.locator( 'input[name="media[]"]' ).first().click();
-		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
+	test( 'Sort media by type', async ( { page, admin } ) => {
+		await admin.visitAdminPage( 'upload.php?mode=list' );
 
 		await page
-			.locator( '#bulk-action-selector-top' )
-			.selectOption( 'delete' );
+			.getByRole( 'combobox', { name: 'Filter by type' } )
+			.selectOption( 'post_mime_type:image' );
+		await page.getByRole( 'button', { name: 'Filter' } ).click();
 
-		page.once( 'dialog', ( dialog ) => {
-			dialog
-				.accept()
-				.catch( ( err ) =>
-					console.error( 'Dialog accept failed:', err )
-				);
-		} );
+		await page
+			.locator(
+				'tr td.title.column-title.has-row-actions.column-primary'
+			)
+			.first()
+			.hover();
 
-		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
-        
-        const deletionMessage = page.locator('#message p');
-        await expect(deletionMessage).toContainText('permanently deleted');
+		await page
+			.locator( "tr[id^='post-'] a[aria-label^='Edit']" )
+			.first()
+			.click();
+
+		await expect(
+			page.locator( 'div.misc-pub-section.misc-pub-filetype' )
+		).toHaveText( 'File type: PNG' );
 	} );
 } );
