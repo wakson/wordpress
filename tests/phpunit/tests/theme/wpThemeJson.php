@@ -2344,7 +2344,9 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 				'styles'  => array(
 					'background' => array(
 						'backgroundImage' => array(
-							'url' => 'http://example.org/quote.png',
+							'id'     => 'uploaded',
+							'source' => 'file',
+							'url'    => 'http://example.org/quote.png',
 						),
 						'backgroundSize'  => 'cover',
 					),
@@ -2376,7 +2378,10 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 			'version' => WP_Theme_JSON::LATEST_SCHEMA,
 			'styles'  => array(
 				'background' => array(
-					'backgroundSize' => 'contain',
+					'backgroundImage' => array(
+						'url' => 'http://example.org/site.png',
+					),
+					'backgroundSize'  => 'contain',
 				),
 				'blocks'     => array(
 					'core/group' => array(
@@ -2406,7 +2411,7 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 			'styles'  => array(
 				'background' => array(
 					'backgroundImage' => array(
-						'url' => 'http://example.org/quote.png',
+						'url' => 'http://example.org/site.png',
 					),
 					'backgroundSize'  => 'contain',
 				),
@@ -2441,6 +2446,60 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 		$actual = $theme_json->get_raw_data();
 
 		$this->assertEqualSetsWithIndex( $expected, $actual );
+	}
+
+	/**
+	 * This test covers `get_block_nodes` with the `$include_node_paths_only` option.
+	 * When `true`, `$include_node_paths_only` should return only the paths of the block nodes.
+	 *
+	 * @ticket 61858
+	 */
+	public function test_return_block_node_paths() {
+		$theme_json = new ReflectionClass( 'WP_Theme_JSON' );
+
+		$func = $theme_json->getMethod( 'get_block_nodes' );
+		$func->setAccessible( true );
+
+		$theme_json = array(
+			'version' => WP_Theme_JSON::LATEST_SCHEMA,
+			'styles'  => array(
+				'typography' => array(
+					'fontSize' => '16px',
+				),
+				'blocks'     => array(
+					'core/button' => array(
+						'color' => array(
+							'background' => 'red',
+						),
+					),
+					'core/group'  => array(
+						'elements' => array(
+							'link' => array(
+								'color' => array(
+									'background' => 'blue',
+								),
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$block_nodes = $func->invoke( null, $theme_json, array(), array( 'include_node_paths_only' => true ) );
+
+		$expected = array(
+			array(
+				'path' => array( 'styles', 'blocks', 'core/button' ),
+			),
+			array(
+				'path' => array( 'styles', 'blocks', 'core/group' ),
+			),
+			array(
+				'path' => array( 'styles', 'blocks', 'core/group', 'elements', 'link' ),
+			),
+		);
+
+		$this->assertEquals( $expected, $block_nodes );
 	}
 
 	/**
