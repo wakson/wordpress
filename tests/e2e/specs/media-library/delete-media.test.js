@@ -10,7 +10,7 @@ test.describe( 'Sort Media', () => {
 		const files = [
             'tests/e2e/assets/test_data_image1.png',
             'tests/e2e/assets/test_data_image2.png',
-            'tests/e2e/assets/test-data.txt'
+            'tests/e2e/assets/test_video.mp4'
         ];
 
         for (const file of files) {
