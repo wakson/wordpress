@@ -5,7 +5,6 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
 test.describe( 'Delete Media', () => {
-    // test.setTimeout(300000);
 	test.beforeAll( async ( { requestUtils } ) => {
         await requestUtils.deleteAllMedia();
         const files = [
@@ -14,21 +13,20 @@ test.describe( 'Delete Media', () => {
             'tests/e2e/assets/test_data_image3.png'
         ];
 
-        // Loop through the array and upload each file
         for (const file of files) {
             await requestUtils.uploadMedia(
                 path.resolve(process.cwd(), file)
             );
         }
 	} );
-
+    test.beforeEach( async ( { admin } ) => {
+		await admin.visitAdminPage( 'upload.php?mode=list' );
+	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
 	} );
 
 	test( 'delete single media', async ( { page, admin } ) => {
-		await admin.visitAdminPage( 'upload.php?mode=list' );
-
 		// Hover on the first media.
 		await page
 			.locator(
@@ -55,8 +53,7 @@ test.describe( 'Delete Media', () => {
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
-		await admin.visitAdminPage( 'upload.php?mode=list' );
-
+        
 		// Select the multiple media from the list.
 		await page.locator( 'input[name="media[]"]' ).first().click();
 		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
