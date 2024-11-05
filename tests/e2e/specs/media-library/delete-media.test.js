@@ -30,12 +30,12 @@ test.describe( 'Delete Media', () => {
 
 	test( 'delete single media', async ( { page, admin } ) => {
 		// Hover on the first media.
-		await page.locator( 'input[name="media[]"]' ).first().click();
-
-        await page
-			.locator( '#bulk-action-selector-top' )
-			.selectOption( 'delete' );
-
+		await page
+			.locator(
+				'tr td.title.column-title.has-row-actions.column-primary'
+			)
+			.first()
+			.hover();
 		page.once( 'dialog', ( dialog ) => {
 			dialog
 				.accept()
@@ -43,8 +43,12 @@ test.describe( 'Delete Media', () => {
 					console.error( 'Dialog accept failed:', err )
 				);
 		} );
+        await page.waitForTimeout(2000);
+		await page
+			.locator( "tr[id^='post-'] a[aria-label^='Delete']" )
+			.first()
+			.click({timeout: 5000});
 
-		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
         
         const deletionMessage = page.locator('#message p');
         await expect(deletionMessage).toContainText('permanently deleted');
