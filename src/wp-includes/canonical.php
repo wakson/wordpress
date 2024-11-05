@@ -714,8 +714,8 @@ function redirect_canonical( $requested_url = null, $do_redirect = true ) {
 		$redirect['path'] = trailingslashit( $redirect['path'] );
 	}
 
-	$original_host_low = strtolower( $original['host'] );
-	$redirect_host_low = strtolower( $redirect['host'] );
+	$original_host_low = strtolower( $original['host'] ?? '' );
+	$redirect_host_low = strtolower( $redirect['host'] ?? '' );
 
 	/*
 	 * Ignore differences in host capitalization, as this can lead to infinite redirects.
@@ -725,10 +725,10 @@ function redirect_canonical( $requested_url = null, $do_redirect = true ) {
 		|| ( 'www.' . $original_host_low !== $redirect_host_low
 			&& 'www.' . $redirect_host_low !== $original_host_low )
 	) {
-		$redirect['host'] = $original['host'];
+		$redirect['host'] = $original['host'] ?? '';
 	}
 
-	$compare_original = array( $original['host'], $original['path'] );
+	$compare_original = array( $original['host'] ?? '', $original['path'] );
 
 	if ( ! empty( $original['port'] ) ) {
 		$compare_original[] = $original['port'];
@@ -749,7 +749,7 @@ function redirect_canonical( $requested_url = null, $do_redirect = true ) {
 	}
 
 	if ( $compare_original !== $compare_redirect ) {
-		$redirect_url = $redirect['scheme'] . '://' . $redirect['host'];
+		$redirect_url = $redirect['scheme'] ?? 'http' . '://' . $redirect['host'];
 
 		if ( ! empty( $redirect['port'] ) ) {
 			$redirect_url .= ':' . $redirect['port'];
