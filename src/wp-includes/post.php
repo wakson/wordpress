@@ -4580,11 +4580,11 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 
 	if ( 'attachment' !== $post_type ) {
 		if ( 'publish' === $post_status ) {
-			if ( ( new DateTimeImmutable( DateTime::createFromFormat( 'Y-m-d H:i:s', $post_date_gmt ) ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() >= MINUTE_IN_SECONDS ) {
+			if ( ( new DateTimeImmutable( ( DateTime::createFromFormat( 'Y-m-d H:i:s', $post_date_gmt ) )->getTimestamp() ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() >= MINUTE_IN_SECONDS ) {
 				$post_status = 'future';
 			}
 		} elseif ( 'future' === $post_status ) {
-			if ( ( new DateTimeImmutable( DateTime::createFromFormat( 'Y-m-d H:i:s', $post_date_gmt ) ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() < MINUTE_IN_SECONDS ) {
+			if ( ( new DateTimeImmutable( ( DateTime::createFromFormat( 'Y-m-d H:i:s', $post_date_gmt ) )->getTimestamp() ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() < MINUTE_IN_SECONDS ) {
 				$post_status = 'publish';
 			}
 		}
