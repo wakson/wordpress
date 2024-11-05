@@ -5377,8 +5377,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			if ( $this->is_virtual() ) {
 				continue;
 			}
-			$bm = $this->bookmarks[ $this->current_element->token->bookmark_name ];
-			if ( $bookmark_starts_at === $bm->start ) {
+			if ( $bookmark_starts_at === $this->bookmarks[ $this->state->current_token->bookmark_name ]->start ) {
 				while ( isset( $this->current_element ) && WP_HTML_Stack_Event::POP === $this->current_element->operation ) {
 					$this->current_element = array_shift( $this->element_queue );
 				}
