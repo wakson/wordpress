@@ -12,7 +12,7 @@ test.describe( 'Delete Media', () => {
 		uploadedMedia = await requestUtils.uploadMedia(
 			path.resolve(
 				process.cwd(),
-				'test/e2e/assets/test_data_image1.png'
+				'tests/e2e/assets/test_data_image1.png'
 			)
 		);
 	} );
