@@ -2617,6 +2617,10 @@ if ( ! function_exists( 'wp_hash_password' ) ) :
 			return $wp_hasher->HashPassword( trim( $password ) );
 		}
 
+		if ( strlen( $password ) > 4096 ) {
+			return '*';
+		}
+
 		/**
 		 * Filters the options passed to the password_hash() and password_needs_rehash() functions.
 		 *
@@ -2628,7 +2632,11 @@ if ( ! function_exists( 'wp_hash_password' ) ) :
 		 */
 		$options = apply_filters( 'wp_hash_password_options', array() );
 
-		return password_hash( trim( $password ), PASSWORD_BCRYPT, $options );
+		// Use sha384 to retain entropy from a password that's longer than 72 bytes.
+		$password_to_hash = base64_encode( hash( 'sha384', trim( $password ), true ) );
+
+		// Add a `wp-` prefix to facilitate distinguishing vanilla bcrypt hashes.
+		return 'wp-' . password_hash( $password_to_hash, PASSWORD_BCRYPT, $options );
 	}
 endif;
 
@@ -2681,13 +2689,21 @@ if ( ! function_exists( 'wp_check_password' ) ) :
 		}
 
 		if ( ! empty( $wp_hasher ) ) {
+			// Check the password using the overridden hasher.
 			$check = $wp_hasher->CheckPassword( $password, $hash );
+		} elseif ( strlen( $password ) > 4096 ) {
+			$check = false;
+		} elseif ( str_starts_with( $hash, 'wp-' ) ) {
+			// Check the password using the current `wp-` prefixed hash.
+			$password_to_verify = base64_encode( hash( 'sha384', $password, true ) );
+			$check              = password_verify( $password_to_verify, substr( $hash, 3 ) );
 		} elseif ( str_starts_with( $hash, '$P$' ) ) {
+			// Check the password using phpass.
 			require_once ABSPATH . WPINC . '/class-phpass.php';
-			// Use the portable hash from phpass.
 			$hasher = new PasswordHash( 8, true );
 			$check  = $hasher->CheckPassword( $password, $hash );
 		} else {
+			// Check the password using compat support for any non-prefixed hash.
 			$check = password_verify( $password, $hash );
 		}
 
@@ -2719,10 +2735,14 @@ if ( ! function_exists( 'wp_password_needs_rehash' ) ) :
 			return false;
 		}
 
+		if ( ! str_starts_with( $hash, 'wp-' ) ) {
+			return true;
+		}
+
 		/** This filter is documented in wp-includes/pluggable.php */
 		$options = apply_filters( 'wp_hash_password_options', array() );
 
-		return password_needs_rehash( $hash, PASSWORD_BCRYPT, $options );
+		return password_needs_rehash( substr( $hash, 3 ), PASSWORD_BCRYPT, $options );
 	}
 endif;
 
