@@ -128,7 +128,10 @@ jobs:
             const fs = require( 'fs' );
             const issue_number = Number( fs.readFileSync( './NR' ) );
 
-            console.log( context );
+            // Don't comment for Dependabot.
+            if ( context.actor == 'dependabot' ) {
+              return;
+            }
 
             // Comments are only added after the first successful build. Check for the presence of a comment and bail early.
             const commentInfo = {
@@ -179,9 +182,13 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
-            console.log( context );
             const { owner, repo } = context.repo;
             const { number } = context.issue;
+
+            // Don't comment for Dependabot.
+            if ( context.actor == 'dependabot' ) {
+              return;
+            }
 
             // Check for the presence of a comment and bail early.
             const comments = ( await github.rest.issues.listComments( { owner, repo, issue_number: number } ) ).data;
