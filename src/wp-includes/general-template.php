@@ -476,8 +476,10 @@ function wp_login_url( $redirect = '', $force_reauth = false ) {
  * @return string User registration URL.
  */
 function wp_registration_url( $redirect = '' ) {
+	// Set base registration URL.
 	$register_url = site_url( 'wp-login.php?action=register', 'login' );
 
+	// Append redirect URL if provided.
 	if ( ! empty( $redirect ) ) {
 		$register_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $register_url );
 	}
