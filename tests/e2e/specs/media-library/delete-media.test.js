@@ -14,7 +14,8 @@ test.describe( 'Delete User', () => {
 	} );
 
 	test( 'Delete Bulk Users', async ( { page, admin } ) => {
-		await admin.visitAdminPage( 'users.php' );
+		await admin.visitAdminPage( '/users.php' );
+        console.log('Session Cookies:', await page.context().cookies());
 
 		await page.getByRole( 'link', { name: 'Subscriber (1)' } ).click();
 		await page.getByLabel( 'Select test' ).check();
