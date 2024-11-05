@@ -5,16 +5,21 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
 test.describe( 'Delete Media', () => {
-    test.setTimeout(300000);
+    // test.setTimeout(300000);
 	test.beforeAll( async ( { requestUtils } ) => {
         await requestUtils.deleteAllMedia();
+        const files = [
+            'tests/e2e/assets/test_data_image1.png',
+            'tests/e2e/assets/test_data_image2.png',
+            'tests/e2e/assets/test_data_image3.png'
+        ];
 
-		await requestUtils.uploadMedia(
-			path.resolve(
-				process.cwd(),
-				'tests/e2e/assets/test_data_image1.png'
-			)
-		);
+        // Loop through the array and upload each file
+        for (const file of files) {
+            await requestUtils.uploadMedia(
+                path.resolve(process.cwd(), file)
+            );
+        }
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
@@ -49,30 +54,30 @@ test.describe( 'Delete Media', () => {
 		).toBeVisible();
 	} );
 
-	// test( 'delete Bulk media', async ( { page, admin } ) => {
-	// 	await admin.visitAdminPage( 'upload.php?mode=list' );
+	test( 'delete Bulk media', async ( { page, admin } ) => {
+		await admin.visitAdminPage( 'upload.php?mode=list' );
 
-	// 	// Select the multiple media from the list.
-	// 	await page.locator( 'input[name="media[]"]' ).first().click();
-	// 	await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
+		// Select the multiple media from the list.
+		await page.locator( 'input[name="media[]"]' ).first().click();
+		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
 
-	// 	await page
-	// 		.locator( '#bulk-action-selector-top' )
-	// 		.selectOption( 'delete' );
+		await page
+			.locator( '#bulk-action-selector-top' )
+			.selectOption( 'delete' );
 
-	// 	page.once( 'dialog', ( dialog ) => {
-	// 		dialog
-	// 			.accept()
-	// 			.catch( ( err ) =>
-	// 				console.error( 'Dialog accept failed:', err )
-	// 			);
-	// 	} );
+		page.once( 'dialog', ( dialog ) => {
+			dialog
+				.accept()
+				.catch( ( err ) =>
+					console.error( 'Dialog accept failed:', err )
+				);
+		} );
 
-	// 	await page.getByRole( 'button', { name: 'Apply' } ).first().click();
+		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
 
-	// 	await expect(
-	// 		page.locator( '#message p' ),
-	// 		'Media got deleted successfully'
-	// 	).toBeVisible();
-	// } );
+		await expect(
+			page.locator( '#message p' ),
+			'Media got deleted successfully'
+		).toBeVisible();
+	} );
 } );
