@@ -905,7 +905,7 @@ function wp_read_image_metadata( $file ) {
 			}
 
 			if ( ! empty( $iptc['2#055'][0] ) && ! empty( $iptc['2#060'][0] ) ) { // Created date and time.
-				$meta['created_timestamp'] = ( new DateTimeImmutable( $iptc['2#055'][0] . ' ' . $iptc['2#060'][0]  ) )->getTimestamp();
+				$meta['created_timestamp'] = ( new DateTimeImmutable( $iptc['2#055'][0] . ' ' . $iptc['2#060'][0] ) )->getTimestamp();
 			}
 
 			if ( ! empty( $iptc['2#116'][0] ) ) { // Copyright.
