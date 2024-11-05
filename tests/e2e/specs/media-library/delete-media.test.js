@@ -48,10 +48,9 @@ test.describe( 'Delete Media', () => {
 			.first()
 			.click();
         await page.waitForTimeout(2000);
-        await expect(
-            page.locator('#message'),
-            'Media deletion confirmation should be visible'
-        ).toBeVisible();
+        await expect( page.locator( '#message' ) ).toHaveText(
+			/Media file permanently deleted./
+		);
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
@@ -74,9 +73,8 @@ test.describe( 'Delete Media', () => {
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
         await page.waitForTimeout(2000);
-        await expect(
-            page.locator('#message'),
-            'Media deletion confirmation should be visible'
-        ).toBeVisible();
+        await expect( page.locator( '#message' ) ).toHaveText(
+			/Media file permanently deleted./
+		);
 	} );
 } );
