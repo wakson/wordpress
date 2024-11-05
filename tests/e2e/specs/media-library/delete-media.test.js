@@ -46,7 +46,7 @@ test.describe( 'Delete Media', () => {
 			.locator( "tr[id^='post-'] a[aria-label^='Delete']" )
 			.first()
 			.click();
-
+        await page.waitForTimeout(2000);
         await expect(
             page.locator('#message'),
             'Media deletion confirmation should be visible'
@@ -72,7 +72,7 @@ test.describe( 'Delete Media', () => {
 		} );
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
-
+        await page.waitForTimeout(2000);
         await expect(
             page.locator('#message'),
             'Media deletion confirmation should be visible'
