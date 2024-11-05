@@ -472,9 +472,16 @@ function wp_login_url( $redirect = '', $force_reauth = false ) {
  *
  * @since 3.6.0
  *
+ * @param  string $redirect Optional path to redirect to on registration.
  * @return string User registration URL.
  */
-function wp_registration_url() {
+function wp_registration_url( $redirect = '' ) {
+	$register_url = site_url( 'wp-login.php?action=register', 'login' );
+
+	if ( ! empty( $redirect ) ) {
+		$register_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $register_url );
+	}
+
 	/**
 	 * Filters the user registration URL.
 	 *
@@ -482,7 +489,7 @@ function wp_registration_url() {
 	 *
 	 * @param string $register The user registration URL.
 	 */
-	return apply_filters( 'register_url', site_url( 'wp-login.php?action=register', 'login' ) );
+	return apply_filters( 'register_url', $register_url, $redirect );
 }
 
 /**
