@@ -7,17 +7,13 @@ import path from 'path';
 test.describe( 'Sort Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
-		const files = [
-            'tests/e2e/assets/test_data_image1.png',
-            'tests/e2e/assets/test_data_image2.png',
-            'tests/e2e/assets/test_video.mp4'
-        ];
+		const files = [ 'tests/e2e/assets/test_data_image1.png' ];
 
-        for (const file of files) {
-            await requestUtils.uploadMedia(
-                path.resolve(process.cwd(), file)
-            );
-        }
+		for ( const file of files ) {
+			await requestUtils.uploadMedia(
+				path.resolve( process.cwd(), file )
+			);
+		}
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
