@@ -28,6 +28,7 @@ test.describe( 'Delete User', () => {
 
 	test( 'Delete Bulk Users', async ( { page, admin } ) => {
 		await admin.visitAdminPage( '/users.php' );
+        console.log('Session Cookies:', await page.context().cookies());
 
 		await page.locator( "a[href='users.php?role=subscriber']" ).click();
 		await page
