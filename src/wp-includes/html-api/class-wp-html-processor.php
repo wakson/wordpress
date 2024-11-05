@@ -5323,15 +5323,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * and computation time.
 		 */
 		if ( 'backward' === $direction ) {
-			// Reset necessary parser state
-			$this->change_parsing_namespace( 'html' );
-			$this->state->frameset_ok                       = true;
-			$this->state->stack_of_template_insertion_modes = array();
-			$this->state->head_element                      = null;
-			$this->state->form_element                      = null;
-			$this->state->current_token                     = null;
-			$this->element_queue                            = array();
-			$this->current_element                          = null;
 
 			/*
 			 * In case the parser is a fragment parser, instead of clearing the
@@ -5354,6 +5345,16 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$this->state->active_formatting_elements->remove_node( $item );
 			}
 
+			// Reset necessary parser state
+			$this->change_parsing_namespace( 'html' );
+			$this->state->frameset_ok                       = true;
+			$this->state->stack_of_template_insertion_modes = array();
+			$this->state->head_element                      = null;
+			$this->state->form_element                      = null;
+			$this->state->current_token                     = null;
+			$this->current_element                          = null;
+			$this->element_queue                            = array();
+
 			if ( null === $this->context_node ) {
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
 				$this->breadcrumbs           = array();
@@ -5373,6 +5374,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		}
 
 		while ( $this->next_token() ) {
+			if ( $this->is_virtual() ) {
+				continue;
+			}
 			$bm = $this->bookmarks[ $this->current_element->token->bookmark_name ];
 			if ( $bookmark_starts_at === $bm->start ) {
 				while ( isset( $this->current_element ) && WP_HTML_Stack_Event::POP === $this->current_element->operation ) {
