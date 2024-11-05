@@ -170,7 +170,7 @@ class Tests_Blocks_wpBlock extends WP_UnitTestCase {
 		);
 		$block        = new WP_Block( $parsed_block, $context, $this->registry );
 
-		$this->assertSame( $context, $block->context );
+		$this->assertSame( array( 'requested' => 'included' ), $block->context );
 	}
 
 	/**
@@ -218,12 +218,9 @@ class Tests_Blocks_wpBlock extends WP_UnitTestCase {
 		$context       = array( 'unrequested' => 'not included' );
 		$block         = new WP_Block( $parsed_block, $context, $this->registry );
 
-		$this->assertCount( 1, $block->context );
+		$this->assertCount( 0, $block->context );
 		$this->assertSame(
-			array(
-				'unrequested'   => 'not included',
-				'core/recordId' => 10,
-			),
+			array( 'core/recordId' => 10 ),
 			$block->inner_blocks[0]->context
 		);
 	}

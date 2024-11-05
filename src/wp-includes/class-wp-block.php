@@ -147,11 +147,7 @@ class WP_Block {
 	/**
 	 * Updates the context for the current block and its inner blocks.
 	 *
-	 * This method updates the block's `context` property by merging the available context from ancestor blocks
-	 * with the block's own context values. It removes specific context keys (`postId` and `postType`) that should
-	 * not be carried over. The block only consumes the context keys specified in its registered block type (`uses_context`).
-	 *
-	 * After updating its own context, the method also updates the context of inner blocks, if any, by passing down
+	 * The method updates the context of inner blocks, if any, by passing down
 	 * any context values the block provides (`provides_context`).
 	 *
 	 * If the block has inner blocks, the method recursively processes them by creating new instances of `WP_Block`
@@ -160,13 +156,6 @@ class WP_Block {
 	 * @since 6.8.0
 	 */
 	public function refresh_context_dependents() {
-		$this->context = $this->available_context;
-
-		// Remove "postId" and "postType" keys.
-		if ( isset( $this->context['postId'] ) || isset( $this->context['postType'] ) ) {
-			unset( $this->context['postId'], $this->context['postType'] );
-		}
-
 		if ( ! empty( $this->block_type->uses_context ) ) {
 			foreach ( $this->block_type->uses_context as $context_name ) {
 				if ( array_key_exists( $context_name, $this->available_context ) ) {
