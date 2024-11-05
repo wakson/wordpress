@@ -49,7 +49,7 @@ class WP_HTML_Open_Elements {
 	 *
 	 * @var bool
 	 */
-	private $has_p_in_button_scope = false;
+	public $has_p_in_button_scope = false;
 
 	/**
 	 * A function that will be called when an item is popped off the stack of open elements.

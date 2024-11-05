@@ -5286,8 +5286,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		// Flush any pending updates to the document before beginning.
 		$this->get_updated_html();
 
-		echo 'Seeking to ' . $bookmark_name . "\n";
-
 		$actual_bookmark_name = "_{$bookmark_name}";
 		$processor_started_at = $this->state->current_token
 			? $this->bookmarks[ $this->state->current_token->bookmark_name ]->start
@@ -5325,8 +5323,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * and computation time.
 		 */
 		if ( 'backward' === $direction ) {
-			echo 'back: ' . "\n";
 			// Reset necessary parser state
+			$this->change_parsing_namespace( 'html' );
 			$this->state->frameset_ok                       = true;
 			$this->state->stack_of_template_insertion_modes = array();
 			$this->state->head_element                      = null;
@@ -5335,56 +5333,48 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$this->element_queue                            = array();
 			$this->current_element                          = null;
 
-			if ( null === $this->context_node ) {
-				echo 'full parser' . "\n";
-				/*
-				 * In the case of a full parser, the processor needs to be
-				 * reset to a clean state and start over.
-				 */
-				$this->state->stack_of_open_elements     = new WP_HTML_Open_Elements();
-				$this->state->active_formatting_elements = new WP_HTML_Active_Formatting_Elements();
-				$this->state->insertion_mode             = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
+			/*
+			 * In case the parser is a fragment parser, instead of clearing the
+			 * parser state and starting fresh, calling the stack methods
+			 * maintains the proper flags in the parser.
+			 */
+			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
+				if ( 'context-node' === $item->bookmark_name ) {
+					break;
+				}
 
-				$this->breadcrumbs          = array();
+				$this->state->stack_of_open_elements->remove_node( $item );
+			}
+
+			foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
+				if ( 'context-node' === $item->bookmark_name ) {
+					break;
+				}
+
+				$this->state->active_formatting_elements->remove_node( $item );
+			}
+
+			if ( null === $this->context_node ) {
+				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
+				$this->breadcrumbs           = array();
+
 				$this->bytes_already_parsed = 0;
 				$this->parser_state         = self::STATE_READY;
 			} else {
-				/*
-				 * In case the parser is a fragment parser, instead of clearing the
-				 * parser state and starting fresh, calling the stack methods
-				 * maintains the proper flags in the parser.
-				 */
-				foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-					if ( 'context-node' === $item->bookmark_name ) {
-						break;
-					}
-
-					$this->state->stack_of_open_elements->remove_node( $item );
-				}
-
-				foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
-					if ( 'context-node' === $item->bookmark_name ) {
-						break;
-					}
-
-					$this->state->active_formatting_elements->remove_node( $item );
-				}
-
 				parent::seek( 'context-node' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_IN_BODY;
 				$this->breadcrumbs           = array_slice( $this->breadcrumbs, 0, 2 );
 			}
 		}
 
-
 		// When moving forwards, reparse the document until reaching the same location as the original bookmark.
 		if ( null !== $this->state->current_token && $bookmark_starts_at === $this->bookmarks[ $this->state->current_token->bookmark_name ]->start ) {
 			return true;
 		}
 
-		while ( var_dump( $this->next_token() ) ) {
-			echo 'bm starts at ' . $bookmark_starts_at . ' and current token starts at ' . $this->bookmarks[ $this->state->current_token->bookmark_name ]->start . "\n";
-			if ( $bookmark_starts_at === $this->bookmarks[ $this->state->current_token->bookmark_name ]->start ) {
+		while ( $this->next_token() ) {
+			$bm = $this->bookmarks[ $this->current_element->token->bookmark_name ];
+			if ( $bookmark_starts_at === $bm->start ) {
 				while ( isset( $this->current_element ) && WP_HTML_Stack_Event::POP === $this->current_element->operation ) {
 					$this->current_element = array_shift( $this->element_queue );
 				}
@@ -5392,7 +5382,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			}
 		}
 
-	echo 'false' . "\n";
 		return false;
 	}
 
