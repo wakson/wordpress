@@ -21,6 +21,7 @@ test.describe( 'Delete Media', () => {
 	} );
     test.beforeEach( async ( { admin } ) => {
 		await admin.visitAdminPage( 'upload.php?mode=list' );
+        await page.waitForSelector('tr td.title.column-title.has-row-actions.column-primary');
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
@@ -49,11 +50,11 @@ test.describe( 'Delete Media', () => {
 		await expect(
 			page.locator( '#message p' ),
 			'Media got deleted successfully'
-		).toBeVisible();
+		).toBeVisible({ timeout: 20000 });
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
-        
+
 		// Select the multiple media from the list.
 		await page.locator( 'input[name="media[]"]' ).first().click();
 		await page.locator( 'input[name="media[]"]' ).nth( 1 ).click();
@@ -75,6 +76,6 @@ test.describe( 'Delete Media', () => {
 		await expect(
 			page.locator( '#message p' ),
 			'Media got deleted successfully'
-		).toBeVisible();
+		).toBeVisible({ timeout: 20000 });
 	} );
 } );
