@@ -946,7 +946,6 @@ class WP_HTML_Tag_Processor {
 		$was_at = $this->bytes_already_parsed;
 		$this->after_tag();
 
-
 		// Don't proceed if there's nothing more to scan.
 		if (
 			self::STATE_COMPLETE === $this->parser_state ||
