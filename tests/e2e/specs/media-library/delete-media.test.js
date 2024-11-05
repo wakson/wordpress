@@ -6,14 +6,18 @@ import path from 'path';
 
 test.describe( 'Delete Media', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
-		const files = [
-			'./tests/e2e/assets/test_data_image1.jpeg',
-			'./tests/e2e/assets/test_data_image2.jpeg',
-			'./tests/e2e/assets/test_data_image3.jpeg'
-		];
-		for ( const file of files ) {
-			await requestUtils.uploadMedia( file );
-		}
+        await requestUtils.deleteAllMedia();
+        const files = [
+            'tests/e2e/assets/test_data_image1.png',
+            'tests/e2e/assets/test_data_image2.png',
+            'tests/e2e/assets/test_data_image3.png'
+        ];
+
+        for (const file of files) {
+            await requestUtils.uploadMedia(
+                path.resolve(process.cwd(), file)
+            );
+        }
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
