@@ -42,6 +42,7 @@ wp-tests-config.php
 /packagehash.txt
 /artifacts
 /setup.log
+/coverage
 
 # Files and folders that get created in wp-content
 /src/wp-content/blogs.dir
@@ -106,5 +107,3 @@ wp-tests-config.php
 # Visual regression test diffs
 tests/visual-regression/specs/__snapshots__
 
-# phpUnit coverage reports target nad cache
-/coverage
