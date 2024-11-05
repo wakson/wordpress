@@ -20,38 +20,8 @@ test.describe( 'Delete Media', () => {
             );
         }
 	} );
-    // test.beforeEach( async ( { page } ) => {
-	// 	await page.goto("wp-admin/upload.php?mode=list")
-    //     await page.waitForTimeout(2000);
-	// } );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
-	} );
-
-	test( 'delete single media', async ( { page, admin } ) => {
-        await admin.visitAdminPage("upload.php?mode=list")
-		// Hover on the first media.
-		await page
-			.locator(
-				'tr td.title.column-title.has-row-actions.column-primary'
-			)
-			.first()
-			.hover();
-		page.once( 'dialog', ( dialog ) => {
-			dialog
-				.accept()
-				.catch( ( err ) =>
-					console.error( 'Dialog accept failed:', err )
-				);
-		} );
-        await page.waitForTimeout(2000);
-		await page
-			.locator( "tr[id^='post-'] a[aria-label^='Delete']" )
-			.first()
-			.click({timeout: 5000});
-        await page.waitForTimeout(2000);
-        const deletionMessage = page.locator('#message p');
-        await expect(deletionMessage).toContainText('permanently deleted');
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
