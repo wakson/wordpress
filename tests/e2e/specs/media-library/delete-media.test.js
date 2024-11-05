@@ -4,16 +4,14 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'Delete User', () => {
-	test.beforeAll( async ( { requestUtils } ) => {
-		requestUtils.createUser( {
-			username: 'testuser',
-			email: 'testuser@gmail.com',
+
+	test( 'Delete Bulk Users', async ( { page, admin,requestUtils } ) => {
+        requestUtils.createUser( {
+			username: `test${Math.floor(Math.random() * 100000)}`,
+			email: `test${Math.floor(Math.random() * 100000)}@gmail.com`,
 			password: 'admin',
 			roles: 'subscriber',
 		} );
-	} );
-
-	test( 'Delete Bulk Users', async ( { page, admin } ) => {
 		await admin.visitAdminPage( '/users.php' );
         console.log('Session Cookies:', await page.context().cookies());
 
