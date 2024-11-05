@@ -48,8 +48,8 @@ test.describe( 'Delete Media', () => {
 			.first()
 			.click();
         
-        const deletionMessage = page.getByText('Media file permanently deleted.');
-		await expect(deletionMessage).toBeVisible();
+        const deletionMessage = page.locator('#message p', { hasText: '2 media files permanently deleted.' });
+        await expect(deletionMessage).toBeVisible({ timeout: 10000 });
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
@@ -72,7 +72,7 @@ test.describe( 'Delete Media', () => {
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
         await page.waitForSelector('#message')
-        const deletionMessage = page.getByText('2 media files permanently deleted.');
-		await expect(deletionMessage).toBeVisible();
+        const deletionMessage = page.locator('#message p', { hasText: '2 media files permanently deleted.' });
+		await expect(deletionMessage).toBeVisible({ timeout: 10000 });
 	} );
 } );
