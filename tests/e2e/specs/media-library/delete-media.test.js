@@ -5,6 +5,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
 test.describe( 'Delete Media', () => {
+    test.setTimeout(30000);
 	test.beforeAll( async ( { requestUtils } ) => {
         await requestUtils.deleteAllMedia();
         const files = [
@@ -21,6 +22,7 @@ test.describe( 'Delete Media', () => {
 	} );
     test.beforeEach( async ( { page } ) => {
 		await page.goto("wp-admin/upload.php?mode=list")
+        await page.waitForTimeout(2000);
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
@@ -49,7 +51,7 @@ test.describe( 'Delete Media', () => {
         await expect(
             page.locator('#message'),
             'Media deletion confirmation should be visible'
-        ).toBeVisible({ timeout: 20000 });
+        ).toBeVisible();
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
@@ -75,6 +77,6 @@ test.describe( 'Delete Media', () => {
         await expect(
             page.locator('#message'),
             'Media deletion confirmation should be visible'
-        ).toBeVisible({ timeout: 20000 });
+        ).toBeVisible();
 	} );
 } );
