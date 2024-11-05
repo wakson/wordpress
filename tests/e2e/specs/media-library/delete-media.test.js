@@ -19,9 +19,9 @@ test.describe( 'Delete Media', () => {
             );
         }
 	} );
-    test.beforeEach( async ( { admin } ) => {
-		await admin.visitAdminPage( 'upload.php?mode=list' );
-        await page.waitForSelector('tr td.title.column-title.has-row-actions.column-primary');
+    test.beforeEach( async ( { page } ) => {
+		await page.goto("wp-admin/upload.php?mode=list")
+		await page.waitForSelector('tr td.title.column-title.has-row-actions.column-primary >>nth=0');
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
