@@ -4579,14 +4579,12 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 	}
 
 	if ( 'attachment' !== $post_type ) {
-		$now = gmdate( 'Y-m-d H:i:s' );
-
 		if ( 'publish' === $post_status ) {
-			if ( ( new DateTimeImmutable( $post_date_gmt ) )->getTimestamp() - ( new DateTimeImmutable( $now ) )->getTimestamp() >= MINUTE_IN_SECONDS ) {
+			if ( ( new DateTimeImmutable( $post_date_gmt ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() >= MINUTE_IN_SECONDS ) {
 				$post_status = 'future';
 			}
 		} elseif ( 'future' === $post_status ) {
-			if ( ( new DateTimeImmutable( $post_date_gmt ) )->getTimestamp() - ( new DateTimeImmutable( $now ) )->getTimestamp() < MINUTE_IN_SECONDS ) {
+			if ( ( new DateTimeImmutable( $post_date_gmt ) )->getTimestamp() - ( new DateTimeImmutable() )->getTimestamp() < MINUTE_IN_SECONDS ) {
 				$post_status = 'publish';
 			}
 		}

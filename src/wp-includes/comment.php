@@ -1958,7 +1958,7 @@ function wp_get_unapproved_comment_author_email() {
 
 		if ( $comment && hash_equals( $_GET['moderation-hash'], wp_hash( $comment->comment_date_gmt ) ) ) {
 			// The comment will only be viewable by the comment author for 10 minutes.
-			$comment_preview_expires = ( new DateTimeImmutable( $comment->comment_date_gmt ) )->add( new DateInterval( 'P10I' ) )->getTimestamp();
+			$comment_preview_expires = ( new DateTimeImmutable( $comment->comment_date_gmt ) )->add( new DateInterval( 'PT10M' ) )->getTimestamp();
 
 			if ( time() < $comment_preview_expires ) {
 				$commenter_email = $comment->comment_author_email;
