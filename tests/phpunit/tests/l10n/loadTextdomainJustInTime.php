@@ -366,8 +366,6 @@ class Tests_L10n_LoadTextdomainJustInTime extends WP_UnitTestCase {
 		$output_after               = custom_i18n_plugin_test();
 		$is_textdomain_loaded_after = is_textdomain_loaded( 'custom-internationalized-plugin' );
 
-		remove_filter( 'locale', array( $this, 'filter_set_locale_to_german' ) );
-
 		$this->assertFalse( $is_textdomain_loaded_before );
 		$this->assertFalse( $is_textdomain_loaded_middle );
 		$this->assertSame( 'This is a dummy plugin', $output_before );
