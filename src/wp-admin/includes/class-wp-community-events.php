@@ -389,7 +389,7 @@ class WP_Community_Events {
 
 		if ( isset( $response_body['events'] ) ) {
 			foreach ( $response_body['events'] as $key => $event ) {
-				$timestamp = ( new DateTimeImmutable( $el["date"] ) )->getTimestamp();
+				$timestamp = ( new DateTimeImmutable( $el['date'] ) )->getTimestamp();
 
 				/*
 				 * The `date_format` option is not used because it's important

@@ -491,7 +491,7 @@ class WP {
 				$wp_last_modified_post    = mysql2date( $date_format, get_lastpostmodified( 'GMT' ), false );
 				$wp_last_modified_comment = mysql2date( $date_format, get_lastcommentmodified( 'GMT' ), false );
 
-				if ( ( new DateTimeImmutable( $wp_last_modified_post ) )->getTimestamp()  > ( new DateTimeImmutable( $wp_last_modified_comment ) )->getTimestamp()  ) {
+				if ( ( new DateTimeImmutable( $wp_last_modified_post ) )->getTimestamp()  > ( new DateTimeImmutable( $wp_last_modified_comment ) )->getTimestamp() ) {
 					$wp_last_modified = $wp_last_modified_post;
 				} else {
 					$wp_last_modified = $wp_last_modified_comment;

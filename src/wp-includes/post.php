@@ -5260,7 +5260,7 @@ function check_and_publish_future_post( $post ) {
 		return;
 	}
 
-	$time = ( new DateTimeImmutable( $post->post_date_gmt . ' GMT'  ) )->getTimestamp();
+	$time = ( new DateTimeImmutable( $post->post_date_gmt . ' GMT' ) )->getTimestamp();
 
 	// Uh oh, someone jumped the gun!
 	if ( $time > time() ) {

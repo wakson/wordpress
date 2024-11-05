@@ -2503,7 +2503,7 @@ final class WP_Customize_Manager {
 			} else {
 				try {
 					$timestamp = ( new DateTimeImmutable( $changeset_date ) )->getTimestamp();
-				}catch( \Exception $exception ){
+				} catch ( \Exception $exception ) {
 					$timestamp = false;
 				}
 				if ( ! $timestamp ) {

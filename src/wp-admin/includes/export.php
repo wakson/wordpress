@@ -137,7 +137,7 @@ function export_wp( $args = array() ) {
 		}
 
 		if ( $args['end_date'] ) {
-			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", gmdate('Y-m-d', ( new DateTimeImmutable( $args['end_date'] ) )->add( new DateInterval( 'P1M' ) )->getTimestamp() ) );
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", gmdate( 'Y-m-d', ( new DateTimeImmutable( $args['end_date'] ) )->add( new DateInterval( 'P1M' ) )->getTimestamp() ) );
 		}
 	}
 
