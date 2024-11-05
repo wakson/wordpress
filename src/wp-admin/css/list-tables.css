@@ -413,6 +413,12 @@ table.media .column-title .filename {
 	background-color: #fff;
 }
 
+@media screen and (max-width: 600px) {
+	.wp-list-table thead {
+		top: 0;
+	}
+}
+
 #the-list tr:last-child td,
 #the-list tr:last-child th {
 	border-bottom: none !important;
