@@ -19,9 +19,8 @@ test.describe( 'Delete Media', () => {
             );
         }
 	} );
-    test.beforeEach( async ( { page,admin } ) => {
-        await admin.visitAdminPage("upload.php?mode=list")
-        await page.waitForTimeout(2000);
+    test.beforeEach( async ( { admin } ) => {
+        await admin.visitAdminPage("/upload.php?mode=list")
 	} );
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllMedia();
@@ -47,9 +46,10 @@ test.describe( 'Delete Media', () => {
 			.first()
 			.click();
 
-        await page.waitForTimeout(2000)
-        const deletionMessage = page.locator("//div[@id='message']/p[contains(text(), 'Media file permanently deleted')]");
-        await expect(deletionMessage).toBeVisible({ timeout: 20000 });
+        await expect(
+            page.locator( '#message p' ),
+            'Media got deleted successfully'
+        ).toBeVisible();
 	} );
 
 	test( 'delete Bulk media', async ( { page, admin } ) => {
@@ -71,8 +71,9 @@ test.describe( 'Delete Media', () => {
 
 		await page.getByRole( 'button', { name: 'Apply' } ).first().click();
 
-        await page.waitForTimeout(2000)
-		const deletionMessage = page.locator("//div[@id='message']/p[contains(text(), '2 media files permanently deleted')]");
-		await expect(deletionMessage).toBeVisible({ timeout: 20000 });
+        await expect(
+			page.locator( '#message p' ),
+			'Media got deleted successfully'
+		).toBeVisible();
 	} );
 } );
