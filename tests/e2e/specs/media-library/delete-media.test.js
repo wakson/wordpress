@@ -2,45 +2,29 @@
  * WordPress dependencies
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import path from 'path';
 
-test.describe( 'Sort Media', () => {
+test.describe( 'Delete User', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
-		await requestUtils.deleteAllMedia();
-		const files = [ 'tests/e2e/assets/test_data_image1.png' ];
-
-		for ( const file of files ) {
-			await requestUtils.uploadMedia(
-				path.resolve( process.cwd(), file )
-			);
-		}
-	} );
-	test.afterAll( async ( { requestUtils } ) => {
-		await requestUtils.deleteAllMedia();
+		requestUtils.createUser( {
+			username: 'testuser',
+			email: 'testuser@gmail.com',
+			password: 'admin',
+			roles: 'subscriber',
+		} );
 	} );
 
-	test( 'Sort media by type', async ( { page, admin } ) => {
-		await admin.visitAdminPage( 'upload.php?mode=list' );
+	test( 'Delete Bulk Users', async ( { page, admin } ) => {
+		await admin.visitAdminPage( 'users.php' );
 
+		await page.getByRole( 'link', { name: 'Subscriber (1)' } ).click();
+		await page.getByLabel( 'Select test' ).check();
 		await page
-			.getByRole( 'combobox', { name: 'Filter by type' } )
-			.selectOption( 'post_mime_type:image' );
-		await page.getByRole( 'button', { name: 'Filter' } ).click();
+			.locator( '#bulk-action-selector-top' )
+			.selectOption( 'delete' );
+		await page.locator( '#doaction' ).click();
+		await page.getByRole( 'button', { name: 'Confirm Deletion' } ).click();
 
-		await page
-			.locator(
-				'tr td.title.column-title.has-row-actions.column-primary'
-			)
-			.first()
-			.hover();
-
-		await page
-			.locator( "tr[id^='post-'] a[aria-label^='Edit']" )
-			.first()
-			.click();
-
-		await expect(
-			page.locator( 'div.misc-pub-section.misc-pub-filetype' )
-		).toHaveText( 'File type: PNG' );
+		// Expect successful user deletion
+		await expect( page.locator( '#message > p' ) ).toHaveText( /deleted./ );
 	} );
 } );
