@@ -5327,7 +5327,11 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-				if ( 'context-node' === $item->bookmark_name ) {
+				/*
+				 * Fragment parsers always start with an HTML root node at the top of the stack.
+				 * Do not remove it.
+				 */
+				if ( 'root-node' === $item->bookmark_name ) {
 					break;
 				}
 
@@ -5335,10 +5339,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			}
 
 			foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
-				if ( 'context-node' === $item->bookmark_name ) {
-					break;
-				}
-
 				$this->state->active_formatting_elements->remove_node( $item );
 			}
 
