@@ -5363,6 +5363,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 
 				$this->bytes_already_parsed = 0;
 				$this->parser_state         = self::STATE_READY;
+				$this->next_token();
 			} else {
 				parent::seek( 'context-node' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_IN_BODY;
@@ -5370,12 +5371,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			}
 		}
 
-		// When moving forwards, reparse the document until reaching the same location as the original bookmark.
-		if ( null !== $this->state->current_token && $bookmark_starts_at === $this->bookmarks[ $this->state->current_token->bookmark_name ]->start ) {
-			return true;
-		}
-
-		while ( $this->next_token() ) {
+		/*
+		 * Here, the processor moves forward through the document until it matches the bookmark.
+		 * do-while is used here because the processor is expected to already be stopped on
+		 * a token than may match the bookmarked location.
+		 */
+		do {
 			if ( $this->is_virtual() ) {
 				continue;
 			}
@@ -5385,7 +5386,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				}
 				return true;
 			}
-		}
+		} while ( $this->next_token() );
 
 		return false;
 	}
