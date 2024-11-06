@@ -5323,11 +5323,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * and computation time.
 		 */
 		if ( 'backward' === $direction ) {
-
 			/*
-			 * In case the parser is a fragment parser, instead of clearing the
-			 * parser state and starting fresh, calling the stack methods
-			 * maintains the proper flags in the parser.
+			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
 				if ( 'context-node' === $item->bookmark_name ) {
@@ -5345,7 +5342,11 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$this->state->active_formatting_elements->remove_node( $item );
 			}
 
-			// Reset necessary parser state
+			/*
+			 * **After** clearing stacks, more processor state can be reset.
+			 * This must be done after clearing the stack because those stacks generate events that
+			 * would appear on a subsequent call to `next_token()`.
+			 */
 			$this->change_parsing_namespace( 'html' );
 			$this->state->frameset_ok                       = true;
 			$this->state->stack_of_template_insertion_modes = array();
@@ -5355,6 +5356,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$this->current_element                          = null;
 			$this->element_queue                            = array();
 
+			// The presence or absence of a context node indicates a full or fragment parser.
 			if ( null === $this->context_node ) {
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
 				$this->breadcrumbs           = array();
