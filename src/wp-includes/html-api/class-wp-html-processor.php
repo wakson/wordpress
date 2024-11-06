@@ -4968,16 +4968,20 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 */
 
 	/**
-	 * Indicates the namespace of the current token, or "html" if there is none.
+	 * Indicates the namespace of the current token, the context node, or "html".
 	 *
 	 * @return string One of "html", "math", or "svg".
 	 */
 	public function get_namespace(): string {
-		if ( ! isset( $this->current_element ) ) {
-			return parent::get_namespace();
+		if ( isset( $this->current_element ) ) {
+			return $this->current_element->token->namespace;
 		}
 
-		return $this->current_element->token->namespace;
+		if ( isset( $this->context_node ) ) {
+			return $this->context_node->namespace;
+		}
+
+		return parent::get_namespace();
 	}
 
 	/**
