@@ -1053,9 +1053,14 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		$processor = WP_HTML_Processor::create_full_parser( '<svg><foreignObject>' );
 		$this->assertTrue( $processor->next_tag( 'foreignObject' ) );
 
-		$fragment = $processor->spawn_fragment_parser( "\0not-preceded-by-nul-byte<rect />" );
+		$fragment = $processor->spawn_fragment_parser( "<image>\0not-preceded-by-nul-byte<rect />" );
 
-		$this->assertSame( 'svg', $fragment->get_namespace() );
+		// Nothing has been processed, the html namespace should be used for parsing as an integration point.
+		$this->assertSame( 'html', $fragment->get_namespace() );
+
+		// HTML parsing transforms IMAGE into IMG.
+		$this->assertTrue( $fragment->next_tag( 'IMG' ) );
+
 		$this->assertTrue( $fragment->next_token() );
 
 		// In HTML parsing, the nul byte is ignored and the text is reached.

@@ -437,7 +437,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return null;
 		}
 
-		$namespace = $this->get_namespace();
+		$namespace = $this->current_element->token->namespace;
 
 		/*
 		 * Prevent creating fragments at "self-contained" nodes.
@@ -452,7 +452,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return null;
 		}
 
-		$fragment_processor              = self::create_fragment( $html );
+		$fragment_processor = self::create_fragment( $html );
+
+		$fragment_processor->change_parsing_namespace(
+			$this->current_element->token->integration_node_type ? 'html' : $namespace
+		);
+
 		$fragment_processor->compat_mode = $this->compat_mode;
 
 		$fragment_processor->context_node                = clone $this->state->current_token;
