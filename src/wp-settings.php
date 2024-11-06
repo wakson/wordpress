@@ -518,8 +518,6 @@ if ( ! is_multisite() && wp_is_fatal_error_handler_enabled() ) {
 	wp_recovery_mode()->initialize();
 }
 
-require_once ABSPATH . '/wp-admin/includes/plugin.php';
-
 // Load active plugins.
 foreach ( wp_get_active_and_valid_plugins() as $plugin ) {
 	wp_register_plugin_realpath( $plugin );
