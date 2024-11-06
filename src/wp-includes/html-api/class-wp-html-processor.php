@@ -464,7 +464,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$context_element[1][ $name ] = $value;
 		}
 
-		$fragment_processor->breadcrumbs = array();
+		$fragment_processor->breadcrumbs = array( 'HTML', $fragment_processor->context_node->node_name );
 
 		if ( 'TEMPLATE' === $context_element[0] ) {
 			$fragment_processor->state->stack_of_template_insertion_modes[] = WP_HTML_Processor_State::INSERTION_MODE_IN_TEMPLATE;
