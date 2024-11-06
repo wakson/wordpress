@@ -47,7 +47,7 @@ jobs:
   # - Constructs and stores a message payload as an output.
   prepare:
     name: Prepare notifications
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     permissions:
       actions: read
       contents: read
@@ -160,7 +160,7 @@ jobs:
   # Posts notifications when a workflow fails.
   failure:
     name: Failure notifications
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     continue-on-error: true
     timeout-minutes: 5
     needs: [ prepare ]
@@ -177,7 +177,7 @@ jobs:
   # Posts notifications the first time a workflow run succeeds after previously failing.
   fixed:
     name: Fixed notifications
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     continue-on-error: true
     timeout-minutes: 5
     needs: [ prepare ]
@@ -194,7 +194,7 @@ jobs:
   # Posts notifications when a workflow is successful.
   success:
     name: Success notifications
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     continue-on-error: true
     timeout-minutes: 5
     needs: [ prepare ]
@@ -211,7 +211,7 @@ jobs:
   # Posts notifications when a workflow is cancelled.
   cancelled:
     name: Cancelled notifications
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     continue-on-error: true
     timeout-minutes: 5
     needs: [ prepare ]

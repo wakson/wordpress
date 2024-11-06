@@ -49,7 +49,7 @@ jobs:
   #
   test-coverage-report:
     name: ${{ matrix.multisite && 'Multisite' || 'Single site' }} report
-    uses: WordPress/wordpress-develop/.github/workflows/reusable-phpunit-tests-v3.yml@trunk
+    uses: ./.github/workflows/reusable-phpunit-tests-v3.yml
     permissions:
       contents: read
     if: ${{ github.repository == 'WordPress/wordpress-develop' }}
@@ -83,7 +83,7 @@ jobs:
 
   failed-workflow:
     name: Failed workflow tasks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     permissions:
       actions: write
     needs: [ slack-notifications ]

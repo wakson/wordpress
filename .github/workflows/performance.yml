@@ -33,7 +33,7 @@ jobs:
   # Runs the performance test suite.
   performance:
     name: Performance tests ${{ matrix.memcached && '(with memcached)' || '' }}
-    uses: WordPress/wordpress-develop/.github/workflows/reusable-performance.yml@trunk
+    uses: ./.github/workflows/reusable-performance.yml
     permissions:
       contents: read
     if: ${{ ( github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' ) && ! contains( github.event.before, '00000000' ) }}
@@ -64,7 +64,7 @@ jobs:
 
   failed-workflow:
     name: Failed workflow tasks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     permissions:
       actions: write
     needs: [ slack-notifications ]
