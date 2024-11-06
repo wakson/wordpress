@@ -2,7 +2,7 @@
 /**
  * Title: Services, subscriber only section
  * Slug: twentytwentyfive/services-subscriber-only-section
- * Categories: call-to-action, featured, services
+ * Categories: call-to-action, services
  * Description: A subscriber-only section highlighting exclusive services and offerings.
  *
  * @package WordPress
@@ -28,7 +28,7 @@
 				<!-- /wp:list-item -->
 
 				<!-- wp:list-item {"fontSize":"medium"} -->
-				<li class="has-medium-font-size"><?php esc_html_e( 'Join our IRL event.', 'twentytwentyfive' ); ?></li>
+				<li class="has-medium-font-size"><?php esc_html_e( 'Join our IRL events.', 'twentytwentyfive' ); ?></li>
 				<!-- /wp:list-item -->
 
 				<!-- wp:list-item {"fontSize":"medium"} -->

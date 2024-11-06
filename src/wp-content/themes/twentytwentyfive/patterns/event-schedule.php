@@ -2,7 +2,7 @@
 /**
  * Title: Event schedule
  * Slug: twentytwentyfive/event-schedule
- * Categories: about, featured
+ * Categories: about
  * Description: A section with specified dates and times for an event.
  * Keywords: events, agenda, schedule, lectures
  *
@@ -86,7 +86,7 @@
 								<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch"}} -->
 								<div class="wp-block-group">
 									<!-- wp:heading {"level":4} -->
-									<h4 class="wp-block-heading"><a href="#"><?php esc_html_e( 'Things you didn&rsquo;t know about the deep ocean', 'twentytwentyfive' ); ?></a></h4>
+									<h4 class="wp-block-heading"><a href="#"><?php esc_html_e( 'Things you didn’t know about the deep ocean', 'twentytwentyfive' ); ?></a></h4>
 									<!-- /wp:heading -->
 									<!-- wp:paragraph -->
 									<p><?php echo esc_html_x( '9 AM — 11 AM', 'Example event time in pattern.', 'twentytwentyfive' ); ?></p>
@@ -129,7 +129,7 @@
 						<!-- wp:column {"width":"33.33%"} -->
 						<div class="wp-block-column" style="flex-basis:33.33%">
 							<!-- wp:image {"id":2773,"aspectRatio":"1","scale":"cover","sizeSlug":"full","linkDestination":"none","style":{"layout":{"selfStretch":"fixed","flexSize":"270px"}}} -->
-							<figure class="wp-block-image size-full"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/parthenon-square.webp" alt="<?php esc_attr_e( 'The acropolis in Athens.', 'twentytwentyfive' ); ?>" class="wp-image-2773" style="aspect-ratio:1;object-fit:cover"/></figure>
+							<figure class="wp-block-image size-full"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/parthenon-square.webp" alt="<?php esc_attr_e( 'The Acropolis of Athens.', 'twentytwentyfive' ); ?>" class="wp-image-2773" style="aspect-ratio:1;object-fit:cover"/></figure>
 							<!-- /wp:image -->
 						</div>
 						<!-- /wp:column -->
@@ -160,7 +160,7 @@
 						<!-- wp:column {"width":"33.33%"} -->
 						<div class="wp-block-column" style="flex-basis:33.33%">
 							<!-- wp:image {"id":2774,"aspectRatio":"1","scale":"cover","sizeSlug":"full","linkDestination":"none","style":{"layout":{"selfStretch":"fixed","flexSize":"270px"}}} -->
-							<figure class="wp-block-image size-full"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/agenda-img-4.webp" alt="<?php esc_attr_e( 'Black and white photo of an african woman.', 'twentytwentyfive' ); ?>" class="wp-image-2774" style="aspect-ratio:1;object-fit:cover"/></figure>
+							<figure class="wp-block-image size-full"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/agenda-img-4.webp" alt="<?php esc_attr_e( 'Black and white photo of an African woman.', 'twentytwentyfive' ); ?>" class="wp-image-2774" style="aspect-ratio:1;object-fit:cover"/></figure>
 							<!-- /wp:image -->
 						</div>
 						<!-- /wp:column -->
