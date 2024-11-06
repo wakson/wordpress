@@ -682,7 +682,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @return bool Whether a token was parsed.
 	 */
 	public function next_token(): bool {
-		return $this->_next_token();
+		return $this->next_visitable_token();
 	}
 
 	/**
@@ -693,13 +693,18 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * semantic rules for text nodes. For access to the raw tokens consider using
 	 * WP_HTML_Tag_Processor instead.
 	 *
-	 * @since 6.7.1 Added for internal support; do not use.
+	 * Note that this method may call itself recursively. This is why it is not
+	 * implemented as {@see WP_HTML_Processor::next_token()}, which instead calls
+	 * this method similarly to how {@see WP_HTML_Tag_Processor::next_token()}
+	 * calls the {@see WP_HTML_Tag_Processor::base_class_next_token()} method.
+	 *
+	 * @since 6.7.1 Added for internal support.
 	 *
 	 * @access private
 	 *
 	 * @return bool
 	 */
-	private function _next_token(): bool {
+	private function next_visitable_token(): bool {
 		$this->current_element = null;
 
 		if ( isset( $this->last_error ) ) {
@@ -717,7 +722,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 *       tokens works in the meantime and isn't obviously wrong.
 		 */
 		if ( empty( $this->element_queue ) && $this->step() ) {
-			return $this->_next_token();
+			return $this->next_visitable_token();
 		}
 
 		// Process the next event on the queue.
@@ -728,7 +733,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				continue;
 			}
 
-			return empty( $this->element_queue ) ? false : $this->_next_token();
+			return empty( $this->element_queue ) ? false : $this->next_visitable_token();
 		}
 
 		$is_pop = WP_HTML_Stack_Event::POP === $this->current_element->operation;
@@ -739,7 +744,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * the breadcrumbs.
 		 */
 		if ( 'root-node' === $this->current_element->token->bookmark_name ) {
-			return $this->_next_token();
+			return $this->next_visitable_token();
 		}
 
 		// Adjust the breadcrumbs for this event.
@@ -751,7 +756,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 
 		// Avoid sending close events for elements which don't expect a closing.
 		if ( $is_pop && ! $this->expects_closer( $this->current_element->token ) ) {
-			return $this->_next_token();
+			return $this->next_visitable_token();
 		}
 
 		return true;
