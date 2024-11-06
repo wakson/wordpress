@@ -1004,7 +1004,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	/**
 	 * Ensures that subclasses to WP_HTML_Processor can do bookkeeping by extending the next_token() method.
 	 *
-	 * @ticket ?
+	 * @ticket 62269
 	 * @dataProvider data_html_processor_with_extended_next_token
 	 */
 	public function test_ensure_next_token_method_extensibility( $html, $expected_token_counts ) {
