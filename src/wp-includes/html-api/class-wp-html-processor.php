@@ -5365,9 +5365,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$this->parser_state         = self::STATE_READY;
 				$this->next_token();
 			} else {
-				parent::seek( 'context-node' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_IN_BODY;
 				$this->breadcrumbs           = array_slice( $this->breadcrumbs, 0, 2 );
+				parent::seek( $this->context_node->bookmark_name );
 			}
 		}
 
