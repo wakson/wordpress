@@ -5370,8 +5370,13 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 						? 'html'
 						: $this->context_node->namespace
 				);
-				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_IN_BODY;
-				$this->breadcrumbs           = array_slice( $this->breadcrumbs, 0, 2 );
+
+				if ( 'TEMPLATE' === $this->context_node->node_name ) {
+					$this->state->stack_of_template_insertion_modes[] = WP_HTML_Processor_State::INSERTION_MODE_IN_TEMPLATE;
+				}
+
+				$this->reset_insertion_mode_appropriately();
+				$this->breadcrumbs = array_slice( $this->breadcrumbs, 0, 2 );
 				parent::seek( $this->context_node->bookmark_name );
 			}
 		}
