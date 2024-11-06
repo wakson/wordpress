@@ -2661,17 +2661,18 @@ function drop_index( $table, $index ) {
  * @return bool True if the index exists, false otherwise.
  */
 function has_index( $table, $column ) {
-    global $wpdb;
+	global $wpdb;
 
-    // Prepare the query to check if an index exists on the specified column.
-    $index = $wpdb->get_var(
+	// Prepare the query to check if an index exists on the specified column.
+	$index = $wpdb->get_var(
 		$wpdb->prepare(
-			"SHOW INDEX FROM `$table` WHERE Column_name = %s", $column
-			)
-		);
+			"SHOW INDEX FROM `$table` WHERE Column_name = %s",
+			$column
+		)
+	);
 
-    // If an index exists, the query will return a result (the first row), otherwise null
-    return ! empty( $index );
+	// If an index exists, the query will return a result (the first row), otherwise null
+	return ! empty( $index );
 }
 
 /**
