@@ -5391,6 +5391,36 @@ EOF;
 	}
 
 	/**
+	 * @ticket 62305
+	 */
+	public function test_image_meta_changes() {
+		$temp_dir = get_temp_dir();
+		$file     = $temp_dir . '/33772.jpg';
+		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+
+		$editor = wp_get_image_editor( $file );
+
+		// Verify that the selected editor supports WebP output.
+		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
+			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'file'           => $file,
+			)
+		);
+
+		// Generate all sizes as WebP.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
+		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
+		remove_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
+
+		$this->assertSame( $file, $webp_sizes['file'], 'The original file name should same.' );
+	}
+
+	/**
 	 * Test AVIF quality filters.
 	 *
 	 * @ticket 61614
