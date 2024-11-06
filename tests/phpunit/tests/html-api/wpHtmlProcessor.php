@@ -1008,9 +1008,9 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	 * @dataProvider data_html_processor_with_extended_next_token
 	 */
 	public function test_ensure_next_token_method_extensibility( $html, $expected_token_counts ) {
-		require_once DIR_TESTDATA . '/html-api/html-xpath-generating-processor.php';
+		require_once DIR_TESTDATA . '/html-api/token-counting-html-processor.php';
 
-		$processor = HTML_XPath_Generating_Processor::create_full_parser( $html );
+		$processor = Token_Counting_HTML_Processor::create_full_parser( $html );
 		while ( $processor->next_tag() ) {
 			continue;
 		}

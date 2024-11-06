@@ -1,6 +1,6 @@
 <?php
 
-class HTML_XPath_Generating_Processor extends WP_HTML_Processor {
+class Token_Counting_HTML_Processor extends WP_HTML_Processor {
 
 	/**
 	 * List of tokens that have already been seen.
