@@ -472,7 +472,18 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 
 		$fragment_processor->reset_insertion_mode_appropriately();
 
-		// @todo Set the parser's form element pointer.
+		/*
+		 * > Set the parser's form element pointer to the nearest node to the context element that
+		 * > is a form element (going straight up the ancestor chain, and including the element
+		 * > itself, if it is a form element), if any. (If there is no such form element, the
+		 * > form element pointer keeps its initial value, null.)
+		 */
+		foreach ( $this->state->stack_of_open_elements->walk_up() as $element ) {
+			if ( 'FORM' === $element->node_name && 'html' === $element->namespace ) {
+				$fragment_processor->state->form_element = $element;
+				break;
+			}
+		}
 
 		$fragment_processor->state->encoding_confidence = 'irrelevant';
 
