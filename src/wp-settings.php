@@ -545,7 +545,6 @@ foreach ( wp_get_active_and_valid_plugins() as $plugin ) {
 			$GLOBALS['wp_textdomain_registry']->set_custom_path( $textdomain, dirname( $plugin ) . $plugin_data['DomainPath'] );
 		} else {
 			$GLOBALS['wp_textdomain_registry']->set_custom_path( $textdomain, dirname( $plugin ) );
-			load_plugin_textdomain( $textdomain, false, dirname( $plugin ) );
 		}
 	}
 }
