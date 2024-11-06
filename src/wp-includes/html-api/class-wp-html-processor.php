@@ -5347,7 +5347,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 * This must be done after clearing the stack because those stacks generate events that
 			 * would appear on a subsequent call to `next_token()`.
 			 */
-			$this->change_parsing_namespace( 'html' );
 			$this->state->frameset_ok                       = true;
 			$this->state->stack_of_template_insertion_modes = array();
 			$this->state->head_element                      = null;
@@ -5358,6 +5357,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 
 			// The presence or absence of a context node indicates a full or fragment parser.
 			if ( null === $this->context_node ) {
+				$this->change_parsing_namespace( 'html' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
 				$this->breadcrumbs           = array();
 
@@ -5365,6 +5365,11 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$this->parser_state         = self::STATE_READY;
 				$this->next_token();
 			} else {
+				$this->change_parsing_namespace(
+					$this->context_node->integration_node_type
+						? 'html'
+						: $this->context_node->namespace
+				);
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_IN_BODY;
 				$this->breadcrumbs           = array_slice( $this->breadcrumbs, 0, 2 );
 				parent::seek( $this->context_node->bookmark_name );
