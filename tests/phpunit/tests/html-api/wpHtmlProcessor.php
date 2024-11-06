@@ -1058,4 +1058,59 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		$this->assertEquals( $expected_token_counts, $processor->token_seen_count, 'Snapshot: ' . var_export( $processor->token_seen_count, true ) );
 		$this->assertEquals( $expected_xpaths, $actual_xpaths, 'Snapshot: ' . var_export( $actual_xpaths, true ) );
 	}
+
+	/**
+	 * @ticket TBD
+	 */
+	public function test_spawn_fragment_parser_in_foreign_content() {
+		$processor = WP_HTML_Processor::create_full_parser( '<svg>' );
+		$this->assertTrue( $processor->next_tag( 'SVG' ) );
+
+		$fragment = $processor->spawn_fragment_parser( "\0preceded-by-nul-byte<rect /><circle></circle><foreignobject><div></div></foreignobject><g>" );
+
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+		$this->assertTrue( $fragment->next_token() );
+
+		/*
+		 * In HTML parsing, a nul byte would be ignored.
+		 * In SVG it should be replaced with a replacement character.
+		 */
+		$this->assertSame( '#text', $fragment->get_token_type() );
+		$this->assertSame( "\u{FFFD}", $fragment->get_modifiable_text() );
+
+		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+
+		$this->assertTrue( $fragment->next_tag( 'CIRCLE' ) );
+		$this->assertSame( array( 'HTML', 'SVG', 'CIRCLE' ), $fragment->get_breadcrumbs() );
+		$this->assertTrue( $fragment->next_tag( 'foreignObject' ) );
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+	}
+
+	/**
+	 * @ticket TBD
+	 */
+	public function test_spawn_fragment_parser_in_foreign_content_integration_point() {
+		$processor = WP_HTML_Processor::create_full_parser( '<svg><foreignObject>' );
+		$this->assertTrue( $processor->next_tag( 'foreignObject' ) );
+
+		$fragment = $processor->spawn_fragment_parser( "\0not-preceded-by-nul-byte<rect />" );
+
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+		$this->assertTrue( $fragment->next_token() );
+
+		// In HTML parsing, the nul byte is ignored and the text is reached.
+		$this->assertSame( '#text', $fragment->get_token_type() );
+		$this->assertSame( 'not-preceded-by-nul-byte', $fragment->get_modifiable_text() );
+
+		/*
+		 * svg:foreignObject is an HTML integration point, so the processor should be in the HTML namespace.
+		 * RECT is an HTML element here, meaning it may have the self-closing flag but does not self-close.
+		 */
+		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
+		$this->assertSame( array( 'HTML', 'FOREIGNOBJECT', 'RECT' ), $fragment->get_breadcrumbs() );
+		$this->assertSame( 'html', $fragment->get_namespace() );
+		$this->assertTrue( $fragment->has_self_closing_flag() );
+		$this->assertTrue( $fragment->expects_closer() );
+	}
 }
