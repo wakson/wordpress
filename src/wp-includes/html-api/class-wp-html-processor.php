@@ -5364,9 +5364,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
 				$this->breadcrumbs           = array();
 
-				$this->bytes_already_parsed = 0;
-				$this->parser_state         = self::STATE_READY;
-				$this->next_token();
+				$this->bookmarks['initial'] = new WP_HTML_Span( 0, 0 );
+				parent::seek( 'initial' );
+				unset( $this->bookmarks['initial'] );
 			} else {
 				$this->change_parsing_namespace(
 					$this->context_node->integration_node_type

@@ -591,7 +591,7 @@ class WP_HTML_Tag_Processor {
 	 * @since 6.2.0
 	 * @var int
 	 */
-	protected $bytes_already_parsed = 0;
+	private $bytes_already_parsed = 0;
 
 	/**
 	 * Byte offset in input document where current token starts.
