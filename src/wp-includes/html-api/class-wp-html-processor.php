@@ -5355,7 +5355,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$this->current_element                          = null;
 			$this->element_queue                            = array();
 
-			// The presence or absence of a context node indicates a full or fragment parser.
+			/*
+			 * The absence of a context node indicates a full parse.
+			 * The presence of a context node indicates a fragment parser.
+			 */
 			if ( null === $this->context_node ) {
 				$this->change_parsing_namespace( 'html' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
@@ -5387,6 +5390,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * a token than may match the bookmarked location.
 		 */
 		do {
+			/*
+			 * The processor will stop on virtual tokens, but bookmarks may not be set on them.
+			 * They should not be matched when seeking a bookmark, skip them.
+			 */
 			if ( $this->is_virtual() ) {
 				continue;
 			}
