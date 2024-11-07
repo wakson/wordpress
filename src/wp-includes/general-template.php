@@ -481,7 +481,7 @@ function wp_registration_url( $redirect_to = null ) {
 	$register_url = site_url( 'wp-login.php?action=register', 'login' );
 
 	// Append redirect URL if provided.
-	if ( $redirect_to ) {
+	if ( ! empty( $redirect_to ) ) {
 		$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_to ), $register_url );
 	}
 
