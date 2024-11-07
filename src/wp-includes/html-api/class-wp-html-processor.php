@@ -425,14 +425,23 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	}
 
 	/**
-	 * Creates a fragment processor with the current node as its context element.
+	 * Creates a fragment processor at the current node.
+	 *
+	 * HTML Fragment parsing always happens with a context node. HTML Fragment Processors can be
+	 * instantiated with a `BODY` context node via `WP_HTML_Processor::create_fragment()`.
+	 *
+	 * The context node may impact how a fragment of HTML is parsed. For example, when parsing
+	 * `<rect />A</rect>B`:
+	 *
+	 * With a BODY context node results in the following tree:
+	 *
 	 *
 	 * @see https://html.spec.whatwg.org/multipage/parsing.html#html-fragment-parsing-algorithm
 	 *
 	 * @param string $html     Input HTML fragment to process.
 	 * @return static|null     The created processor if successful, otherwise null.
 	 */
-	public function spawn_fragment_parser( string $html ): ?self {
+	public function create_fragment_at_current_node( string $html ) {
 		if ( $this->get_token_type() !== '#tag' ) {
 			return null;
 		}
@@ -452,7 +461,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return null;
 		}
 
-		$fragment_processor = self::create_fragment( $html );
+		$fragment_processor = static::create_fragment( $html );
 
 		$fragment_processor->change_parsing_namespace(
 			$this->current_element->token->integration_node_type ? 'html' : $namespace
