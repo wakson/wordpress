@@ -364,9 +364,10 @@ class WP_Block {
 
 				foreach ( $selectors as $selector ) {
 					// If the current or any other tags match the selector, replace the HTML.
-					if ( strcasecmp( $block_reader->get_tag(), $selector ) === 0 || $block_reader->next_tag(
-						array( 'tag_name' => $selector )
-					) ) {
+					if (
+						strcasecmp( $block_reader->get_tag(), $selector ) === 0 ||
+						$block_reader->next_tag( $selector )
+					) {
 						$block_reader->release_bookmark( 'iterate-selectors' );
 						$block_reader->set_inner_html( wp_kses_post( $source_value ) );
 						return $block_reader->get_updated_html();
