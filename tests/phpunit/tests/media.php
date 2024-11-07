@@ -5415,7 +5415,6 @@ EOF;
 		// Generate all sizes as WebP.
 		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
 		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
-		remove_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
 
 		$this->assertSame( $file, $webp_sizes['file'], 'The original file name should same.' );
 	}
