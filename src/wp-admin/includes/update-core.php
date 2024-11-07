@@ -2,6 +2,10 @@
 /**
  * WordPress core upgrade functionality.
  *
+ * Note: Newly introduced functions and methods cannot be used here.
+ * All functions must be present in the previous version being upgraded from
+ * as this file is used there too.
+ *
  * @package WordPress
  * @subpackage Administration
  * @since 2.7.0
@@ -905,6 +909,7 @@ $_new_bundled_files = array(
 	'themes/twentytwentytwo/'   => '5.9',
 	'themes/twentytwentythree/' => '6.1',
 	'themes/twentytwentyfour/'  => '6.4',
+	'themes/twentytwentyfive/'  => '6.7',
 );
 
 /**
@@ -965,8 +970,11 @@ $_new_bundled_files = array(
 function update_core( $from, $to ) {
 	global $wp_filesystem, $_old_files, $_old_requests_files, $_new_bundled_files, $wpdb;
 
+	/*
+	 * Give core update script an additional 300 seconds (5 minutes)
+	 * to finish updating large files when running on slower servers.
+	 */
 	if ( function_exists( 'set_time_limit' ) ) {
-		// Gives core update script time an additional 300 seconds(5 minutes) to finish updating large files or run on slower servers.
 		set_time_limit( 300 );
 	}
 
