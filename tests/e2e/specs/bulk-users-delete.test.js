@@ -12,7 +12,7 @@ test.describe( 'Delete User', () => {
 				) }`,
 				email: `test${ index }_${ Math.floor(
 					Math.random() * 10000
-				) }@gmail.com`,
+				) }@domain.tld`,
 				password: `admin${ index }`,
 				roles: 'subscriber',
 			};
