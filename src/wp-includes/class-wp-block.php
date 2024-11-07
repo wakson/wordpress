@@ -607,3 +607,114 @@ class WP_Block {
 		return $block_content;
 	}
 }
+
+// phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
+class PrivateProcessor extends WP_HTML_Processor {
+
+	public function set_inner_html( ?string $html ) {
+		if ( $this->is_virtual() ) {
+			return false;
+		}
+
+		if ( $this->get_token_type() !== '#tag' ) {
+			return false;
+		}
+
+		if ( $this->is_tag_closer() ) {
+			return false;
+		}
+
+		if ( ! $this->expects_closer() ) {
+			return false;
+		}
+
+		// @todo check if this is necessary
+		/*if (*/
+		/*  'html' !== $this->state->current_token->namespace &&*/
+		/*  $this->state->current_token->has_self_closing_flag*/
+		/*) {*/
+		/*  return false;*/
+		/*}*/
+
+		if ( null === $html ) {
+			$html = '';
+		}
+		if ( '' !== $html ) {
+			$fragment_parser = $this->spawn_fragment_parser( $html );
+			if (
+				null === $fragment_parser
+			) {
+				return false;
+			}
+
+			try {
+				$html = $fragment_parser->serialize();
+			} catch ( Exception $e ) {
+				return false;
+			}
+		}
+
+		// @todo apply modifications if there are any???
+		if ( ! parent::set_bookmark( 'SET_INNER_HTML: opener' ) ) {
+			return false;
+		}
+
+		if ( ! $this->proceed_to_matching_closer() ) {
+			parent::seek( 'SET_INNER_HTML: opener' );
+			return false;
+		}
+
+		if ( ! parent::set_bookmark( 'SET_INNER_HTML: closer' ) ) {
+			return false;
+		}
+
+		$inner_html_start  = $this->bookmarks['SET_INNER_HTML: opener']->start + $this->bookmarks['SET_INNER_HTML: opener']->length;
+		$inner_html_length = $this->bookmarks['SET_INNER_HTML: closer']->start - $inner_html_start;
+
+		$this->lexical_updates['innerHTML'] = new WP_HTML_Text_Replacement(
+			$inner_html_start,
+			$inner_html_length,
+			$html
+		);
+
+		parent::seek( 'SET_INNER_HTML: opener' );
+		parent::release_bookmark( 'SET_INNER_HTML: opener' );
+		parent::release_bookmark( 'SET_INNER_HTML: closer' );
+
+		// @todo check for whether that html will make a mess!
+		// Will it break out of tags?
+		return true;
+	}
+
+	public function proceed_to_matching_closer(): bool {
+		$tag_name = $this->get_tag();
+
+		if ( null === $tag_name ) {
+			return false;
+		}
+
+		if ( $this->is_tag_closer() ) {
+			return false;
+		}
+
+		if ( ! $this->expects_closer() ) {
+			return false;
+		}
+
+		$breadcrumbs = $this->get_breadcrumbs();
+		array_pop( $breadcrumbs );
+
+		// @todo Can't use these queries together
+		while ( $this->next_tag(
+			array(
+				'tag_name'    => $this->get_tag(),
+				'tag_closers' => 'visit',
+			)
+		) ) {
+			if ( $this->get_breadcrumbs() === $breadcrumbs ) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
