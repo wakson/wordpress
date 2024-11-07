@@ -5391,35 +5391,6 @@ EOF;
 	}
 
 	/**
-	 * @ticket 62305
-	 */
-	public function test_image_meta_changes() {
-		$temp_dir = get_temp_dir();
-		$file     = $temp_dir . '/33772.jpg';
-		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
-
-		$editor = wp_get_image_editor( $file );
-
-		// Verify that the selected editor supports WebP output.
-		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
-			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
-		}
-
-		$attachment_id = self::factory()->attachment->create_object(
-			array(
-				'post_mime_type' => 'image/jpeg',
-				'file'           => $file,
-			)
-		);
-
-		// Generate all sizes as WebP.
-		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
-		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
-
-		$this->assertSame( $file, $webp_sizes['file'], 'The original file name should same.' );
-	}
-
-	/**
 	 * Test AVIF quality filters.
 	 *
 	 * @ticket 61614
@@ -6471,6 +6442,55 @@ EOF;
 			$expected,
 			wp_img_tag_add_auto_sizes( $input ),
 			'Failed asserting that "auto" keyword is correctly added or not added to sizes attribute in the image tag.'
+		);
+	}
+
+	/**
+	 * @ticket 62305
+	 *
+	 * @dataProvider data_provider_to_test_image_metadata_get_converted_image_in_file_key
+	 *
+	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
+	 */
+	public function test_image_metadata_get_converted_image_in_file_key( bool $apply_big_image_size_threshold ) {
+		$temp_dir = get_temp_dir();
+		$file     = $temp_dir . '/33772.jpg';
+		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+
+		$editor = wp_get_image_editor( $file );
+
+		// Verify that the selected editor supports WebP output.
+		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
+			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'file'           => $file,
+			)
+		);
+
+		if ( $apply_big_image_size_threshold ) {
+			add_filter( 'big_image_size_threshold', array( $this, 'add_big_image_size_threshold' ) );
+		}
+
+		// Generate all sizes as WebP.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
+		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
+		$this->assertStringEndsNotWith( '.jpg', $webp_sizes['file'], 'Make sure the it not return original image.' );
+		$this->assertStringEndsWith( '.webp', $webp_sizes['file'], 'Make sure the it return converted WebP image.' );
+	}
+
+	/**
+	 * Data provider for test_image_metadata_get_converted_image_in_file_key().
+	 *
+	 * @return array[]
+	 */
+	public function data_provider_to_test_image_metadata_get_converted_image_in_file_key() {
+		return array(
+			array( false ),
+			array( true ),
 		);
 	}
 
