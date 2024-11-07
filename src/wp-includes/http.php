@@ -763,7 +763,7 @@ function wp_parse_url( $url, $component = -1 ) {
 			break;
 	}
 
-	return parse_url( (string) $url, $component )??null;
+	return parse_url( (string) $url, $component );
 
 }
 
