@@ -2658,12 +2658,12 @@ function drop_index( $table, $index ) {
  *
  * @param string $table  The name of the table.
  * @param string $column The name of the column to check for an index.
+ *
  * @return bool True if the index exists, false otherwise.
  */
 function has_index( $table, $column ) {
 	global $wpdb;
 
-	// Prepare the query to check if an index exists on the specified column.
 	$index = $wpdb->get_var(
 		$wpdb->prepare(
 			"SHOW INDEX FROM `$table` WHERE Column_name = %s",
@@ -2671,7 +2671,6 @@ function has_index( $table, $column ) {
 		)
 	);
 
-	// If an index exists, the query will return a result (the first row), otherwise null
 	return ! empty( $index );
 }
 
