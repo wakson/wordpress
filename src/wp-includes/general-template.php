@@ -471,17 +471,18 @@ function wp_login_url( $redirect = '', $force_reauth = false ) {
  * Returns the URL that allows the user to register on the site.
  *
  * @since 3.6.0
+ * @since tba Optional `$redirect_to` parameter was added.
  *
- * @param  string $redirect Optional path to redirect to on registration.
+ * @param  string|null $redirect_to Optional path to redirect to on registration.
  * @return string User registration URL.
  */
-function wp_registration_url( $redirect = '' ) {
+function wp_registration_url( $redirect_to = null ) {
 	// Set base registration URL.
 	$register_url = site_url( 'wp-login.php?action=register', 'login' );
 
 	// Append redirect URL if provided.
-	if ( ! empty( $redirect ) ) {
-		$register_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $register_url );
+	if ( $redirect_to ) {
+		$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_to ), $register_url );
 	}
 
 	/**
@@ -491,7 +492,7 @@ function wp_registration_url( $redirect = '' ) {
 	 *
 	 * @param string $register The user registration URL.
 	 */
-	return apply_filters( 'register_url', $register_url, $redirect );
+	return apply_filters( 'register_url', $register_url );
 }
 
 /**
