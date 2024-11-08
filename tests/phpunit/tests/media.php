@@ -6448,19 +6448,20 @@ EOF;
 	/**
 	 * @ticket 62305
 	 *
-	 * @dataProvider data_provider_to_test_image_converted_to_other_format_has_correct_filename
+	 * @dataProvider data_image_converted_to_other_format_has_correct_filename
 	 *
 	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
 	 */
 	public function test_image_converted_to_other_format_has_correct_filename( bool $apply_big_image_size_threshold ) {
-		$temp_dir = get_temp_dir();
-		$file     = $temp_dir . '/33772.jpg';
+		$temp_dir      = get_temp_dir();
+		$file          = $temp_dir . '/33772.jpg';
+		$scaled_suffix = $apply_big_image_size_threshold ? '-scaled' : '';
 		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
 
 		$editor = wp_get_image_editor( $file );
 
 		// Verify that the selected editor supports WebP output.
-		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
+		if ( is_wp_error( $editor ) || ! $editor->supports_mime_type( 'image/webp' ) ) {
 			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
 		}
 
@@ -6477,21 +6478,23 @@ EOF;
 
 		// Generate all sizes as WebP.
 		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
-		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
-		$this->assertStringEndsNotWith( '.jpg', $webp_sizes['file'], 'Make sure it not return original image.' );
-		$this->assertStringEndsWith( '.webp', $webp_sizes['file'], 'Make sure it return converted WebP image.' );
-		$this->assertStringEndsWith( '33772.webp', $webp_sizes['file'], 'Make sure it the generated file name is the same as the uploaded file name, except .jpg replaced with .webp' );
+
+		$image_meta = wp_generate_attachment_metadata( $attachment_id, $file );
+
+		$this->assertStringEndsNotWith( '.jpg', $image_meta['file'], 'The file extension is expected to change.' );
+		$this->assertSame( "33772{$scaled_suffix}.webp", basename( $image_meta['file'] ), 'The file name is expected to be 33772.webp' );
+		$this->assertSame( '33772.jpg', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data' );
 	}
 
 	/**
-	 * Data provider for test_image_converted_to_other_format_has_correct_filename().
+	 * Data provider for test_image_metadata_get_converted_image_in_file_key().
 	 *
 	 * @return array[]
 	 */
-	public function data_provider_to_test_image_converted_to_other_format_has_correct_filename() {
+	public function data_image_converted_to_other_format_has_correct_filename() {
 		return array(
-			array( false ),
-			array( true ),
+			'do not scale image' => array( false ),
+			'scale image'        => array( true ),
 		);
 	}
 
