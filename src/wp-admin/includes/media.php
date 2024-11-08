@@ -3277,7 +3277,7 @@ function edit_form_image_editor( $post ) {
 		'tinymce'       => apply_filters( 'activate_tinymce_for_media_description', false ),
 		'quicktags'     => $quicktags_settings,
 	);
-	if ( $editor_args['tinymce'] === true ) {
+	if ( true === $editor_args['tinymce'] ) {
 		$editor_args['textarea_rows'] = 20;
 	}
 
