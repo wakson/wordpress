@@ -1019,7 +1019,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62357
 	 */
 	public function test_create_fragment_at_current_node_in_foreign_content() {
 		$processor = WP_HTML_Processor::create_full_parser( '<svg>' );
@@ -1047,7 +1047,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62357
 	 */
 	public function test_create_fragment_at_current_node_in_foreign_content_integration_point() {
 		$processor = WP_HTML_Processor::create_full_parser( '<svg><foreignObject>' );
