@@ -6446,7 +6446,10 @@ EOF;
 	}
 
 	/**
+	 * Ensure a converted image format has the correct filename.
+	 *
 	 * @ticket 62305
+	 * @ticket 62359
 	 *
 	 * @dataProvider data_image_converted_to_other_format_has_correct_filename
 	 *
