@@ -6482,7 +6482,7 @@ EOF;
 		$image_meta = wp_generate_attachment_metadata( $attachment_id, $file );
 
 		$this->assertStringEndsNotWith( '.heic', $image_meta['file'], 'The file extension is expected to change.' );
-		$this->assertSame( "test-image{$scaled_suffix}.jpg", basename( $image_meta['file'] ), 'The file name is expected to be test-image.jpg' );
+		$this->assertSame( "test-image{$scaled_suffix}.jpg", basename( $image_meta['file'] ), "The file name is expected to be test-image{$scaled_suffix}.jpg" );
 		$this->assertSame( 'test-image.heic', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data' );
 	}
 
