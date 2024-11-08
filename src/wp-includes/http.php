@@ -714,8 +714,6 @@ function wp_parse_url( $url, $component = -1 ) {
 	switch ( $component ) {
 
 		case -1:
-			return parse_url( (string) $url );
-
 		case PHP_URL_PATH:
 		case PHP_URL_QUERY:
 		case PHP_URL_SCHEME:
