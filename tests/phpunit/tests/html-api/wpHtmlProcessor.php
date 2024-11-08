@@ -562,6 +562,27 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensures that expects_closer works for void-like elements in foreign content.
+	 *
+	 * For example, `<svg><input>text` creates an `svg:input` that contains a text node.
+	 * This input should not be treated as a void tag and _should_ expect a close tag.
+	 *
+	 * @dataProvider data_void_tags
+	 *
+	 * @ticket TBD
+	 */
+	public function test_expects_closer_foreign_content_not_void( string $void_tag ) {
+		$processor = WP_HTML_Processor::create_fragment( "<svg><{$void_tag}>" );
+
+		$this->assertTrue( $processor->next_tag( $void_tag ) );
+		if ( $processor->get_namespace() === 'svg' ) {
+			$this->assertTrue( $processor->expects_closer() );
+		} else {
+			$this->assertFalse( $processor->expects_closer() );
+		}
+	}
+
+	/**
 	 * Ensures that self-closing foreign SCRIPT elements are properly found.
 	 *
 	 * @ticket 61576
