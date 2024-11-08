@@ -1564,10 +1564,10 @@ class Tests_Functions extends WP_UnitTestCase {
 		}
 
 		$expected = array(
-			1181,
-			1181,
+			1180,
+			1180,
 			IMAGETYPE_HEIC,
-			'width="1181" height="1181"',
+			'width="1180" height="1180"',
 			'mime' => 'image/heic',
 		);
 		$result   = wp_getimagesize( $file );
