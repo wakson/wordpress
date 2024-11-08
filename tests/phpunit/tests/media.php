@@ -6446,6 +6446,56 @@ EOF;
 	}
 
 	/**
+	 * @ticket 62305
+	 *
+	 * @dataProvider data_provider_to_test_image_converted_to_other_format_has_correct_filename
+	 *
+	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
+	 */
+	public function test_image_converted_to_other_format_has_correct_filename( bool $apply_big_image_size_threshold ) {
+		$temp_dir = get_temp_dir();
+		$file     = $temp_dir . '/33772.jpg';
+		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+
+		$editor = wp_get_image_editor( $file );
+
+		// Verify that the selected editor supports WebP output.
+		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
+			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'file'           => $file,
+			)
+		);
+
+		if ( $apply_big_image_size_threshold ) {
+			add_filter( 'big_image_size_threshold', array( $this, 'add_big_image_size_threshold' ) );
+		}
+
+		// Generate all sizes as WebP.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
+		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
+		$this->assertStringEndsNotWith( '.jpg', $webp_sizes['file'], 'Make sure it not return original image.' );
+		$this->assertStringEndsWith( '.webp', $webp_sizes['file'], 'Make sure it return converted WebP image.' );
+		$this->assertStringEndsWith( '33772.webp', $webp_sizes['file'], 'Make sure it the generated file name is the same as the uploaded file name, except .jpg replaced with .webp' );
+	}
+
+	/**
+	 * Data provider for test_image_converted_to_other_format_has_correct_filename().
+	 *
+	 * @return array[]
+	 */
+	public function data_provider_to_test_image_converted_to_other_format_has_correct_filename() {
+		return array(
+			array( false ),
+			array( true ),
+		);
+	}
+
+	/**
 	 * Helper method to keep track of the last context returned by the 'wp_get_attachment_image_context' filter.
 	 *
 	 * The method parameter is passed by reference and therefore will always contain the last context value.
