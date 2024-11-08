@@ -411,12 +411,14 @@ function get_post_embed_url( $post = null ) {
 		return false;
 	}
 
-	$is_published = 'publish' === $post->post_status;
-
-	if ( $is_published ) {
+	if ( 'publish' === $post->post_status ) {
 		$embed_url = trailingslashit( get_permalink( $post ) ) . user_trailingslashit( 'embed' );
 
-		$path_conflict = get_page_by_path( str_replace( home_url(), '', $embed_url ), OBJECT, get_post_types( array( 'public' => true ) ) );
+		$path_conflict = get_page_by_path(
+			str_replace( home_url(), '', $embed_url ),
+			OBJECT,
+			get_post_types( array( 'public' => true ) )
+		);
 
 		if ( ! get_option( 'permalink_structure' ) || $path_conflict ) {
 			$embed_url = add_query_arg( array( 'embed' => 'true' ), get_permalink( $post ) );
