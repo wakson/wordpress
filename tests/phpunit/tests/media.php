@@ -6484,6 +6484,7 @@ EOF;
 		$this->assertStringEndsNotWith( '.heic', $image_meta['file'], 'The file extension is expected to change.' );
 		$this->assertSame( "test-image{$scaled_suffix}.jpg", basename( $image_meta['file'] ), "The file name is expected to be test-image{$scaled_suffix}.jpg" );
 		$this->assertSame( 'test-image.heic', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data' );
+		$this->assertSame( 'image/jpeg', wp_get_image_mime( $image_meta['file'] ), 'The image mime type is expected to be image/jpeg' );
 	}
 
 	/**
