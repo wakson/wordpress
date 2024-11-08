@@ -6505,7 +6505,7 @@ EOF;
 
 		$editor = wp_get_image_editor( $file );
 
-		// Skip if the editor does not support HEIC.
+		// Skip if the editor does not support WebP.
 		if ( is_wp_error( $editor ) || ! $editor->supports_mime_type( 'image/webp' ) ) {
 			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
 		}
