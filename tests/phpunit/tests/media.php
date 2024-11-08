@@ -6490,8 +6490,8 @@ EOF;
 	 */
 	public function data_image_converted_to_other_format_has_correct_filename() {
 		return array(
-			array( false ),
-			array( true ),
+			'do not scale image' => array( false ),
+			'scale image'        => array( true ),
 		);
 	}
 
