@@ -6448,7 +6448,7 @@ EOF;
 	/**
 	 * @ticket 62305
 	 *
-	 * @dataProvider data_provider_to_test_image_converted_to_other_format_has_correct_filename
+	 * @dataProvider data_image_converted_to_other_format_has_correct_filename
 	 *
 	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
 	 */
@@ -6488,7 +6488,7 @@ EOF;
 	 *
 	 * @return array[]
 	 */
-	public function data_provider_to_test_image_converted_to_other_format_has_correct_filename() {
+	public function data_image_converted_to_other_format_has_correct_filename() {
 		return array(
 			array( false ),
 			array( true ),
