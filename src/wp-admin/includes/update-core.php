@@ -788,16 +788,17 @@ $_old_files = array(
 	 * See https://core.trac.wordpress.org/changeset/59141
 	 */
 	// 6.7 - files
-	'wp-includes/js/dist/vendor/react.min.js.LICENSE.txt',
-	'wp-includes/js/dist/vendor/wp-polyfill-importmap.min.js',
-	'wp-includes/js/dist/vendor/react-dom.min.js.LICENSE.txt',
-	'wp-includes/js/dist/vendor/wp-polyfill-importmap.js',
-	'wp-includes/js/dist/interactivity.js',
-	'wp-includes/js/dist/interactivity-router.js',
-	'wp-includes/js/dist/interactivity.min.js',
 	'wp-includes/js/dist/interactivity-router.asset.php',
+	'wp-includes/js/dist/interactivity-router.js',
 	'wp-includes/js/dist/interactivity-router.min.js',
 	'wp-includes/js/dist/interactivity-router.min.asset.php',
+	'wp-includes/js/dist/interactivity.js',
+	'wp-includes/js/dist/interactivity.min.js',
+	'wp-includes/js/dist/vendor/react-dom.min.js.LICENSE.txt',
+	'wp-includes/js/dist/vendor/react.min.js.LICENSE.txt',
+	'wp-includes/js/dist/vendor/wp-polyfill-importmap.js',
+	'wp-includes/js/dist/vendor/wp-polyfill-importmap.min.js',
+	'wp-includes/sodium_compat/src/Core/Base64/Common.php',
 	'wp-includes/SimplePie/Author.php',
 	'wp-includes/SimplePie/Cache.php',
 	'wp-includes/SimplePie/Caption.php',
@@ -819,7 +820,6 @@ $_old_files = array(
 	'wp-includes/SimplePie/Restriction.php',
 	'wp-includes/SimplePie/Sanitize.php',
 	'wp-includes/SimplePie/Source.php',
-	'wp-includes/sodium_compat/src/Core/Base64/Common.php',
 	// 6.7 - directories
 	'wp-includes/SimplePie/Cache/',
 	'wp-includes/SimplePie/Content/',
