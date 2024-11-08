@@ -6453,20 +6453,21 @@ EOF;
 	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
 	 */
 	public function test_image_converted_to_other_format_has_correct_filename( bool $apply_big_image_size_threshold ) {
-		$temp_dir = get_temp_dir();
-		$file     = $temp_dir . '/33772.jpg';
-		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+		$temp_dir      = get_temp_dir();
+		$file          = $temp_dir . '/test-image.heic';
+		$scaled_suffix = $apply_big_image_size_threshold ? '-scaled' : '';
+		copy( DIR_TESTDATA . '/images/test-image.heic', $file );
 
 		$editor = wp_get_image_editor( $file );
 
-		// Verify that the selected editor supports WebP output.
-		if ( ! $editor->supports_mime_type( 'image/webp' ) ) {
-			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
+		// Skip if the editor does not support HEIC.
+		if ( ! $editor->supports_mime_type( 'image/heic' ) ) {
+			$this->markTestSkipped( 'HEIC is not supported by the selected image editor.' );
 		}
 
 		$attachment_id = self::factory()->attachment->create_object(
 			array(
-				'post_mime_type' => 'image/jpeg',
+				'post_mime_type' => 'image/heic',
 				'file'           => $file,
 			)
 		);
@@ -6475,12 +6476,11 @@ EOF;
 			add_filter( 'big_image_size_threshold', array( $this, 'add_big_image_size_threshold' ) );
 		}
 
-		// Generate all sizes as WebP.
-		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
-		$webp_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
-		$this->assertStringEndsNotWith( '.jpg', $webp_sizes['file'], 'Make sure it not return original image.' );
-		$this->assertStringEndsWith( '.webp', $webp_sizes['file'], 'Make sure it return converted WebP image.' );
-		$this->assertStringEndsWith( '33772.webp', $webp_sizes['file'], 'Make sure it the generated file name is the same as the uploaded file name, except .jpg replaced with .webp' );
+		$image_meta = wp_generate_attachment_metadata( $attachment_id, $file );
+
+		$this->assertStringEndsNotWith( '.heic', $image_meta['file'], 'The file extension is expected to change.' );
+		$this->assertStringEndsWith( "/test-image{$scaled_suffix}.jpg", $image_meta['file'], 'The expected file name is ./test-image.jpg' );
+		$this->assertSame( 'test-image.heic', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data' );
 	}
 
 	/**
