@@ -6461,7 +6461,7 @@ EOF;
 		$editor = wp_get_image_editor( $file );
 
 		// Skip if the editor does not support HEIC.
-		if ( ! $editor->supports_mime_type( 'image/heic' ) ) {
+		if ( is_wp_error( $editor ) || ! $editor->supports_mime_type( 'image/heic' ) ) {
 			$this->markTestSkipped( 'HEIC is not supported by the selected image editor.' );
 		}
 
