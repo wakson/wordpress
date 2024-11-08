@@ -575,9 +575,13 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		$processor = WP_HTML_Processor::create_fragment( "<svg><{$void_tag}>" );
 
 		$this->assertTrue( $processor->next_tag( $void_tag ) );
+
+		// Some void-like will close the SVG element and be HTML tags.
 		if ( $processor->get_namespace() === 'svg' ) {
+			$this->assertSame( array( 'HTML', 'BODY', 'SVG', $void_tag ), $processor->get_breadcrumbs() );
 			$this->assertTrue( $processor->expects_closer() );
 		} else {
+			$this->assertSame( array( 'HTML', 'BODY', $void_tag ), $processor->get_breadcrumbs() );
 			$this->assertFalse( $processor->expects_closer() );
 		}
 	}
