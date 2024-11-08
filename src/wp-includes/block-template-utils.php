@@ -1190,8 +1190,7 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 			if ( isset( $query['post_type'] ) && ! isset( $template_file['postTypes'] ) ) {
 				$candidate              = _build_block_template_result_from_file( $template_file, $template_type );
 				$default_template_types = get_default_block_template_types();
-				$is_custom              = ! isset( $default_template_types[ $candidate->slug ] );
-				if ( $is_custom ) {
+				if ( ! isset( $default_template_types[ $candidate->slug ] ) ) {
 					$query_result[] = $candidate;
 				}
 			}
