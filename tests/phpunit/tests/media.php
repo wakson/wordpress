@@ -6446,7 +6446,7 @@ EOF;
 	}
 
 	/**
-	 * Ensure an HEIC image is converted to a JPeg.
+	 * Ensure an HEIC image is converted to a JPEG.
 	 *
 	 * @ticket 62305
 	 * @ticket 62359
@@ -6488,7 +6488,7 @@ EOF;
 	}
 
 	/**
-	 * Ensure a jepeg is converted to webp when applied via a filter.
+	 * Ensure a JPEG is converted to WebP when applied via a filter.
 	 *
 	 * @ticket 62305
 	 * @ticket 62359
