@@ -346,7 +346,7 @@ class WP_Textdomain_Registry {
 		 * If no path is found for the given locale and a custom path has been set
 		 * using load_plugin_textdomain/load_theme_textdomain, use that one.
 		 */
-		if ( 'en_US' !== $locale && isset( $this->custom_paths[ $domain ] ) ) {
+		if ( isset( $this->custom_paths[ $domain ] ) ) {
 			$fallback_location = rtrim( $this->custom_paths[ $domain ], '/' ) . '/';
 			$this->set( $domain, $locale, $fallback_location );
 			return $fallback_location;
