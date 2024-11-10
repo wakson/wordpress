@@ -351,7 +351,7 @@ function wp_create_image_subsizes( $file, $attachment_id ) {
 					 * be added and subsequently removed.
 					 */
 					$converted_file_name = $editor->generate_filename( 'converted' );
-					$converted_file_name = preg_replace( '/-converted\.[a-z0-9]+$/i', '.', $converted_file_name );
+					$converted_file_name = preg_replace( '/(-converted\.)([a-z0-9]+)$/i', '.$2', $converted_file_name );
 					$saved = $editor->save( $converted_file_name );
 				} else {
 					$saved = $editor->save();
