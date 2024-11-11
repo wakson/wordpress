@@ -27,6 +27,8 @@ class Tests_Feed_fetchFeed extends WP_UnitTestCase {
 		foreach( $feed->get_items( 0, 1 ) as $item ) {
 			$content = $item->get_content();
 		}
+
+		$this->assertStringContainsString( '<a href="https://learn.wordpress.org/">Learn WordPress</a> is a learning resource providing workshops, quizzes, courses, lesson plans, and discussion groups so that anyone, from beginners to advanced users, can learn to do more with WordPress.', $content );
 	}
 
 	public function mocked_rss_response() {
