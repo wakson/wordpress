@@ -6,7 +6,6 @@
     align-items: center;
     justify-content: center;
     gap: var(--wp--style--block-gap, 2rem);
-
 }
 
 #wp-empty-template-alert > * {
