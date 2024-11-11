@@ -156,6 +156,8 @@ class WP_Block {
 	 * @since 6.8.0
 	 */
 	public function refresh_context_dependents() {
+		$this->available_context = array_merge( $this->available_context, $this->context );
+
 		if ( ! empty( $this->block_type->uses_context ) ) {
 			foreach ( $this->block_type->uses_context as $context_name ) {
 				if ( array_key_exists( $context_name, $this->available_context ) ) {
@@ -546,7 +548,6 @@ class WP_Block {
 						$inner_block->context = apply_filters( 'render_block_context', $inner_block->context, $inner_block->parsed_block, $parent_block );
 
 						if ( $inner_block->context !== $inner_block_context ) {
-							$inner_block->available_context = array_merge( $this->available_context, $inner_block->context );
 							$inner_block->refresh_context_dependents();
 						}
 
