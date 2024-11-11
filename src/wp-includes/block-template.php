@@ -30,22 +30,16 @@ function wp_render_empty_block_template_warning( $block_template ) {
 	return sprintf(
 		/* translators: %1$s: Block template title. %2$s: Empty template warning message. %3$s: Edit post link. %4$s: Edit button label. */
 		'<div id="wp-empty-template-alert">
-			<div class="content">
-				<div class="message">
-					<h2>%1$s</h2>
-					<p>%2$s</p>
-				</div>
-				<div class="actions">
-					<a href="%3$s" class="wp-element-button">
-						%4$s
-					</a>
-				</div>
-			</div>
+			<h2>%1$s</h2>
+			<p>%2$s</p>
+			<a href="%3$s" class="wp-element-button">
+				%4$s
+			</a>
 		</div>',
 		$block_template->title,
-		__( 'This page is blank because your theme\'s template is currently empty. It may have been accidentally deleted, but don\'t worry! You can easily reset or edit this template in the <a href="https://wordpress.org/documentation/article/site-editor/">site editor</a>.' ),
+		__( 'This page is blank because the theme\'s template is empty. You can reset or customize it in the Site Editor.' ),
 		get_edit_post_link( $block_template->wp_id, 'site-editor' ),
-		__( 'Edit Template' )
+		__( 'Edit template' )
 	);
 }
 
