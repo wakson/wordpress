@@ -5328,18 +5328,11 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * and computation time.
 		 */
 		if ( 'backward' === $direction ) {
+
 			/*
 			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-				/*
-				 * Fragment parsers always start with an HTML root node at the top of the stack.
-				 * Do not remove it.
-				 */
-				if ( 'root-node' === $item->bookmark_name ) {
-					break;
-				}
-
 				$this->state->stack_of_open_elements->remove_node( $item );
 			}
 
@@ -5373,6 +5366,21 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				parent::seek( 'initial' );
 				unset( $this->bookmarks['initial'] );
 			} else {
+
+				/*
+				 * Push the root-node (HTML) back onto the stack of open elements.
+				 *
+				 * Fragment parsers require this extra bit of setup.
+				 * It's handled in full parsers by advancing the processor state.
+				 */
+				$this->state->stack_of_open_elements->push(
+					new WP_HTML_Token(
+						'root-node',
+						'HTML',
+						false
+					)
+				);
+
 				$this->change_parsing_namespace(
 					$this->context_node->integration_node_type
 						? 'html'
