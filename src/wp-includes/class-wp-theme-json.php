@@ -3586,7 +3586,7 @@ class WP_Theme_JSON {
 	 *
 	 * @since 6.8.0
 	 *
-	 * @param array $elements            The elements to process.
+	 * @param array $elements  The elements to process.
 	 * @return array The sanitized elements styles.
 	 */
 	protected static function remove_insecure_element_styles( $elements ) {
