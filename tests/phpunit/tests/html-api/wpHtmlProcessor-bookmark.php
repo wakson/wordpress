@@ -130,6 +130,23 @@ class Tests_HtmlApi_WpHtmlProcessor_Bookmark extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Covers a regression where the root node may not be present on the stack of open elements.
+	 *
+	 * Heading elements (h1, h2, etc.) check the current node on the stack of open elements
+	 * and expect it to be defined. If the root-node has been popped, pushing a new heading
+	 * onto the stack will create a warning and fail the test.
+	 *
+	 * @ticket 62290
+	 */
+	public function test_fragment_starts_with_h1() {
+		$processor = WP_HTML_Processor::create_fragment( '<h1>' );
+		$this->assertTrue( $processor->next_tag( 'H1' ) );
+		$this->assertTrue( $processor->set_bookmark( 'mark' ) );
+		$this->assertTrue( $processor->next_token() );
+		$this->assertTrue( $processor->seek( 'mark' ) );
+	}
+
+	/**
 	 * Data provider.
 	 *
 	 * @return array
