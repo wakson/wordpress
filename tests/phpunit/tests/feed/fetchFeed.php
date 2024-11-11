@@ -23,6 +23,10 @@ class Tests_Feed_fetchFeed extends WP_UnitTestCase {
 		add_filter( 'pre_option_blog_charset', '__return_empty_string', 20 );
 
 		$feed = fetch_feed( 'https://wordpress.org/news/feed/' );
+
+		foreach( $feed->get_items( 0, 1 ) as $item ) {
+			$content = $item->get_content();
+		}
 	}
 
 	public function mocked_rss_response() {
