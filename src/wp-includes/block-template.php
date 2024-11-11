@@ -28,7 +28,7 @@ function _add_template_loader_filters() {
 function wp_render_empty_block_template_warning( $block_template ) {
 	wp_enqueue_style( 'wp-empty-template-alert' );
 	return sprintf(
-		/* translators: %1$s: Block template title. %2$s: Empty template warning message. %3$s: Edit post link. %4$s: Edit button label. */
+		/* translators: %1$s: Block template title. %2$s: Empty template warning message. %3$s: Edit template link. %4$s: Edit template button label. */
 		'<div id="wp-empty-template-alert">
 			<h2>%1$s</h2>
 			<p>%2$s</p>
