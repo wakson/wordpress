@@ -20,7 +20,7 @@ class Tests_Formatting_WpNaturalTime extends WP_UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp(): void  {
+	public function setUp(): void {
 		parent::setUp();
 		$this->ts = array(
 			'now'         => gmmktime( 10, 0, 0, 7, 1, 2015 ),
