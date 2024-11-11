@@ -30,9 +30,6 @@ function wp_render_empty_block_template_warning( $block_template ) {
 	return sprintf(
 		/* translators: %1$s: Block template title. %2$s: Empty template warning message. %3$s: Edit post link. %4$s: Edit button label. */
 		'<div id="wp-empty-template-alert">
-			<div class="icon">
-				<span class="dashicons dashicons-warning"></span>
-			</div>
 			<div class="content">
 				<div class="message">
 					<h2>%1$s</h2>
