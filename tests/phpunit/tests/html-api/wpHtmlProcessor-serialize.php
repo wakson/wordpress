@@ -286,7 +286,7 @@ class Tests_HtmlApi_WpHtmlProcessor_Serialize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62396
 	 *
 	 * @dataProvider data_provider_serialize_doctype
 	 */
