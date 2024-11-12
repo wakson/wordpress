@@ -5391,6 +5391,49 @@ EOF;
 	}
 
 	/**
+	 * Test AVIF quality filters.
+	 *
+	 * @ticket 61614
+	 */
+	public function test_quality_with_avif_conversion_file_sizes() {
+		$temp_dir = get_temp_dir();
+		$file     = $temp_dir . '/33772.jpg';
+		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+
+		$editor = wp_get_image_editor( $file );
+		// Only continue if the server supports AVIF.
+		if ( ! $editor->supports_mime_type( 'image/avif' ) ) {
+			$this->markTestSkipped( 'AVIF is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'file'           => $file,
+			)
+		);
+
+		// Test sizes with AVIF images.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_avif' ) );
+		$avif_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
+		remove_filter( 'image_editor_output_format', array( $this, 'image_editor_output_avif' ) );
+
+		// Set the compression quality to a lower setting and test again, verifying that file sizes are all smaller.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_avif' ) );
+		add_filter( 'wp_editor_set_quality', array( $this, 'image_editor_change_quality_low' ) );
+		$smaller_avif_sizes = wp_generate_attachment_metadata( $attachment_id, $file );
+		remove_filter( 'wp_editor_set_quality', array( $this, 'image_editor_change_quality_low' ) );
+		remove_filter( 'image_editor_output_format', array( $this, 'image_editor_output_avif' ) );
+
+		// Sub-sizes: for each size, the AVIF should be smaller than the JPEG.
+		$sizes_to_compare = array_intersect_key( $avif_sizes['sizes'], $smaller_avif_sizes['sizes'] );
+
+		foreach ( $sizes_to_compare as $size => $size_data ) {
+			$this->assertLessThan( $avif_sizes['sizes'][ $size ]['filesize'], $smaller_avif_sizes['sizes'][ $size ]['filesize'] );
+		}
+	}
+
+	/**
 	 * Test that an image size isn't generated if it matches the original image size.
 	 *
 	 * @ticket 57370
@@ -6403,6 +6446,105 @@ EOF;
 	}
 
 	/**
+	 * Ensure an HEIC image is converted to a JPEG.
+	 *
+	 * @ticket 62305
+	 * @ticket 62359
+	 *
+	 * @dataProvider data_image_converted_to_other_format_has_correct_filename
+	 *
+	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
+	 */
+	public function test_heic_image_upload_is_converted_to_jpeg( bool $apply_big_image_size_threshold ) {
+		$temp_dir      = get_temp_dir();
+		$file          = $temp_dir . '/test-image.heic';
+		$scaled_suffix = $apply_big_image_size_threshold ? '-scaled' : '';
+		copy( DIR_TESTDATA . '/images/test-image.heic', $file );
+
+		$editor = wp_get_image_editor( $file );
+
+		// Skip if the editor does not support HEIC.
+		if ( is_wp_error( $editor ) || ! $editor->supports_mime_type( 'image/heic' ) ) {
+			$this->markTestSkipped( 'HEIC is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/heic',
+				'file'           => $file,
+			)
+		);
+
+		if ( $apply_big_image_size_threshold ) {
+			add_filter( 'big_image_size_threshold', array( $this, 'add_big_image_size_threshold' ) );
+		}
+
+		$image_meta = wp_generate_attachment_metadata( $attachment_id, $file );
+
+		$this->assertStringEndsNotWith( '.heic', $image_meta['file'], 'The file extension is expected to change.' );
+		$this->assertSame( "test-image{$scaled_suffix}.jpg", basename( $image_meta['file'] ), "The file name is expected to be test-image{$scaled_suffix}.jpg" );
+		$this->assertSame( 'test-image.heic', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data.' );
+		$this->assertSame( 'image/jpeg', wp_get_image_mime( $image_meta['file'] ), 'The image mime type is expected to be image/jpeg.' );
+	}
+
+	/**
+	 * Ensure a JPEG is converted to WebP when applied via a filter.
+	 *
+	 * @ticket 62305
+	 * @ticket 62359
+	 *
+	 * @dataProvider data_image_converted_to_other_format_has_correct_filename
+	 *
+	 * @param bool $apply_big_image_size_threshold True if filter needs to apply, otherwise false.
+	 */
+	public function test_jpeg_image_converts_to_webp_when_filtered( bool $apply_big_image_size_threshold ) {
+		$temp_dir      = get_temp_dir();
+		$file          = $temp_dir . '/33772.jpg';
+		$scaled_suffix = $apply_big_image_size_threshold ? '-scaled' : '';
+		copy( DIR_TESTDATA . '/images/33772.jpg', $file );
+
+		$editor = wp_get_image_editor( $file );
+
+		// Skip if the editor does not support WebP.
+		if ( is_wp_error( $editor ) || ! $editor->supports_mime_type( 'image/webp' ) ) {
+			$this->markTestSkipped( 'WebP is not supported by the selected image editor.' );
+		}
+
+		$attachment_id = self::factory()->attachment->create_object(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'file'           => $file,
+			)
+		);
+
+		if ( $apply_big_image_size_threshold ) {
+			add_filter( 'big_image_size_threshold', array( $this, 'add_big_image_size_threshold' ) );
+		}
+
+		// Generate all sizes as WebP.
+		add_filter( 'image_editor_output_format', array( $this, 'image_editor_output_webp' ) );
+
+		$image_meta = wp_generate_attachment_metadata( $attachment_id, $file );
+
+		$this->assertStringEndsNotWith( '.jpg', $image_meta['file'], 'The file extension is expected to change.' );
+		$this->assertSame( "33772{$scaled_suffix}.webp", basename( $image_meta['file'] ), "The file name is expected to be 33772{$scaled_suffix}.webp." );
+		$this->assertSame( '33772.jpg', $image_meta['original_image'], 'The original image name is expected to be stored in the meta data.' );
+		$this->assertSame( 'image/webp', wp_get_image_mime( $image_meta['file'] ), 'The image mime type is expected to be image/webp.' );
+	}
+
+	/**
+	 * Data provider for test_image_converted_to_other_format_has_correct_filename().
+	 *
+	 * @return array[]
+	 */
+	public function data_image_converted_to_other_format_has_correct_filename() {
+		return array(
+			'do not scale image' => array( false ),
+			'scale image'        => array( true ),
+		);
+	}
+
+	/**
 	 * Helper method to keep track of the last context returned by the 'wp_get_attachment_image_context' filter.
 	 *
 	 * The method parameter is passed by reference and therefore will always contain the last context value.
@@ -6442,6 +6584,13 @@ EOF;
 	}
 
 	/**
+	 * Output AVIF images.
+	 */
+	public function image_editor_output_avif() {
+		return array( 'image/jpeg' => 'image/avif' );
+	}
+
+	/**
 	 * Changes the quality using very low quality for JPEGs and very high quality
 	 * for WebPs, used to verify the filter is applying correctly.
 	 *
@@ -6457,6 +6606,13 @@ EOF;
 		} else {
 			return 30;
 		}
+	}
+
+	/**
+	 * Output only low quality images.
+	 */
+	public function image_editor_change_quality_low( $quality ) {
+		return 15;
 	}
 
 	/**

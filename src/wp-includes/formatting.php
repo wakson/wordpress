@@ -2812,7 +2812,7 @@ function trailingslashit( $value ) {
  *
  * @since 2.2.0
  *
- * @param string $text Value from which trailing slashes will be removed.
+ * @param string $value Value from which trailing slashes will be removed.
  * @return string String without the trailing slashes.
  */
 function untrailingslashit( $value ) {
@@ -5392,9 +5392,9 @@ function wp_html_excerpt( $str, $count, $more = null ) {
  *
  * @global string $_links_add_base
  *
- * @param string $content String to search for links in.
- * @param string $base    The base URL to prefix to links.
- * @param array  $attrs   The attributes which should be processed.
+ * @param string   $content String to search for links in.
+ * @param string   $base    The base URL to prefix to links.
+ * @param string[] $attrs   The attributes which should be processed.
  * @return string The processed content.
  */
 function links_add_base_url( $content, $base, $attrs = array( 'src', 'href' ) ) {
