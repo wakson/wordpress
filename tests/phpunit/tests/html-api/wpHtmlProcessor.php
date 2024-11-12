@@ -569,7 +569,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_void_tags
 	 *
-	 * @ticket TBD
+	 * @ticket 62363
 	 */
 	public function test_expects_closer_foreign_content_not_void( string $void_tag ) {
 		$processor = WP_HTML_Processor::create_fragment( "<svg><{$void_tag}>" );
