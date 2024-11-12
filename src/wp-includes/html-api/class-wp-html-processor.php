@@ -497,7 +497,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 */
 		foreach ( $this->state->stack_of_open_elements->walk_up() as $element ) {
 			if ( 'FORM' === $element->node_name && 'html' === $element->namespace ) {
-				$fragment_processor->state->form_element = $element;
+				$fragment_processor->state->form_element                = clone $element;
+				$fragment_processor->state->form_element->bookmark_name = null;
+				$fragment_processor->state->form_element->on_destroy    = null;
 				break;
 			}
 		}
