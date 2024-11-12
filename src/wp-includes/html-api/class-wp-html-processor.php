@@ -1199,7 +1199,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 					}
 					$html .= " \"{$doctype->system_identifier}\"";
 				}
-				$html .= '>';
+				$html .= ">\n";
 				break;
 
 			case '#text':
