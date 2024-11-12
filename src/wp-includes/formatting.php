@@ -3504,7 +3504,7 @@ function convert_smilies( $text ) {
 
 				$output .= $content;
 			}
-		}  else {
+		} else {
 				$output = $text;
 		}
 	} else {
