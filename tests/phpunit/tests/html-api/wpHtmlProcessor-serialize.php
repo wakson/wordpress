@@ -284,4 +284,17 @@ class Tests_HtmlApi_WpHtmlProcessor_Serialize extends WP_UnitTestCase {
 			'Comment text'         => array( "<!-- \x00 -->", "<!-- \u{FFFD} -->" ),
 		);
 	}
+
+	/**
+	 * @ticket TBD
+	 */
+	public function test_full_document_serialize_includes_doctype() {
+		$processor = WP_HTML_Processor::create_full_parser(
+			'<!doCTYpe HtmL pubLIC "xxx" \'yyy\'zzz>👌'
+		);
+		$this->assertSame(
+			'<!DOCTYPE html PUBLIC "xxx" "yyy"><html><head></head><body>👌</body></html>',
+			$processor->serialize()
+		);
+	}
 }
