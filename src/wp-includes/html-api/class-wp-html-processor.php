@@ -462,6 +462,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		}
 
 		$fragment_processor = static::create_fragment( $html );
+		if ( null === $fragment_processor ) {
+			return null;
+		}
 
 		$fragment_processor->change_parsing_namespace(
 			$this->current_element->token->integration_node_type ? 'html' : $namespace
