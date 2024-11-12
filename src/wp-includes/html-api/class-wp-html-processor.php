@@ -293,7 +293,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @return static|null The created processor if successful, otherwise null.
 	 */
 	public static function create_fragment( $html, $context = '<body>', $encoding = 'UTF-8' ) {
-		if ( '<body>' !== $context || 'UTF-8' !== $encoding ) {
+		if ( 'UTF-8' !== $encoding ) {
 			return null;
 		}
 
