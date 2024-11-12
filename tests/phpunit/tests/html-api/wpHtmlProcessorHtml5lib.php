@@ -213,7 +213,7 @@ class Tests_HtmlApi_Html5lib extends WP_UnitTestCase {
 				if ( null !== $parent_processor->get_last_error() ) {
 					throw new Exception( $parent_processor->get_last_error() );
 				}
-				$processor = $parent_processor->spawn_fragment_parser( $html );
+				$processor = $parent_processor->create_fragment_at_current_node( $html );
 			}
 
 			if ( null === $processor ) {
