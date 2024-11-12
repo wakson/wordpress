@@ -454,7 +454,7 @@ abstract class WP_Image_Editor {
 			}
 		}
 
-		return trailingslashit( $dir ) . "{$name}-{$suffix}.{$new_ext}";
+		return trailingslashit( $dir ) . "{$name}{$suffix}.{$new_ext}";
 	}
 
 	/**
