@@ -287,14 +287,34 @@ class Tests_HtmlApi_WpHtmlProcessor_Serialize extends WP_UnitTestCase {
 
 	/**
 	 * @ticket TBD
+	 *
+	 * @dataProvider data_provider_serialize_doctype
 	 */
-	public function test_full_document_serialize_includes_doctype() {
+	public function test_full_document_serialize_includes_doctype( string $doctype_input, string $doctype_output ) {
 		$processor = WP_HTML_Processor::create_full_parser(
-			'<!doCTYpe HtmL pubLIC "xxx" \'yyy\'zzz>👌'
+			"{$doctype_input}👌"
 		);
 		$this->assertSame(
-			'<!DOCTYPE html PUBLIC "xxx" "yyy"><html><head></head><body>👌</body></html>',
+			"{$doctype_output}<html><head></head><body>👌</body></html>",
 			$processor->serialize()
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public static function data_provider_serialize_doctype() {
+		return array(
+			'None'                   => array( '', '' ),
+			'Empty'                  => array( '<!DOCTYPE>', '<!DOCTYPE>' ),
+			'HTML5'                  => array( '<!DOCTYPE html>', '<!DOCTYPE html>' ),
+			'Strange name'           => array( '<!DOCTYPE WordPress>', '<!DOCTYPE wordpress>' ),
+			'With public'            => array( '<!DOCTYPE html PUBLIC "x">', '<!DOCTYPE html PUBLIC "x">' ),
+			'With system'            => array( '<!DOCTYPE html SYSTEM "y">', '<!DOCTYPE html SYSTEM "y">' ),
+			'With public and system' => array( '<!DOCTYPE html PUBLIC "x" "y">', '<!DOCTYPE html PUBLIC "x" "y">' ),
+			'Weird casing'           => array( '<!docType HtmL pubLIc\'xxx\'"yyy" all this is ignored>', '<!DOCTYPE html PUBLIC "xxx" "yyy">' ),
 		);
 	}
 }
