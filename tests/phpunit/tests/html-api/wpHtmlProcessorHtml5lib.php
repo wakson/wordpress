@@ -226,11 +226,6 @@ class Tests_HtmlApi_Html5lib extends WP_UnitTestCase {
 			}
 		}
 
-		/*
-		 * The fragment parser will start in 2 levels deep at: html > body > [position]
-		 * and requires adjustment to initial parameters.
-		 * The full parser will not.
-		 */
 		$output       = '';
 		$indent_level = 0;
 		$was_text     = null;
