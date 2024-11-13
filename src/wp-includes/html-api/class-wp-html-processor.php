@@ -1184,22 +1184,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 					break;
 				}
 
-				$html .= '<!DOCTYPE';
-
-				if ( $doctype->name ) {
-					$html .= " {$doctype->name}";
+				if ( 'no-quirks' === $doctype->indicated_compatability_mode ) {
+					$html = '<!DOCTYPE html>';
 				}
-
-				if ( null !== $doctype->public_identifier ) {
-					$html .= " PUBLIC \"{$doctype->public_identifier}\"";
-				}
-				if ( null !== $doctype->system_identifier ) {
-					if ( null === $doctype->public_identifier ) {
-						$html .= ' SYSTEM';
-					}
-					$html .= " \"{$doctype->system_identifier}\"";
-				}
-				$html .= '>';
 				break;
 
 			case '#text':

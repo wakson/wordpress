@@ -308,13 +308,13 @@ class Tests_HtmlApi_WpHtmlProcessor_Serialize extends WP_UnitTestCase {
 	public static function data_provider_serialize_doctype() {
 		return array(
 			'None'                   => array( '', '' ),
-			'Empty'                  => array( '<!DOCTYPE>', '<!DOCTYPE>' ),
+			'Empty'                  => array( '<!DOCTYPE>', '' ),
 			'HTML5'                  => array( '<!DOCTYPE html>', '<!DOCTYPE html>' ),
-			'Strange name'           => array( '<!DOCTYPE WordPress>', '<!DOCTYPE wordpress>' ),
-			'With public'            => array( '<!DOCTYPE html PUBLIC "x">', '<!DOCTYPE html PUBLIC "x">' ),
-			'With system'            => array( '<!DOCTYPE html SYSTEM "y">', '<!DOCTYPE html SYSTEM "y">' ),
-			'With public and system' => array( '<!DOCTYPE html PUBLIC "x" "y">', '<!DOCTYPE html PUBLIC "x" "y">' ),
-			'Weird casing'           => array( '<!docType HtmL pubLIc\'xxx\'"yyy" all this is ignored>', '<!DOCTYPE html PUBLIC "xxx" "yyy">' ),
+			'Strange name'           => array( '<!DOCTYPE WordPress>', '' ),
+			'With public'            => array( '<!DOCTYPE html PUBLIC "x">', '<!DOCTYPE html>' ),
+			'With system'            => array( '<!DOCTYPE html SYSTEM "y">', '<!DOCTYPE html>' ),
+			'With public and system' => array( '<!DOCTYPE html PUBLIC "x" "y">', '<!DOCTYPE html>' ),
+			'Weird casing'           => array( '<!docType HtmL pubLIc\'xxx\'"yyy" all this is ignored>', '<!DOCTYPE html>' ),
 		);
 	}
 }
