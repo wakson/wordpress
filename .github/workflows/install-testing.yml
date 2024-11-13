@@ -157,10 +157,6 @@ jobs:
           coverage: none
           tools: wp-cli${{ contains( fromJSON('["5.4", "5.5"]'), matrix.php ) && ':2.4.0' || '' }}
 
-      - name: Start the database server
-        run: |
-          sudo systemctl start ${{ matrix.db-type }}
-
       - name: Download WordPress
         run: wp core download ${{ inputs.wp-version && format( '--version={0}', inputs.wp-version ) || '--version=nightly' }}
 
