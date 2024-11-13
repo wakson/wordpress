@@ -594,10 +594,10 @@ foreach ( $themes as $theme ) :
 	<div class="theme-id-container">
 		<?php if ( $theme['active'] ) { ?>
 			<h2 class="theme-name" id="<?php echo esc_attr( $aria_name ); ?>">
-				<span><?php _ex( 'Active:', 'theme' ); ?></span> <?php echo $theme['name']; ?>
+				<span><?php _ex( 'Active:', 'theme' ); ?></span> <?php echo esc_html( $theme['name'] ); ?>
 			</h2>
 		<?php } else { ?>
-			<h2 class="theme-name" id="<?php echo esc_attr( $aria_name ); ?>"><?php echo $theme['name']; ?></h2>
+			<h2 class="theme-name" id="<?php echo esc_attr( $aria_name ); ?>"><?php echo esc_html( $theme['name'] ); ?></h2>
 		<?php } ?>
 
 		<div class="theme-actions">
@@ -605,23 +605,23 @@ foreach ( $themes as $theme ) :
 			<?php
 			if ( $theme['actions']['customize'] && current_user_can( 'edit_theme_options' ) && current_user_can( 'customize' ) ) {
 				/* translators: %s: Theme name. */
-				$customize_aria_label = sprintf( _x( 'Customize %s', 'theme' ), $theme['name'] );
+				$customize_aria_label = sprintf( _x( 'Customize %s', 'theme' ), esc_html( $theme['name'] ) );
 				?>
-				<a aria-label="<?php echo esc_attr( $customize_aria_label ); ?>" class="button button-primary customize load-customize hide-if-no-customize" href="<?php echo $theme['actions']['customize']; ?>"><?php _e( 'Customize' ); ?></a>
+				<a aria-label="<?php echo esc_attr( $customize_aria_label ); ?>" class="button button-primary customize load-customize hide-if-no-customize" href="<?php echo esc_url( $theme['actions']['customize'] ); ?>"><?php _e( 'Customize' ); ?></a>
 			<?php } ?>
 		<?php } elseif ( $theme['compatibleWP'] && $theme['compatiblePHP'] ) { ?>
 			<?php
 			/* translators: %s: Theme name. */
 			$aria_label = sprintf( _x( 'Activate %s', 'theme' ), '{{ data.name }}' );
 			?>
-			<a class="button activate" href="<?php echo $theme['actions']['activate']; ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>"><?php _e( 'Activate' ); ?></a>
+			<a class="button activate" href="<?php echo esc_url( $theme['actions']['activate'] ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>"><?php _e( 'Activate' ); ?></a>
 			<?php
 			// Only classic themes require the "customize" capability.
 			if ( current_user_can( 'edit_theme_options' ) && ( $theme['blockTheme'] || current_user_can( 'customize' ) ) ) {
 				/* translators: %s: Theme name. */
 				$live_preview_aria_label = sprintf( _x( 'Live Preview %s', 'theme' ), '{{ data.name }}' );
 				?>
-				<a aria-label="<?php echo esc_attr( $live_preview_aria_label ); ?>" class="button button-primary load-customize hide-if-no-customize" href="<?php echo $theme['actions']['customize']; ?>"><?php _e( 'Live Preview' ); ?></a>
+				<a aria-label="<?php echo esc_attr( $live_preview_aria_label ); ?>" class="button button-primary load-customize hide-if-no-customize" href="<?php echo esc_url( $theme['actions']['customize'] ); ?>"><?php _e( 'Live Preview' ); ?></a>
 			<?php } ?>
 		<?php } else { ?>
 			<?php
