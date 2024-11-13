@@ -89,6 +89,7 @@ jobs:
         with:
           max_attempts: 3
           retry_on: error
+          timeout_seconds: 10
           command: wp config create --dbname=test_db --dbuser=root --dbpass=root --dbhost=127.0.0.1:${{ job.services.database.ports['3306'] }}
 
       - name: Install WordPress
