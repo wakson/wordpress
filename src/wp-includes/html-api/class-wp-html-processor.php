@@ -1178,12 +1178,17 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$token_type = $this->get_token_type();
 
 		switch ( $token_type ) {
+			/*
+			 * DOCTYPE determines whether the document mode is quirks or no-quirks.
+			 *
+			 * Normalize to the HTML5 doctype in case of no-quirks.
+			 * Omit the DOCTYPE in quirks mode which has the same result.
+			 */
 			case '#doctype':
 				$doctype = $this->get_doctype_info();
 				if ( null === $doctype ) {
 					break;
 				}
-
 				if ( 'no-quirks' === $doctype->indicated_compatability_mode ) {
 					$html = '<!DOCTYPE html>';
 				}
