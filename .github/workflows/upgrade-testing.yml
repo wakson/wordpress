@@ -94,7 +94,7 @@ jobs:
     name: ${{ matrix.wp }} to ${{ inputs.new-version && inputs.new-version || 'latest' }}
     uses: WordPress/wordpress-develop/.github/workflows/reusable-upgrade-testing.yml@trunk
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
-    needs: [ upgrade-tests-wp-6x-php-8x-mysql, upgrade-tests-wp-6x-php-7x-mysql ]
+    needs: [ upgrade-tests-wp-6x-php-7x-mysql ]
     strategy:
       fail-fast: false
       matrix:
@@ -128,7 +128,7 @@ jobs:
     name: ${{ matrix.wp }} to ${{ inputs.new-version && inputs.new-version || 'latest' }}
     uses: WordPress/wordpress-develop/.github/workflows/reusable-upgrade-testing.yml@trunk
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
-    needs: [ upgrade-tests-wp-6x-php-8x-mysql, upgrade-tests-wp-6x-php-7x-mysql ]
+    needs: [ upgrade-tests-wp-6x-php-8x-mysql ]
     strategy:
       fail-fast: false
       matrix:
@@ -152,7 +152,7 @@ jobs:
     name: ${{ matrix.wp }} to ${{ inputs.new-version && inputs.new-version || 'latest' }}
     uses: WordPress/wordpress-develop/.github/workflows/reusable-upgrade-testing.yml@trunk
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
-    needs: [ upgrade-tests-wp-5x-php-7x-mysql, upgrade-tests-wp-5x-php-8x-mysql ]
+    needs: [ upgrade-tests-wp-5x-php-7x-mysql, upgrade-tests-wp-6x-php-7x-mysql ]
     strategy:
       fail-fast: false
       matrix:
@@ -186,7 +186,7 @@ jobs:
     name: ${{ matrix.wp }} to ${{ inputs.new-version && inputs.new-version || 'latest' }}
     uses: WordPress/wordpress-develop/.github/workflows/reusable-upgrade-testing.yml@trunk
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
-    needs: [ upgrade-tests-wp-5x-php-7x-mysql, upgrade-tests-wp-5x-php-8x-mysql ]
+    needs: [ upgrade-tests-wp-6x-php-8x-mysql, upgrade-tests-wp-5x-php-8x-mysql ]
     strategy:
       fail-fast: false
       matrix:
