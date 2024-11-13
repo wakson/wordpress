@@ -20,7 +20,7 @@ function _add_template_loader_filters() {
 /**
  * Renders a warning screen for empty block templates.
  *
- * @since x.x
+ * @since 6.8.0
  *
  * @param WP_Block_Template $block_template The block template object.
  * @return string The warning screen HTML.
