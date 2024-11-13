@@ -607,21 +607,21 @@ foreach ( $themes as $theme ) :
 				/* translators: %s: Theme name. */
 				$customize_aria_label = sprintf( _x( 'Customize %s', 'theme' ), $theme['name'] );
 				?>
-				<a aria-label="<?php echo esc_attr( $customize_aria_label ); ?>" class="button button-primary customize load-customize hide-if-no-customize" href="<?php echo $theme['actions']['customize']; ?>"><?php _e( 'Customize' ); ?></a>
+				<a aria-label="<?php echo esc_attr( $customize_aria_label ); ?>" class="button button-primary customize load-customize hide-if-no-customize" href="<?php echo esc_url( $theme['actions']['customize'] ); ?>"><?php _e( 'Customize' ); ?></a>
 			<?php } ?>
 		<?php } elseif ( $theme['compatibleWP'] && $theme['compatiblePHP'] ) { ?>
 			<?php
 			/* translators: %s: Theme name. */
 			$aria_label = sprintf( _x( 'Activate %s', 'theme' ), '{{ data.name }}' );
 			?>
-			<a class="button activate" href="<?php echo $theme['actions']['activate']; ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>"><?php _e( 'Activate' ); ?></a>
+			<a class="button activate" href="<?php echo esc_url( $theme['actions']['activate'] ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>"><?php _e( 'Activate' ); ?></a>
 			<?php
 			// Only classic themes require the "customize" capability.
 			if ( current_user_can( 'edit_theme_options' ) && ( $theme['blockTheme'] || current_user_can( 'customize' ) ) ) {
 				/* translators: %s: Theme name. */
 				$live_preview_aria_label = sprintf( _x( 'Live Preview %s', 'theme' ), '{{ data.name }}' );
 				?>
-				<a aria-label="<?php echo esc_attr( $live_preview_aria_label ); ?>" class="button button-primary load-customize hide-if-no-customize" href="<?php echo $theme['actions']['customize']; ?>"><?php _e( 'Live Preview' ); ?></a>
+				<a aria-label="<?php echo esc_attr( $live_preview_aria_label ); ?>" class="button button-primary load-customize hide-if-no-customize" href="<?php echo esc_url( $theme['actions']['customize'] ); ?>"><?php _e( 'Live Preview' ); ?></a>
 			<?php } ?>
 		<?php } else { ?>
 			<?php
