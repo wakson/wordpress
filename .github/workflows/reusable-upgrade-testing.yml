@@ -85,7 +85,11 @@ jobs:
         run: wp core download --version=${{ inputs.wp }}
 
       - name: Create wp-config.php file
-        run: wp config create --dbname=test_db --dbuser=root --dbpass=root --dbhost=127.0.0.1:${{ job.services.database.ports['3306'] }}
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v.3.0.0
+        with:
+          max_attempts: 3
+          retry_on: error
+          command: wp config create --dbname=test_db --dbuser=root --dbpass=root --dbhost=127.0.0.1:${{ job.services.database.ports['3306'] }}
 
       - name: Install WordPress
         run: wp core ${{ inputs.multisite && 'multisite-' || '' }}install --url=http://localhost/ --title="Upgrade Test" --admin_user=admin --admin_password=password --admin_email=me@example.org --skip-email
