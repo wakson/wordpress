@@ -96,7 +96,6 @@ jobs:
   #
   # Performs the following steps:
   # - Sets up PHP.
-  # - Starts the database server.
   # - Downloads the specified version of WordPress.
   # - Creates a `wp-config.php` file.
   # - Installs WordPress.
