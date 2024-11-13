@@ -42,7 +42,6 @@ jobs:
   #
   # Performs the following steps:
   # - Sets up PHP.
-  # - Starts the database server.
   # - Downloads the specified version of WordPress.
   # - Creates a `wp-config.php` file.
   # - Installs WordPress.
@@ -76,10 +75,6 @@ jobs:
           php-version: '${{ inputs.php }}'
           coverage: none
           tools: wp-cli
-
-      - name: Start the database server
-        run: |
-          sudo systemctl start ${{ inputs.db-type }}
 
       - name: Download WordPress ${{ inputs.wp }}
         run: wp core download --version=${{ inputs.wp }}
