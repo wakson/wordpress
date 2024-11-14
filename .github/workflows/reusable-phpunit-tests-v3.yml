@@ -120,20 +120,6 @@ jobs:
         with:
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-        with:
-          show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
-          repository: 'docker-library/php'
-          path: some-bad-folder
-
-      - name: Upload HTML coverage report as artifact
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
-        with:
-          name: wp-code-coverage${{ inputs.multisite && '-multisite' || '-single' }}-${{ github.sha }}
-          path: some-bad-folder
-          overwrite: true
-
       - name: Set up Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
@@ -234,7 +220,7 @@ jobs:
         with:
           name: wp-code-coverage${{ inputs.multisite && '-multisite' || '-single' }}-${{ github.sha }}
           path: wp-code-coverage${{ inputs.multisite && '-multisite' || '-single' }}-${{ github.sha }}
-          overwrite: false
+          overwrite: true
 
       - name: Ensure version-controlled files are not modified or deleted
         run: git diff --exit-code
