@@ -545,7 +545,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		}
 
 		if ( is_string( $query ) ) {
-			$query = array( 'tag_name' => $query );
+			$query = array( 'breadcrumbs' => array( $query ) );
 		}
 
 		if ( ! is_array( $query ) ) {
