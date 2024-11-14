@@ -480,6 +480,10 @@ class WP_REST_Users_Controller extends WP_REST_Controller {
 			return $user;
 		}
 
+		if ( $request->is_method( 'head' ) ) {
+			return new WP_REST_Response();
+		}
+
 		$user     = $this->prepare_item_for_response( $user, $request );
 		$response = rest_ensure_response( $user );
 
