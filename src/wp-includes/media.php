@@ -1138,7 +1138,7 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = f
 		}
 
 		/** This filter is documented in wp-includes/media.php */
-		$add_auto_sizes = apply_filters( 'wp_img_tag_add_auto_sizes', true, '' );
+		$add_auto_sizes = apply_filters( 'wp_img_tag_add_auto_sizes', true );
 
 		// Adds 'auto' to the sizes attribute if applicable.
 		if (
@@ -1995,9 +1995,8 @@ function wp_img_tag_add_auto_sizes( string $image ): string {
 	 * @since 6.7.1
 	 *
 	 * @param boolean $enabled Whether auto-sizes for lazy loaded images is enabled.
-	 * @param string  $image   The image tag markup being modified.
 	 */
-	if ( ! apply_filters( 'wp_img_tag_add_auto_sizes', true, $image ) ) {
+	if ( ! apply_filters( 'wp_img_tag_add_auto_sizes', true ) ) {
 		return $image;
 	}
 
