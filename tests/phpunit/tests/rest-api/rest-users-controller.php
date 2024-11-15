@@ -233,14 +233,29 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->check_user_data( $userdata, $data, 'view', $data['_links'] );
 	}
 
-	public function test_get_items_with_edit_context() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_with_edit_context( $method ) {
 		wp_set_current_user( self::$user );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = rest_get_server()->dispatch( $request );
 
-		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			200,
+			$response->get_status(),
+			sprintf( 'Expected HTTP status code 200 but got %s.', $response->get_status() )
+		);
+
+		if ( 'HEAD' === $method ) {
+			$this->assertNull( $response->get_data(), 'Expected null response data for HEAD request, but received non-null data.' );
+			return;
+		}
 
 		$all_data = $response->get_data();
 		$data     = $all_data[0];
@@ -248,9 +263,15 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->check_user_data( $userdata, $data, 'edit', $data['_links'] );
 	}
 
-	public function test_get_items_with_edit_context_without_permission() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_with_edit_context_without_permission( $method ) {
 		// Test with a user not logged in.
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = rest_get_server()->dispatch( $request );
 
@@ -260,7 +281,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// capability in question: 'list_users'.
 		wp_set_current_user( self::$editor );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = rest_get_server()->dispatch( $request );
 
@@ -318,14 +339,20 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertNotContains( self::$user, $user_ids );
 	}
 
-	public function test_get_items_pagination_headers() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_pagination_headers( $method ) {
 		$total_users = self::$total_users;
 		$total_pages = (int) ceil( $total_users / 10 );
 
 		wp_set_current_user( self::$user );
 
 		// Start of the index.
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request  = new WP_REST_Request( $method, '/wp/v2/users' );
 		$response = rest_get_server()->dispatch( $request );
 		$headers  = $response->get_headers();
 		$this->assertSame( $total_users, $headers['X-WP-Total'] );
@@ -343,7 +370,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		self::factory()->user->create();
 		++$total_users;
 		++$total_pages;
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'page', 3 );
 		$response = rest_get_server()->dispatch( $request );
 		$headers  = $response->get_headers();
@@ -365,7 +392,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertStringContainsString( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 
 		// Last page.
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'page', $total_pages );
 		$response = rest_get_server()->dispatch( $request );
 		$headers  = $response->get_headers();
@@ -381,7 +408,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertStringNotContainsString( 'rel="next"', $headers['Link'] );
 
 		// Out of bounds.
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'page', 100 );
 		$response = rest_get_server()->dispatch( $request );
 		$headers  = $response->get_headers();
@@ -410,14 +437,24 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertCount( 5, $response->get_data() );
 	}
 
-	public function test_get_items_page() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_page( $method ) {
 		wp_set_current_user( self::$user );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new WP_REST_Request( $method, '/wp/v2/users' );
 		$request->set_param( 'per_page', 5 );
 		$request->set_param( 'page', 2 );
 		$response = rest_get_server()->dispatch( $request );
-		$this->assertCount( 5, $response->get_data() );
+
+		if ( 'HEAD' !== $method ) {
+			$this->assertCount( 5, $response->get_data() );
+		}
+
 		$prev_link = add_query_arg(
 			array(
 				'per_page' => 5,
@@ -1207,10 +1244,16 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertErrorResponse( 'rest_user_cannot_view', $response, 401 );
 	}
 
-	public function test_get_current_user() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_current_user( $method ) {
 		wp_set_current_user( self::$user );
 
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+		$request  = new WP_REST_Request( $method, '/wp/v2/users/me' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertSame( 200, $response->get_status() );
 		$this->check_get_user_response( $response, 'view' );
@@ -1218,6 +1261,10 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$headers = $response->get_headers();
 		$this->assertArrayNotHasKey( 'Location', $headers );
 
+		if ( 'HEAD' === $method ) {
+			// HEAD responses only contain headers. Bail.
+			return;
+		}
 		$links = $response->get_links();
 		$this->assertSame( rest_url( 'wp/v2/users/' . self::$user ), $links['self'][0]['href'] );
 	}
@@ -1469,8 +1516,8 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 				$this->assertSame( 'Sorry, that username already exists!', $error['message'] );
 			} else {
 				$expected = '<strong>Error:</strong> This email address is already registered. ' .
-							'<a href="http://rest.wordpress.org/wp-login.php">Log in</a> with ' .
-							'this address or choose another one.';
+				            '<a href="http://rest.wordpress.org/wp-login.php">Log in</a> with ' .
+				            'this address or choose another one.';
 				$this->assertSame( $expected, $error['message'] );
 			}
 		}
@@ -2374,6 +2421,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2399,6 +2447,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2433,6 +2482,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2461,6 +2511,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2537,6 +2588,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2562,6 +2614,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2604,6 +2657,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2632,6 +2686,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2660,6 +2715,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -2688,6 +2744,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
+
 			return;
 		}
 
@@ -3100,6 +3157,18 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		);
 	}
 
+	/**
+	 * Data provider intended to provide HTTP method names for testing GET and HEAD requests.
+	 *
+	 * @return array
+	 */
+	public function data_readable_http_methods() {
+		return array(
+			'GET request'  => array( 'GET' ),
+			'HEAD request' => array( 'HEAD' ),
+		);
+	}
+
 	protected function check_user_data( $user, $data, $context, $links ) {
 		$this->assertSame( $user->ID, $data['id'] );
 		$this->assertSame( $user->display_name, $data['name'] );
@@ -3176,4 +3245,5 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 		return;
 	}
+
 }
