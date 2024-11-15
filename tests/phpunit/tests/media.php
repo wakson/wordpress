@@ -6267,6 +6267,46 @@ EOF;
 	}
 
 	/**
+	 * Test content filtered markup with lazy loading does not get auto-sizes when disabled.
+	 *
+	 * @ticket 61847
+	 * @ticket 62413
+	 *
+	 * @covers ::wp_img_tag_add_auto_sizes
+	 */
+	public function test_content_image_does_not_have_auto_sizes_when_disabled() {
+		// Force lazy loading attribute.
+		add_filter( 'wp_img_tag_add_loading_attr', '__return_true' );
+		// Disable auto-sizes attribute.
+		add_filter( 'wp_image_tag_auto_sizes_enabled', '__return_false' );
+
+		$this->assertStringNotContainsString(
+			'sizes="auto, ',
+			wp_filter_content_tags( get_image_tag( self::$large_id, '', '', '', 'large' ) ),
+			'Failed asserting that the sizes attribute for a content image with lazy loading does not include "auto" when disabled.'
+		);
+	}
+
+	/**
+	 * Test generated image markup with lazy loading does not get auto-sizes when disabled.
+	 *
+	 * @ticket 61847
+	 * @ticket 62413
+	 *
+	 * @covers ::wp_img_tag_add_auto_sizes
+	 */
+	public function test_generated_image_does_not_have_auto_sizes_when_disabled() {
+		// Disable auto-sizes attribute.
+		add_filter( 'wp_image_tag_auto_sizes_enabled', '__return_false' );
+
+		$this->assertStringNotContainsString(
+			'sizes="auto, ',
+			wp_get_attachment_image( self::$large_id, 'large', false, array( 'loading' => 'lazy' ) ),
+			'Failed asserting that the sizes attribute for an image with lazy loading does not include "auto" when disabled.'
+		);
+	}
+
+	/**
 	 * Test generated markup for an image with 'auto' keyword already present in sizes does not receive it again.
 	 *
 	 * @ticket 61847

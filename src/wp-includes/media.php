@@ -1975,6 +1975,18 @@ function wp_filter_content_tags( $content, $context = null ) {
  * @return string The filtered image tag markup.
  */
 function wp_img_tag_add_auto_sizes( string $image ): string {
+	/**
+	 * Filters whether auto-sizes for lazy loaded images is enabled.
+	 *
+	 * @since 6.7.1
+	 *
+	 * @param boolean $enabled Whether auto-sizes for lazy loaded images is enabled.
+	 * @param string  $image   The image tag markup being modified.
+	 */
+	if ( ! apply_filters( 'wp_image_tag_auto_sizes_enabled', true, $image ) ) {
+		return $image;
+	}
+
 	$processor = new WP_HTML_Tag_Processor( $image );
 
 	// Bail if there is no IMG tag.
