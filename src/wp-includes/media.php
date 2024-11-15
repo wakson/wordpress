@@ -1137,16 +1137,6 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = f
 			}
 		}
 
-		// Adds 'auto' to the sizes attribute if applicable.
-		if (
-			isset( $attr['loading'] ) &&
-			'lazy' === $attr['loading'] &&
-			isset( $attr['sizes'] ) &&
-			! wp_sizes_attribute_includes_valid_auto( $attr['sizes'] )
-		) {
-			$attr['sizes'] = 'auto, ' . $attr['sizes'];
-		}
-
 		/**
 		 * Filters the list of attachment image attributes.
 		 *
