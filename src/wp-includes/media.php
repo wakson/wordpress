@@ -1141,7 +1141,6 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = f
 		if (
 			isset( $attr['loading'] ) &&
 			'lazy' === $attr['loading'] &&
-			isset( $attr['width'] ) &&
 			isset( $attr['sizes'] ) &&
 			! wp_sizes_attribute_includes_valid_auto( $attr['sizes'] )
 		) {
