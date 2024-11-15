@@ -660,8 +660,8 @@ jQuery( function($) {
 			function() {
 				var t = $(this), c = t.is(':checked'), id = t.val();
 				if ( id && t.parents('#taxonomy-'+taxonomy).length ) {
-					$('#in-' + taxonomy + '-' + id + ', [id^="in-' + taxonomy + '-' + id + '-"]').prop('checked', c);
-					$('#in-popular-' + taxonomy + '-' + id).prop('checked', c);
+					$('input[id^="in-' + taxonomy + '-' + id + '"]').prop('checked', c);
+					$('input#in-popular-' + taxonomy + '-' + id).prop('checked', c);
 				}
 			}
 		);
