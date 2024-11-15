@@ -564,6 +564,7 @@ body.trashing #publish-settings {
 	padding: 10px 10px 11px 14px;
 	display: flex;
 	align-items: center;
+	box-sizing: border-box;
 }
 
 .accordion-section-title button.accordion-trigger:has(.menu-in-location) {
@@ -694,7 +695,6 @@ body.trashing #publish-settings {
 	height: auto;
 	max-height: none;
 	overflow: auto;
-	overflow-x: hidden;
 	transform: none;
 }
 
