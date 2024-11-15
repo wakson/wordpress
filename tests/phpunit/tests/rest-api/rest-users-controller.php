@@ -264,6 +264,18 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	/**
+	 * Data provider intended to provide HTTP method names for testing GET and HEAD requests.
+	 *
+	 * @return array
+	 */
+	public function data_readable_http_methods() {
+		return array(
+			'GET request'  => array( 'GET' ),
+			'HEAD request' => array( 'HEAD' ),
+		);
+	}
+
+	/**
 	 * @dataProvider data_readable_http_methods
 	 * @ticket 56481
 	 *
@@ -3158,15 +3170,76 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	/**
-	 * Data provider intended to provide HTTP method names for testing GET and HEAD requests.
-	 *
-	 * @return array
+	 * @ticket 56481
 	 */
-	public function data_readable_http_methods() {
-		return array(
-			'GET request'  => array( 'GET' ),
-			'HEAD request' => array( 'HEAD' ),
-		);
+	public function test_get_item_with_head_request_should_not_prepare_user_data() {
+		wp_set_current_user( self::$user );
+		$request = new WP_REST_Request( 'HEAD', sprintf( '/wp/v2/users/%d', self::$user ) );
+
+		$hook_name = 'rest_prepare_user';
+
+		$filter   = new MockAction();
+		$callback = array( $filter, 'filter' );
+		add_filter( $hook_name, $callback );
+		$response = rest_get_server()->dispatch( $request );
+		remove_filter( $hook_name, $callback );
+
+		$this->assertSame( 200, $response->get_status(), 'The response status should be 200.' );
+
+		$this->assertSame( 0, $filter->get_call_count(), 'The "' . $hook_name . '" filter was called when it should not be for HEAD requests.' );
+		$this->assertNull( $response->get_data(), 'The server should not generate a body in response to a HEAD request.' );
+	}
+
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_returns_only_fetches_ids_for_head_requests( $method ) {
+		$is_head_request = 'HEAD' === $method;
+		$request         = new WP_REST_Request( $method, '/wp/v2/users' );
+
+		$filter = new MockAction();
+
+		add_filter( 'pre_user_query', array( $filter, 'filter' ), 10, 2 );
+
+		$response = rest_get_server()->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		if ( $is_head_request ) {
+			$this->assertNull( $response->get_data() );
+		} else {
+			$this->assertNotEmpty( $response->get_data() );
+		}
+
+		$args = $filter->get_args();
+		$this->assertTrue( isset( $args[0][0] ), 'Query parameters were not captured.' );
+		$this->assertInstanceOf( WP_User_Query::class, $args[0][0], 'Query parameters were not captured.' );
+
+		/** @var WP_Term_Query $query */
+		$query = $args[0][0];
+
+		if ( $is_head_request ) {
+			$this->assertArrayHasKey( 'fields', $query->query_vars, 'The fields parameter is not set in the query vars.' );
+			$this->assertSame( 'id', $query->query_vars['fields'], 'The query must fetch only user IDs.' );
+		} else {
+			$this->assertTrue(
+				! array_key_exists( 'fields', $query->query_vars ) || 'ids' !== $query->query_vars['fields'],
+				'The fields parameter should not be forced to "ids" for non-HEAD requests.'
+			);
+		}
+
+		if ( ! $is_head_request ) {
+			return;
+		}
+
+		global $wpdb;
+		$users_table = preg_quote( $wpdb->users, '/' );
+		$pattern     = '/SELECT SQL_CALC_FOUND_ROWS wptests_users.ID\n\s+FROM\s+' . $users_table . '\n\s+WHERE 1=1/is';
+
+		// Assert that the SQL query only fetches the term_id column.
+		$this->assertMatchesRegularExpression( $pattern, $query->request, 'The SQL query does not match the expected string.' );
 	}
 
 	protected function check_user_data( $user, $data, $context, $links ) {
