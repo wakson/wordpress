@@ -6201,6 +6201,35 @@ EOF;
 	}
 
 	/**
+	 * Test generated markup for an image with no width does not get auto-sizes.
+	 *
+	 * @ticket 61847
+	 * @ticket 62413
+	 */
+	public function test_image_without_width_does_not_have_auto_sizes() {
+		// Disable automatic width calculation.
+		add_filter(
+			'wp_get_attachment_image_src',
+			function ( $img_data ) {
+				return array( $img_data[0], null, null );
+			}
+		);
+
+		$this->assertStringNotContainsString(
+			'sizes="auto, ',
+			wp_get_attachment_image(
+				self::$large_id,
+				'large',
+				false,
+				array(
+					'loading' => 'lazy',
+				)
+			),
+			'Failed asserting that the sizes attribute for an image without a width does not include "auto".'
+		);
+	}
+
+	/**
 	 * Test content filtered markup with lazy loading gets auto-sizes.
 	 *
 	 * @ticket 61847
