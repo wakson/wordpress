@@ -694,6 +694,7 @@ body.trashing #publish-settings {
 	height: auto;
 	max-height: none;
 	overflow: auto;
+	overflow-x: hidden;
 	transform: none;
 }
 
