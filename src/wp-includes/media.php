@@ -1141,6 +1141,7 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = f
 		if (
 			isset( $attr['loading'] ) &&
 			'lazy' === $attr['loading'] &&
+			isset( $attr['width'] ) &&
 			isset( $attr['sizes'] ) &&
 			! wp_sizes_attribute_includes_valid_auto( $attr['sizes'] )
 		) {
@@ -1993,8 +1994,14 @@ function wp_img_tag_add_auto_sizes( string $image ): string {
 	}
 
 	// Bail early if the image is not lazy-loaded.
-	$value = $processor->get_attribute( 'loading' );
-	if ( ! is_string( $value ) || 'lazy' !== strtolower( trim( $value, " \t\f\r\n" ) ) ) {
+	$loading = $processor->get_attribute( 'loading' );
+	if ( ! is_string( $loading ) || 'lazy' !== strtolower( trim( $loading, " \t\f\r\n" ) ) ) {
+		return $image;
+	}
+
+	// Bail early if the image doesn't have a width attribute.
+	$width = $processor->get_attribute( 'width' );
+	if ( ! is_string( $width ) ) {
 		return $image;
 	}
 
