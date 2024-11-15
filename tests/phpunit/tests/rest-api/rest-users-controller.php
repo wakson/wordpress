@@ -1528,8 +1528,8 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 				$this->assertSame( 'Sorry, that username already exists!', $error['message'] );
 			} else {
 				$expected = '<strong>Error:</strong> This email address is already registered. ' .
-				            '<a href="http://rest.wordpress.org/wp-login.php">Log in</a> with ' .
-				            'this address or choose another one.';
+							'<a href="http://rest.wordpress.org/wp-login.php">Log in</a> with ' .
+							'this address or choose another one.';
 				$this->assertSame( $expected, $error['message'] );
 			}
 		}
@@ -2433,7 +2433,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2459,7 +2458,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2494,7 +2492,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2523,7 +2520,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2600,7 +2596,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2626,7 +2621,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2669,7 +2663,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2698,7 +2691,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2727,7 +2719,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
@@ -2756,7 +2747,6 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		// Not implemented in multisite.
 		if ( is_multisite() ) {
 			$this->assertErrorResponse( 'rest_cannot_delete', $response, 501 );
-
 			return;
 		}
 
