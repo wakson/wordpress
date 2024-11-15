@@ -3245,5 +3245,4 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 		return;
 	}
-
 }
