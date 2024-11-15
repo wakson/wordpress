@@ -6278,7 +6278,7 @@ EOF;
 		// Force lazy loading attribute.
 		add_filter( 'wp_img_tag_add_loading_attr', '__return_true' );
 		// Disable auto-sizes attribute.
-		add_filter( 'wp_image_tag_auto_sizes_enabled', '__return_false' );
+		add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 
 		$this->assertStringNotContainsString(
 			'sizes="auto, ',
@@ -6297,7 +6297,7 @@ EOF;
 	 */
 	public function test_generated_image_does_not_have_auto_sizes_when_disabled() {
 		// Disable auto-sizes attribute.
-		add_filter( 'wp_image_tag_auto_sizes_enabled', '__return_false' );
+		add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 
 		$this->assertStringNotContainsString(
 			'sizes="auto, ',
