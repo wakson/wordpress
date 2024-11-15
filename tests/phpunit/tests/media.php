@@ -6215,16 +6215,17 @@ EOF;
 			}
 		);
 
+		$markup = wp_get_attachment_image( self::$large_id, 'large', false, array( 'loading' => false ) );
+
+		$this->assertStringNotContainsString(
+			'width="',
+			$markup,
+			'Failed confirming the test markup did not include a width attribute.'
+		);
+
 		$this->assertStringNotContainsString(
 			'sizes="auto, ',
-			wp_get_attachment_image(
-				self::$large_id,
-				'large',
-				false,
-				array(
-					'loading' => 'lazy',
-				)
-			),
+			$markup,
 			'Failed asserting that the sizes attribute for an image without a width does not include "auto".'
 		);
 	}
