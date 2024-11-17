@@ -137,8 +137,7 @@ function update_post_thumbnail_cache( $wp_query = null ) {
 	}
 
 	if ( ! empty( $thumb_ids ) ) {
-		_prime_post_caches( $thumb_ids, false, false );
-		wp_lazyload_post_meta( $thumb_ids );
+		_prime_post_caches( $thumb_ids, false, true );
 	}
 
 	$wp_query->thumbnails_cached = true;
