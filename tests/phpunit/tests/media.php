@@ -6697,14 +6697,14 @@ EOF;
 	public function test_output_format_mappings_with_plugin_overrides() {
 		add_filter(
 			'image_editor_output_format',
-			function( $formats ) {
+			function ( $formats ) {
 				$formats['image/heic'] = 'image/webp';
 				$formats['image/jpeg'] = 'image/avif';
 				return $formats;
 			}
 		);
 
-		$filename = 'test-image.heic';
+		$filename  = 'test-image.heic';
 		$mime_type = 'image/heic';
 
 		$expected = array(
