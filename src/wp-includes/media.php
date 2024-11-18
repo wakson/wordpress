@@ -2020,7 +2020,7 @@ function wp_img_tag_add_auto_sizes( string $image ): string {
 	 * As such, it still makes sense to ensure presence of a width attribute here in order to use `sizes=auto`.
 	 */
 	$width = $processor->get_attribute( 'width' );
-	if ( ! is_string( $width ) ) {
+	if ( ! is_string( $width ) || '' === $width ) {
 		return $image;
 	}
 
