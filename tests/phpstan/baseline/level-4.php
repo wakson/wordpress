@@ -428,12 +428,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/class-wp-upgrader.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_dashboard_quota\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/dashboard.php',
-];
-$ignoreErrors[] = [
 	// identifier: booleanAnd.leftAlwaysTrue
 	'message' => '#^Left side of && is always true\\.$#',
 	'count' => 3,
@@ -460,12 +454,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	// identifier: return.unusedType
 	'message' => '#^Function WP_Filesystem\\(\\) never returns null so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/file.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function validate_file_to_edit\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/file.php',
 ];
@@ -560,12 +548,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/image.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function register_importer\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/import.php',
-];
-$ignoreErrors[] = [
 	// identifier: function.impossibleType
 	'message' => '#^Call to function is_array\\(\\) with WP_Post will always evaluate to false\\.$#',
 	'count' => 1,
@@ -650,12 +632,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/misc.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function site_admin_notice\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/ms.php',
-];
-$ignoreErrors[] = [
 	// identifier: while.alwaysTrue
 	'message' => '#^While loop condition is always true\\.$#',
 	'count' => 1,
@@ -674,28 +650,10 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/plugin.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function uninstall_plugin\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/plugin.php',
-];
-$ignoreErrors[] = [
 	// identifier: booleanAnd.alwaysFalse
 	'message' => '#^Result of && is always false\\.$#',
 	'count' => 2,
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/plugin.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function _fix_attachment_links\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/post.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function write_post\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/post.php',
 ];
 $ignoreErrors[] = [
 	// identifier: isset.offset
@@ -724,12 +682,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	// identifier: function.impossibleType
 	'message' => '#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function parent_dropdown\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/template.php',
 ];
@@ -794,40 +746,10 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/update-core.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function maintenance_nag\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/update.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function update_nag\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/update.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_plugin_update_row\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/update.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_theme_update_row\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/update.php',
-];
-$ignoreErrors[] = [
 	// identifier: booleanOr.rightAlwaysFalse
 	'message' => '#^Right side of \\|\\| is always false\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/update.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function make_site_theme_from_default\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/upgrade.php',
 ];
 $ignoreErrors[] = [
 	// identifier: if.alwaysTrue
@@ -956,12 +878,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/themes.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_list_authors\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/author-template.php',
-];
-$ignoreErrors[] = [
 	// identifier: isset.property
 	'message' => '#^Property WP_Block_Type\\:\\:\\$editor_style_handles \\(array\\<string\\>\\) in isset\\(\\) is not nullable\\.$#',
 	'count' => 1,
@@ -1046,22 +962,10 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/canonical.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function add_role\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/capabilities.php',
-];
-$ignoreErrors[] = [
 	// identifier: deadCode.unreachable
 	'message' => '#^Unreachable statement \\- code above always terminates\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/capabilities.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function the_terms\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/category-template.php',
 ];
 $ignoreErrors[] = [
 	// identifier: booleanNot.alwaysFalse
@@ -1838,12 +1742,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-xmlrpc-server.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Method wp_xmlrpc_server\\:\\:_toggle_sticky\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-xmlrpc-server.php',
-];
-$ignoreErrors[] = [
 	// identifier: function.impossibleType
 	'message' => '#^Call to function is_float\\(\\) with string will always evaluate to false\\.$#',
 	'count' => 1,
@@ -1916,18 +1814,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/class-wpdb.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function comment_class\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/comment-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function trackback_url\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/comment-template.php',
-];
-$ignoreErrors[] = [
 	// identifier: if.alwaysTrue
 	'message' => '#^If condition is always true\\.$#',
 	'count' => 1,
@@ -1938,18 +1824,6 @@ $ignoreErrors[] = [
 	'message' => '#^Strict comparison using \\=\\=\\= between false and string will always evaluate to false\\.$#',
 	'count' => 3,
 	'path' => __DIR__ . '/../../../src/wp-includes/comment-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function do_trackbacks\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/comment.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_update_comment_count\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/comment.php',
 ];
 $ignoreErrors[] = [
 	// identifier: if.alwaysTrue
@@ -1992,12 +1866,6 @@ $ignoreErrors[] = [
 	'message' => '#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/compat.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_cron\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/cron.php',
 ];
 $ignoreErrors[] = [
 	// identifier: booleanAnd.alwaysFalse
@@ -2192,12 +2060,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/formatting.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function sanitize_hex_color\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/formatting.php',
-];
-$ignoreErrors[] = [
 	// identifier: if.alwaysFalse
 	'message' => '#^If condition is always false\\.$#',
 	'count' => 1,
@@ -2230,24 +2092,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	// identifier: elseif.unreachable
 	'message' => '#^Elseif branch is unreachable because previous condition is always true\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function do_enclose\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_ext2type\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_update_php_annotation\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
 ];
@@ -2313,73 +2157,13 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	// identifier: return.unusedType
-	'message' => '#^Function get_footer\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_header\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_sidebar\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_template_part\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function post_type_archive_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
 	'message' => '#^Function single_cat_title\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
 ];
 $ignoreErrors[] = [
 	// identifier: return.unusedType
-	'message' => '#^Function single_month_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function single_post_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
 	'message' => '#^Function single_tag_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function single_term_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_get_archives\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_login_form\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
 ];
@@ -2540,66 +2324,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/l10n/class-wp-translation-file-mo.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function edit_term_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_next_comments_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_next_posts_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_next_posts_page_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_previous_comments_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_previous_posts_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_previous_posts_page_link\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function next_posts\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function paginate_comments_links\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function previous_posts\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/link-template.php',
-];
-$ignoreErrors[] = [
 	// identifier: booleanNot.alwaysFalse
 	'message' => '#^Negated boolean expression is always false\\.$#',
 	'count' => 1,
@@ -2714,18 +2438,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/ms-files.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function add_existing_user_to_blog\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/ms-functions.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_active_blog_for_user\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/ms-functions.php',
-];
-$ignoreErrors[] = [
 	// identifier: deadCode.unreachable
 	'message' => '#^Unreachable statement \\- code above always terminates\\.$#',
 	'count' => 1,
@@ -2828,18 +2540,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/post-template.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function the_title\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/post-template.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function the_title_attribute\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/post-template.php',
-];
-$ignoreErrors[] = [
 	// identifier: function.impossibleType
 	'message' => '#^Call to function is_array\\(\\) with non\\-falsy\\-string will always evaluate to false\\.$#',
 	'count' => 1,
@@ -2848,18 +2548,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	// identifier: function.impossibleType
 	'message' => '#^Call to function is_numeric\\(\\) with array will always evaluate to false\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/post.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function get_post_custom_keys\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/post.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_untrash_post_comments\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/post.php',
 ];
@@ -3098,22 +2786,10 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/revision.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_save_post_revision\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/revision.php',
-];
-$ignoreErrors[] = [
 	// identifier: booleanAnd.leftAlwaysTrue
 	'message' => '#^Left side of && is always true\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/rewrite.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function print_late_styles\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/script-loader.php',
 ];
 $ignoreErrors[] = [
 	// identifier: booleanNot.alwaysTrue
@@ -3206,12 +2882,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/taxonomy.php',
 ];
 $ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function update_object_term_cache\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/taxonomy.php',
-];
-$ignoreErrors[] = [
 	// identifier: empty.offset
 	'message' => '#^Offset \'template\' on array\\{0\\: false, label\\: string\\|WP_Taxonomy, args\\: array\\{\\}\\}\\|array\\{name\\: string, label\\: string\\|WP_Taxonomy, labels\\: stdClass, description\\: string, public\\: bool, publicly_queryable\\: bool, hierarchical\\: bool, show_ui\\: bool, \\.\\.\\.\\} in empty\\(\\) does not exist\\.$#',
 	'count' => 1,
@@ -3243,19 +2913,7 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	// identifier: return.unusedType
-	'message' => '#^Function add_theme_support\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/theme.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
 	'message' => '#^Function remove_theme_support\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/theme.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function unregister_default_headers\\(\\) never returns void so it can be removed from the return type\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/theme.php',
 ];
@@ -3276,12 +2934,6 @@ $ignoreErrors[] = [
 	'message' => '#^Right side of \\|\\| is always false\\.$#',
 	'count' => 3,
 	'path' => __DIR__ . '/../../../src/wp-includes/update.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function update_user_caches\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/user.php',
 ];
 $ignoreErrors[] = [
 	// identifier: booleanNot.alwaysTrue
@@ -3306,18 +2958,6 @@ $ignoreErrors[] = [
 	'message' => '#^Right side of && is always true\\.$#',
 	'count' => 2,
 	'path' => __DIR__ . '/../../../src/wp-includes/user.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_sidebar_description\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/widgets.php',
-];
-$ignoreErrors[] = [
-	// identifier: return.unusedType
-	'message' => '#^Function wp_widget_description\\(\\) never returns void so it can be removed from the return type\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/widgets.php',
 ];
 $ignoreErrors[] = [
 	// identifier: booleanAnd.alwaysFalse

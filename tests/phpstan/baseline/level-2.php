@@ -1281,7 +1281,7 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	// identifier: binaryOp.invalid
-	'message' => '#^Binary operation "\\+" between array\\|int and 1 results in an error\\.$#',
+	'message' => '#^Binary operation "\\+" between array\\|int\\<min, \\-1\\>\\|int\\<1, max\\> and 1 results in an error\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/comment.php',
 ];
