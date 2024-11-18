@@ -396,6 +396,23 @@ if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists.
 		'<abbr>UTC</abbr>'
 	);
 	?>
+	<script type="application/javascript">
+	(function($){
+
+	const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const $tzSelect = $('#timezone_string');
+
+	if ( $tzSelect.val() !== browserTz ) {
+		$tzSelect.after( '<p>Your browser timezone is currently set to <code>' + browserTz + '</code> -- <a class="updateTzSelectToBrowser" href="#">would you like to update the WordPress timezone to match?</a></p>' );
+		$tzSelect.parent().find('.updateTzSelectToBrowser').on( 'click', function(e){
+			e.preventDefault();
+			$tzSelect.val( browserTz );
+			$(this).parents('p').text('Updated!').fadeOut('slow');
+		})
+	}
+
+})(jQuery);
+</script>
 </p>
 
 <p class="timezone-info">
