@@ -3215,8 +3215,8 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			$this->assertSame( 'id', $query->query_vars['fields'], 'The query must fetch only user IDs.' );
 		} else {
 			$this->assertTrue(
-				! array_key_exists( 'fields', $query->query_vars ) || 'ids' !== $query->query_vars['fields'],
-				'The fields parameter should not be forced to "ids" for non-HEAD requests.'
+				! array_key_exists( 'fields', $query->query_vars ) || 'id' !== $query->query_vars['fields'],
+				'The fields parameter should not be forced to "id" for non-HEAD requests.'
 			);
 		}
 
