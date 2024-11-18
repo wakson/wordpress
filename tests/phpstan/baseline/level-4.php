@@ -530,6 +530,12 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/image.php',
 ];
 $ignoreErrors[] = [
+	// identifier: elseif.alwaysTrue
+	'message' => '#^Elseif condition is always true\\.$#',
+	'count' => 1,
+	'path' => __DIR__ . '/../../../src/wp-admin/includes/image.php',
+];
+$ignoreErrors[] = [
 	// identifier: booleanAnd.alwaysFalse
 	'message' => '#^Result of && is always false\\.$#',
 	'count' => 2,

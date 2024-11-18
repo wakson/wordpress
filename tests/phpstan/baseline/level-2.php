@@ -1016,12 +1016,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-block.php',
 ];
 $ignoreErrors[] = [
-	// identifier: arguments.count
-	'message' => '#^Method WP_HTML_Tag_Processor\\:\\:get_tag\\(\\) invoked with 1 parameter, 0 required\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-block.php',
-];
-$ignoreErrors[] = [
 	// identifier: staticClassAccess.privateMethod
 	'message' => '#^Unsafe call to private method WP_Classic_To_Block_Menu_Converter\\:\\:group_by_parent_id\\(\\) through static\\:\\:\\.$#',
 	'count' => 1,
@@ -1658,12 +1652,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/nav-menu.php',
 ];
 $ignoreErrors[] = [
-	// identifier: greater.invalid
-	'message' => '#^Comparison operation "\\>" between 0\\|array\\<int, string\\>\\|string\\|null and int results in an error\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/option.php',
-];
-$ignoreErrors[] = [
 	// identifier: parameter.defaultValue
 	'message' => '#^Default value of the parameter \\#3 \\$deprecated \\(\'\'\\) of function unregister_setting\\(\\) is incompatible with type callable\\(\\)\\: mixed\\.$#',
 	'count' => 1,
@@ -1796,12 +1784,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php',
 ];
 $ignoreErrors[] = [
-	// identifier: property.private
-	'message' => '#^Access to private property WP_User_Query\\:\\:\\$results\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-users-controller.php',
-];
-$ignoreErrors[] = [
 	// identifier: property.nonObject
 	'message' => '#^Cannot access property \\$post_content on array\\|object\\.$#',
 	'count' => 1,
@@ -1882,12 +1864,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	// identifier: property.notFound
 	'message' => '#^Access to an undefined property object\\:\\:\\$ID\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/user.php',
-];
-$ignoreErrors[] = [
-	// identifier: binaryOp.invalid
-	'message' => '#^Binary operation "\\-" between string and int\\<1, max\\> results in an error\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/user.php',
 ];

@@ -385,11 +385,5 @@ $ignoreErrors[] = [
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/widgets.php',
 ];
-$ignoreErrors[] = [
-	// identifier: isset.variable
-	'message' => '#^Variable \\$HTTP_RAW_POST_DATA in isset\\(\\) always exists and is not nullable\\.$#',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/xmlrpc.php',
-];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
