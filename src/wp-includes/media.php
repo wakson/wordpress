@@ -1985,6 +1985,17 @@ function wp_filter_content_tags( $content, $context = null ) {
  * @return string The filtered image tag markup.
  */
 function wp_img_tag_add_auto_sizes( string $image ): string {
+	/**
+	 * Filters whether auto-sizes for lazy loaded images is enabled.
+	 *
+	 * @since 6.7.1
+	 *
+	 * @param boolean $enabled Whether auto-sizes for lazy loaded images is enabled.
+	 */
+	if ( ! apply_filters( 'wp_img_tag_add_auto_sizes', true ) ) {
+		return $image;
+	}
+
 	$processor = new WP_HTML_Tag_Processor( $image );
 
 	// Bail if there is no IMG tag.
@@ -1993,8 +2004,14 @@ function wp_img_tag_add_auto_sizes( string $image ): string {
 	}
 
 	// Bail early if the image is not lazy-loaded.
-	$value = $processor->get_attribute( 'loading' );
-	if ( ! is_string( $value ) || 'lazy' !== strtolower( trim( $value, " \t\f\r\n" ) ) ) {
+	$loading = $processor->get_attribute( 'loading' );
+	if ( ! is_string( $loading ) || 'lazy' !== strtolower( trim( $loading, " \t\f\r\n" ) ) ) {
+		return $image;
+	}
+
+	// Bail early if the image doesn't have a width attribute.
+	$width = $processor->get_attribute( 'width' );
+	if ( ! is_string( $width ) ) {
 		return $image;
 	}
 
