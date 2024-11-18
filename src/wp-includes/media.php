@@ -2066,6 +2066,12 @@ function wp_sizes_attribute_includes_valid_auto( string $sizes_attr ): bool {
  * @see https://core.trac.wordpress.org/ticket/62413
  */
 function wp_print_auto_sizes_contain_css_fix() {
+	/** This filter is documented in wp-includes/media.php */
+	$add_auto_sizes = apply_filters( 'wp_img_tag_add_auto_sizes', true );
+	if ( ! $add_auto_sizes ) {
+		return;
+	}
+
 	?>
 	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
 	<?php
