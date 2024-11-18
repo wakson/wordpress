@@ -219,8 +219,25 @@ function login_header( $title = null, $message = '', $wp_error = null ) {
 	endif;
 	?>
 	<div id="login">
-		<h1 role="presentation" class="wp-login-logo"><a href="<?php echo esc_url( $login_header_url ); ?>"><?php echo esc_html( $login_header_text ); ?></a></h1>
+		<h1 role="presentation" class="wp-login-logo">
+			<a href="<?php echo esc_url( $login_header_url ); ?>">
+				<?php
+				echo wp_kses(
+					$login_header_text,
+					array(
+						'br'     => array(),
+						'strong' => array(),
+						'em'     => array(),
+						'u'      => array(),
+						'i'      => array(),
+						'b'      => array(),
+					)
+				);
+				?>
+			</a>
+		</h1>
 	<?php
+
 	/**
 	 * Filters the message to display above the login form.
 	 *
