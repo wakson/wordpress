@@ -2009,7 +2009,12 @@ function wp_img_tag_add_auto_sizes( string $image ): string {
 		return $image;
 	}
 
-	// Bail early if the image doesn't have a width attribute.
+	/*
+	 * Bail early if the image doesn't have a width attribute.
+	 * Per WordPress Core itself, lazy-loaded images should always have a width attribute.
+	 * However, it is possible that lazy-loading could be added by a plugin, where we don't have that guarantee.
+	 * As such, it still makes sense to ensure presence of a width attribute here in order to use `sizes=auto`.
+	 */
 	$width = $processor->get_attribute( 'width' );
 	if ( ! is_string( $width ) ) {
 		return $image;
