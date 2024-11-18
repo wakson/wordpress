@@ -3207,7 +3207,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertTrue( isset( $args[0][0] ), 'Query parameters were not captured.' );
 		$this->assertInstanceOf( WP_User_Query::class, $args[0][0], 'Query parameters were not captured.' );
 
-		/** @var WP_Term_Query $query */
+		/** @var WP_User $query */
 		$query = $args[0][0];
 
 		if ( $is_head_request ) {
@@ -3228,7 +3228,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$users_table = preg_quote( $wpdb->users, '/' );
 		$pattern     = '/SELECT SQL_CALC_FOUND_ROWS wptests_users.ID\n\s+FROM\s+' . $users_table . '\n\s+WHERE 1=1/is';
 
-		// Assert that the SQL query only fetches the term_id column.
+		// Assert that the SQL query only fetches the id column.
 		$this->assertMatchesRegularExpression( $pattern, $query->request, 'The SQL query does not match the expected string.' );
 	}
 
