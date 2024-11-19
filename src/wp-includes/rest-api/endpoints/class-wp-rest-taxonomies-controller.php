@@ -201,6 +201,7 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.7.0
 	 * @since 5.9.0 Renamed `$taxonomy` to `$item` to match parent class for PHP 8 named parameter support.
+	 * @since 6.8.0 Expose `$args` field.
 	 *
 	 * @param WP_Taxonomy     $item    Taxonomy data.
 	 * @param WP_REST_Request $request Full details about the request.
@@ -245,6 +246,10 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 
 		if ( in_array( 'hierarchical', $fields, true ) ) {
 			$data['hierarchical'] = $taxonomy->hierarchical;
+		}
+
+		if ( in_array( 'args', $fields, true ) ) {
+			$data['args'] = isset( $taxonomy->args ) ? $taxonomy->args : new stdClass();
 		}
 
 		if ( in_array( 'rest_base', $fields, true ) ) {
@@ -316,6 +321,7 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 	 * @since 4.7.0
 	 * @since 5.0.0 The `visibility` property was added.
 	 * @since 5.9.0 The `rest_namespace` property was added.
+	 * @since 6.8.0 The `args` property was added.
 	 *
 	 * @return array Item schema data.
 	 */
@@ -329,6 +335,12 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 			'title'      => 'taxonomy',
 			'type'       => 'object',
 			'properties' => array(
+				'args'           => array(
+					'description' => __( 'Arguments automatically used inside `wp_get_object_terms()` for this taxonomy.' ),
+					'type'        => 'object',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
 				'capabilities'   => array(
 					'description' => __( 'All capabilities used by the taxonomy.' ),
 					'type'        => 'object',
