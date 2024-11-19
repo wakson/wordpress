@@ -120,7 +120,14 @@
 					"slug": "80"
 				}
 			],
-			"units": [ "%", "px", "em", "rem", "vh", "vw" ]
+			"units": [
+				"%",
+				"px",
+				"em",
+				"rem",
+				"vh",
+				"vw"
+			]
 		},
 		"typography": {
 			"writingMode": true,
@@ -396,12 +403,12 @@
 				}
 			},
 			"core/post-date": {
-				"color": {
+				"color":{
 					"text": "var:preset|color|accent-4"
 				},
 				"elements": {
 					"link": {
-						"color": {
+						"color" : {
 							"text": "var:preset|color|accent-4"
 						},
 						":hover": {
@@ -541,7 +548,7 @@
 								"left": "1.125rem"
 							}
 						},
-						":hover": {
+						":hover" : {
 							"border": {
 								"color": "transparent"
 							}
@@ -720,6 +727,7 @@
 			"area": "header",
 			"name": "header-large-title",
 			"title": "Header with large title"
+
 		},
 		{
 			"area": "footer",
@@ -745,7 +753,7 @@
 	"customTemplates": [
 		{
 			"name": "page-no-title",
-			"postTypes": [ "page" ],
+			"postTypes": ["page"],
 			"title": "Page No Title"
 		}
 	]
