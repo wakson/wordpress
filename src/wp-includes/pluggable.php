@@ -2510,8 +2510,7 @@ if ( ! function_exists( 'wp_salt' ) ) :
 		 * option. These options will be primed to avoid repeated
 		 * database requests for undefined salts.
 		 */
-		static $options_are_primed = false;
-
+		static $options_are_primed;
 		if ( ! $options_are_primed ) {
 			$options_to_prime = array();
 			foreach ( array( 'auth', 'secure_auth', 'logged_in', 'nonce' ) as $key ) {
