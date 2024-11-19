@@ -1438,7 +1438,7 @@ function delete_term_meta( $term_id, $meta_key, $meta_value = '' ) {
  *               False for an invalid `$term_id` (non-numeric, zero, or negative value).
  *               An empty array if a valid but non-existing term ID is passed and `$single` is false.
  *               An empty string if a valid but non-existing term ID is passed and `$single` is true.
- * 				 Note: Non-serialized values are returned as strings:
+ *               Note: Non-serialized values are returned as strings:
  *               - false values are returned as empty strings ('')
  *               - true values are returned as '1'
  *               - numbers are returned as strings
