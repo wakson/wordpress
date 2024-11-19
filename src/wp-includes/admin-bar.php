@@ -205,7 +205,7 @@ function wp_admin_bar_wp_menu( $wp_admin_bar ) {
 			'parent' => 'wp-logo-external',
 			'id'     => 'learn',
 			'title'  => __( 'Learn WordPress' ),
-			'href'   => 'https://learn.wordpress.org/',
+			'href'   => add_query_arg( 'locale', get_locale(), 'https://learn.wordpress.org/' ),
 		)
 	);
 
