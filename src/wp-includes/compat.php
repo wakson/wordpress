@@ -418,6 +418,9 @@ if ( ! function_exists( 'array_key_first' ) ) {
 		foreach ( $array as $key => $value ) {
 			return $key;
 		}
+
+		// Return null for an empty array.
+		return null;
 	}
 }
 
