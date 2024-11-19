@@ -1088,6 +1088,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 	 * Retrieves the query params for collections.
 	 *
 	 * @since 4.7.0
+	 * @since 6.8.0 Added 'term_order' to the list of allowed orderby parameters.
 	 *
 	 * @return array Collection parameters.
 	 */
@@ -1145,6 +1146,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 				'term_group',
 				'description',
 				'count',
+				'term_order',
 			),
 		);
 
