@@ -48,6 +48,33 @@
 					"name": "Accent 6",
 					"slug": "accent-6"
 				}
+			],
+			"duotone": [
+				{
+					"colors": [ "#111111", "#ffffff" ],
+					"slug": "duotone-1",
+					"name": "Black and white"
+				},
+				{
+					"colors": [ "#111111", "#C2A990" ],
+					"slug": "duotone-2",
+					"name": "Black and sandstone"
+				},
+				{
+					"colors": [ "#111111", "#D8613C" ],
+					"slug": "duotone-3",
+					"name": "Black and rust"
+				},
+				{
+					"colors": [ "#111111", "#B1C5A4" ],
+					"slug": "duotone-4",
+					"name": "Black and sage"
+				},
+				{
+					"colors": [ "#111111", "#B5BDBC" ],
+					"slug": "duotone-5",
+					"name": "Black and pastel blue"
+				}
 			]
 		},
 		"layout": {
@@ -93,14 +120,7 @@
 					"slug": "80"
 				}
 			],
-			"units": [
-				"%",
-				"px",
-				"em",
-				"rem",
-				"vh",
-				"vw"
-			]
+			"units": [ "%", "px", "em", "rem", "vh", "vw" ]
 		},
 		"typography": {
 			"writingMode": true,
@@ -376,12 +396,12 @@
 				}
 			},
 			"core/post-date": {
-				"color":{
+				"color": {
 					"text": "var:preset|color|accent-4"
 				},
 				"elements": {
 					"link": {
-						"color" : {
+						"color": {
 							"text": "var:preset|color|accent-4"
 						},
 						":hover": {
@@ -521,7 +541,7 @@
 								"left": "1.125rem"
 							}
 						},
-						":hover" : {
+						":hover": {
 							"border": {
 								"color": "transparent"
 							}
@@ -700,7 +720,6 @@
 			"area": "header",
 			"name": "header-large-title",
 			"title": "Header with large title"
-
 		},
 		{
 			"area": "footer",
@@ -726,7 +745,7 @@
 	"customTemplates": [
 		{
 			"name": "page-no-title",
-			"postTypes": ["page"],
+			"postTypes": [ "page" ],
 			"title": "Page No Title"
 		}
 	]
