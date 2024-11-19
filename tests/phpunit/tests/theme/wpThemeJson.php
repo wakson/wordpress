@@ -2506,7 +2506,7 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 	 * This test covers `get_block_nodes` with the `$include_node_paths_only`
 	 * and `include_block_style_variations` options.
 	 *
-	 * @ticket 62399	 
+	 * @ticket 62399
 	 */
 	public function test_return_block_node_paths_with_variations() {
 		$theme_json = new ReflectionClass( 'WP_Theme_JSON' );
