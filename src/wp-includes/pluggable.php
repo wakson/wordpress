@@ -2479,9 +2479,7 @@ if ( ! function_exists( 'wp_salt' ) ) :
 
 		static $duplicated_keys;
 		if ( null === $duplicated_keys ) {
-			$duplicated_keys = array(
-				'put your unique phrase here' => true,
-			);
+			$duplicated_keys = array();
 
 			foreach ( array( 'AUTH', 'SECURE_AUTH', 'LOGGED_IN', 'NONCE', 'SECRET' ) as $first ) {
 				foreach ( array( 'KEY', 'SALT' ) as $second ) {
@@ -2492,6 +2490,8 @@ if ( ! function_exists( 'wp_salt' ) ) :
 					$duplicated_keys[ $value ] = isset( $duplicated_keys[ $value ] );
 				}
 			}
+
+			$duplicated_keys['put your unique phrase here'] = true;
 
 			/*
 			 * translators: This string should only be translated if wp-config-sample.php is localized.
