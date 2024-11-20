@@ -433,7 +433,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * The context node may impact how a fragment of HTML is parsed. For example, consider the HTML
 	 * fragment `<td />Inside TD?</td>`.
 	 *
-	 * With a BODY context node results in the following tree:
+	 * A BODY context node will produce the following tree:
 	 *
 	 *     └─#text Inside TD?
 	 *
@@ -460,8 +460,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 *
 	 * @see https://html.spec.whatwg.org/multipage/parsing.html#html-fragment-parsing-algorithm
 	 *
-	 * @param string $html     Input HTML fragment to process.
-	 * @return static|null     The created processor if successful, otherwise null.
+	 * @param string $html Input HTML fragment to process.
+	 * @return static|null The created processor if successful, otherwise null.
 	 */
 	public function create_fragment_at_current_node( string $html ) {
 		if ( $this->get_token_type() !== '#tag' ) {
