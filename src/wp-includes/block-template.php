@@ -37,7 +37,7 @@ function wp_render_empty_block_template_warning( $block_template ) {
 			</a>
 		</div>',
 		$block_template->title,
-		__( 'This page is blank because the theme\'s template is empty. You can reset or customize it in the Site Editor.' ),
+		__( 'This page is blank because the template is empty. You can reset or customize it in the Site Editor.' ),
 		get_edit_post_link( $block_template->wp_id, 'site-editor' ),
 		__( 'Edit template' )
 	);
