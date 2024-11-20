@@ -476,7 +476,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 */
 		if (
 			'html' === $namespace &&
-			in_array( $this->get_tag(), array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
+			in_array( $this->current_element->token->node_name, array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
 		) {
 			return null;
 		}
@@ -486,24 +486,20 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return null;
 		}
 
-		$fragment_processor->change_parsing_namespace(
-			$this->current_element->token->integration_node_type ? 'html' : $namespace
-		);
-
 		$fragment_processor->compat_mode = $this->compat_mode;
 
 		$fragment_processor->context_node                = clone $this->state->current_token;
 		$fragment_processor->context_node->bookmark_name = 'context-node';
 		$fragment_processor->context_node->on_destroy    = null;
 
-		$context_element = array( $fragment_processor->context_node->node_name, array() );
+		$fragment_processor->state->context_node = array( $fragment_processor->context_node->node_name, array() );
 		foreach ( $this->get_attribute_names_with_prefix( '' ) as $name => $value ) {
-			$context_element[1][ $name ] = $value;
+			$fragment_processor->state->context_node[1][ $name ] = $value;
 		}
 
 		$fragment_processor->breadcrumbs = array( 'HTML', $fragment_processor->context_node->node_name );
 
-		if ( 'TEMPLATE' === $context_element[0] ) {
+		if ( 'TEMPLATE' === $fragment_processor->context_node->node_name ) {
 			$fragment_processor->state->stack_of_template_insertion_modes[] = WP_HTML_Processor_State::INSERTION_MODE_IN_TEMPLATE;
 		}
 
@@ -525,6 +521,15 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		}
 
 		$fragment_processor->state->encoding_confidence = 'irrelevant';
+
+		/*
+		 * Update the parsing namespace near the end of the process.
+		 * This is important so that any push/pop from the stack of open
+		 * elements does not change the parsing namespace.
+		 */
+		$fragment_processor->change_parsing_namespace(
+			$this->current_element->token->integration_node_type ? 'html' : $namespace
+		);
 
 		return $fragment_processor;
 	}
