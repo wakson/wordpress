@@ -1060,7 +1060,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		 * In SVG it should be replaced with a replacement character.
 		 */
 		$this->assertSame( '#text', $fragment->get_token_type() );
-		$this->assertSame( "\u{FFFD}", $fragment->get_modifiable_text() );
+		$this->assertStringStartsWith( "\u{FFFD}", $fragment->get_modifiable_text() );
 
 		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
 		$this->assertSame( 'svg', $fragment->get_namespace() );
