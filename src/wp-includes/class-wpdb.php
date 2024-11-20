@@ -944,7 +944,7 @@ class wpdb {
 	public function set_sql_mode( $modes = array(), $dbh = null ) {
 		if ( is_null( $dbh ) ) {
 			$dbh = $this->dbh;
- 	    }
+		}
 		if ( empty( $modes ) ) {
 			$res = mysqli_query( $dbh, 'SELECT @@SESSION.sql_mode' );
 
