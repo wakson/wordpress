@@ -471,14 +471,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$namespace = $this->current_element->token->namespace;
 
 		/*
-		 * Prevent creating fragments at "self-contained" nodes.
-		 *
-		 * @see https://github.com/WordPress/wordpress-develop/pull/7141
-		 * @see https://github.com/WordPress/wordpress-develop/pull/7198
+		 * Prevent creating fragments at nodes that require a special tokenizer state.
+		 * This is unsupported by the HTML Processor.
 		 */
 		if (
 			'html' === $namespace &&
-			in_array( $this->get_tag(), array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP' ), true )
+			in_array( $this->get_tag(), array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
 		) {
 			return null;
 		}
