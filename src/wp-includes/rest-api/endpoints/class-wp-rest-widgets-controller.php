@@ -690,9 +690,8 @@ class WP_REST_Widgets_Controller extends WP_REST_Controller {
 			'instance'      => null,
 		);
 
-		if ( 
-			'wp_inactive_widgets' !== $sidebar_id &&
-			rest_is_field_included( 'rendered', $fields )
+		if ( 'wp_inactive_widgets' !== $sidebar_id
+			&& rest_is_field_included( 'rendered', $fields )
 		) {
 			$prepared['rendered'] = trim( wp_render_widget( $widget_id, $sidebar_id ) );
 		}
