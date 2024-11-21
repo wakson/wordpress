@@ -450,6 +450,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 *
 	 * @see https://html.spec.whatwg.org/multipage/parsing.html#html-fragment-parsing-algorithm
 	 *
+	 * @since 6.8.0
+	 *
 	 * @param string $html     Input HTML fragment to process.
 	 * @return static|null     The created processor if successful, otherwise null.
 	 */
@@ -522,9 +524,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->state->encoding_confidence = 'irrelevant';
 
 		/*
-		 * Updating the parsing namespace near the end of the process.
-		 * This is important so that any push/pop from the stack of open
-		 * elements does not change the parsing namespace.
+		 * The parsing namespace is set at the end of the process.
+		 * This is important so that it is not modified by other operations.
 		 */
 		$fragment_processor->change_parsing_namespace(
 			$this->current_element->token->integration_node_type ? 'html' : $namespace
