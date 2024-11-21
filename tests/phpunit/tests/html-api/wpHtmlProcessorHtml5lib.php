@@ -153,7 +153,6 @@ class Tests_HtmlApi_Html5lib extends WP_UnitTestCase {
 	 * @return string|null Tree structure of parsed HTML, if supported, else null.
 	 */
 	private static function build_tree_representation( ?string $fragment_context, string $html ) {
-		$processor = null;
 		if ( $fragment_context ) {
 			/*
 			 * If the string of characters starts with "svg ", the context
