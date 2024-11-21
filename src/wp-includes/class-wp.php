@@ -546,7 +546,7 @@ class WP {
 				$headers['X-Pingback'] = get_bloginfo( 'pingback_url', 'display' );
 			}
 
-			// Send no-cache headers for password protected posts to avoid reverse-proxy or CDNs caching.
+			// Send nocache headers for password protected posts to avoid reverse-proxy or CDNs caching.
 			if ( post_password_required( $post ) ) {
 				$headers = array_merge( $headers, wp_get_nocache_headers() );
 			}
