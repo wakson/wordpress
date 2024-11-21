@@ -325,16 +325,15 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		while ( $context_processor->next_tag() ) {
 			$context_processor->set_bookmark( 'final_node' );
 		}
+
 		if ( $context_processor->has_bookmark( 'final_node' ) ) {
 			$context_processor->seek( 'final_node' );
-			$processor = $context_processor->create_fragment_at_current_node( $html );
-		}
-
-		if ( ! isset( $processor ) ) {
+		} else {
+			_doing_it_wrong( __METHOD__, __( 'No valid context element was detected.' ), '6.8.0' );
 			return null;
 		}
 
-		return $processor;
+		return $context_processor->create_fragment_at_current_node( $html );
 	}
 
 	/**
@@ -477,10 +476,29 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 */
 	public function create_fragment_at_current_node( string $html ) {
 		if ( $this->get_token_type() !== '#tag' || $this->is_tag_closer() ) {
+			_doing_it_wrong(
+				__METHOD__,
+				__( 'The context element must be a start tag.' ),
+				'6.8.0'
+			);
 			return null;
 		}
 
+		$tag_name  = $this->current_element->token->node_name;
 		$namespace = $this->current_element->token->namespace;
+
+		if ( 'html' === $namespace && self::is_void( $tag_name ) ) {
+			_doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					// translators: %s: A tag name like INPUT or BR.
+					__( 'The context element cannot be a void element, found "%s".' ),
+					$tag_name
+				),
+				'6.8.0'
+			);
+			return null;
+		}
 
 		/*
 		 * Prevent creating fragments at nodes that require a special tokenizer state.
@@ -488,8 +506,17 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 */
 		if (
 			'html' === $namespace &&
-			in_array( $this->current_element->token->node_name, array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
+			in_array( $tag_name, array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
 		) {
+			_doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					// translators: %s: A tag name like IFRAME or TEXTAREA.
+					__( 'The context element "%s" is not supported.' ),
+					$tag_name
+				),
+				'6.8.0'
+			);
 			return null;
 		}
 
