@@ -573,8 +573,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->state->encoding_confidence = 'irrelevant';
 
 		/*
-		 * The parsing namespace is set at the end of the process.
-		 * This is important so that it is not modified by other operations.
+		 * Update the parsing namespace near the end of the process.
+		 * This is important so that any push/pop from the stack of open
+		 * elements does not change the parsing namespace.
 		 */
 		$fragment_processor->change_parsing_namespace(
 			$this->current_element->token->integration_node_type ? 'html' : $namespace
