@@ -493,8 +493,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->context_node->on_destroy    = null;
 
 		$fragment_processor->state->context_node = array( $fragment_processor->context_node->node_name, array() );
-		foreach ( $this->get_attribute_names_with_prefix( '' ) as $name => $value ) {
-			$fragment_processor->state->context_node[1][ $name ] = $value;
+
+		$attribute_names = $this->get_attribute_names_with_prefix( '' );
+		if ( null !== $attribute_names ) {
+			foreach ( $attribute_names as $name ) {
+				$fragment_processor->state->context_node[1][ $name ] = $this->get_attribute( $name );
+			}
 		}
 
 		$fragment_processor->breadcrumbs = array( 'HTML', $fragment_processor->context_node->node_name );
