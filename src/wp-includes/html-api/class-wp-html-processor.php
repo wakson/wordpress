@@ -423,7 +423,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * The context node may impact how a fragment of HTML is parsed. For example, consider the HTML
 	 * fragment `<td />Inside TD?</td>`.
 	 *
-	 * With a BODY context node results in the following tree:
+	 * A BODY context node will produce the following tree:
 	 *
 	 *     └─#text Inside TD?
 	 *
@@ -452,8 +452,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 *
 	 * @since 6.8.0
 	 *
-	 * @param string $html     Input HTML fragment to process.
-	 * @return static|null     The created processor if successful, otherwise null.
+	 * @param string $html Input HTML fragment to process.
+	 * @return static|null The created processor if successful, otherwise null.
 	 */
 	public function create_fragment_at_current_node( string $html ) {
 		if ( $this->get_token_type() !== '#tag' ) {
@@ -463,14 +463,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$namespace = $this->current_element->token->namespace;
 
 		/*
-		 * Prevent creating fragments at "self-contained" nodes.
-		 *
-		 * @see https://github.com/WordPress/wordpress-develop/pull/7141
-		 * @see https://github.com/WordPress/wordpress-develop/pull/7198
+		 * Prevent creating fragments at nodes that require a special tokenizer state.
+		 * This is unsupported by the HTML Processor.
 		 */
 		if (
 			'html' === $namespace &&
-			in_array( $this->get_tag(), array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP' ), true )
+			in_array( $this->current_element->token->node_name, array( 'IFRAME', 'NOEMBED', 'NOFRAMES', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'XMP', 'PLAINTEXT' ), true )
 		) {
 			return null;
 		}
@@ -494,8 +492,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->context_node->on_destroy    = null;
 
 		$fragment_processor->state->context_node = array( $fragment_processor->context_node->node_name, array() );
-		foreach ( $this->get_attribute_names_with_prefix( '' ) as $name => $value ) {
-			$fragment_processor->state->context_node[1][ $name ] = $value;
+
+		$attribute_names = $this->get_attribute_names_with_prefix( '' );
+		if ( null !== $attribute_names ) {
+			foreach ( $attribute_names as $name ) {
+				$fragment_processor->state->context_node[1][ $name ] = $this->get_attribute( $name );
+			}
 		}
 
 		$fragment_processor->breadcrumbs = array( 'HTML', $fragment_processor->context_node->node_name );
@@ -665,6 +667,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				'6.4.0'
 			);
 			return false;
+		}
+
+		if ( isset( $query['tag_name'] ) ) {
+			$query['tag_name'] = strtoupper( $query['tag_name'] );
 		}
 
 		$needs_class = ( isset( $query['class_name'] ) && is_string( $query['class_name'] ) )
@@ -1301,14 +1307,17 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				}
 
 				if ( null !== $doctype->public_identifier ) {
-					$html .= " PUBLIC \"{$doctype->public_identifier}\"";
+					$quote = str_contains( $doctype->public_identifier, '"' ) ? "'" : '"';
+					$html .= " PUBLIC {$quote}{$doctype->public_identifier}{$quote}";
 				}
 				if ( null !== $doctype->system_identifier ) {
 					if ( null === $doctype->public_identifier ) {
 						$html .= ' SYSTEM';
 					}
-					$html .= " \"{$doctype->system_identifier}\"";
+					$quote = str_contains( $doctype->system_identifier, '"' ) ? "'" : '"';
+					$html .= " {$quote}{$doctype->system_identifier}{$quote}";
 				}
+
 				$html .= '>';
 				break;
 
