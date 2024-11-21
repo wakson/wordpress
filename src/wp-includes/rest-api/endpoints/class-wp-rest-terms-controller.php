@@ -301,7 +301,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 		 * those params override the `$args` passed to this function.
 		 */
 		if ( isset( $taxonomy_obj->args ) && is_array( $taxonomy_obj->args ) ) {
-			$args = array_merge( $args, $taxonomy_obj->args );
+			$prepared_args = array_merge( $prepared_args, $taxonomy_obj->args );
 		}
 
 		/**
