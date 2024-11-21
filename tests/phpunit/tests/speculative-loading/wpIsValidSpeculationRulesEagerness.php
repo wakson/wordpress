@@ -28,13 +28,13 @@ class Tests_Speculative_Loading_wpIsValidSpeculationRulesEagerness extends WP_Un
 
 	public function data_is_valid_speculation_rules_eagerness(): array {
 		return array(
-			'conservative'  => array( 'conservative', true ),
-			'moderate'      => array( 'moderate', true ),
-			'eager'         => array( 'eager', true ),
-			'auto'          => array( 'auto', false ),
-			'none'          => array( 'none', false ),
-			'42'            => array( 42, false ),
-			'empty string'  => array( '', false ),
+			'conservative' => array( 'conservative', true ),
+			'moderate'     => array( 'moderate', true ),
+			'eager'        => array( 'eager', true ),
+			'auto'         => array( 'auto', false ),
+			'none'         => array( 'none', false ),
+			'42'           => array( 42, false ),
+			'empty string' => array( '', false ),
 		);
 	}
 }

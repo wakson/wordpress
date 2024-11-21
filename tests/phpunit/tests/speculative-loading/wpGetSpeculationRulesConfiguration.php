@@ -177,7 +177,7 @@ class Tests_Speculative_Loading_wpGetSpeculationRulesConfiguration extends WP_Un
 			),
 			'missing eagerness'      => array(
 				array(
-					'mode'      => 'prerender',
+					'mode' => 'prerender',
 				),
 				array(
 					'mode'      => 'prerender',
