@@ -130,7 +130,7 @@ jobs:
         os: [ ubuntu-latest ]
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
         db-type: [ 'mariadb' ]
-        db-version: [ '10.4', '10.6', '10.11', '11.2', '11.4' ]
+        db-version: [ '10.5', '10.6', '10.11', '11.2', '11.4' ]
         multisite: [ false, true ]
         memcached: [ false ]
 
