@@ -309,7 +309,6 @@ class Tests_Speculative_Loading_wpGetSpeculationRules extends WP_UnitTestCase {
 			}
 		);
 
-
 		$rules              = wp_get_speculation_rules( $this->prerender_config );
 		$href_exclude_paths = $rules['prerender'][0]['where']['and'][1]['not']['href_matches'];
 		$this->assertSame(
