@@ -279,12 +279,37 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * form is provided because a context element may have attributes that
 	 * impact the parse, such as with a SCRIPT tag and its `type` attribute.
 	 *
+	 * Example:
+	 *
+	 *     // Usually, snippets of HTML ought to be processed in the default `<body>` context:
+	 *     $processor = WP_HTML_Processor::create_fragment( '<p>Hi</p>' );
+	 *
+	 *     // Some fragments should be processed in the correct context like this SVG:
+	 *     $processor = WP_HTML_Processor::create_fragment( '<rect width="10" height="10" />', '<svg>' );
+	 *
+	 *     // This fragment with TD tags should be processed in a TR context:
+	 *     $processor = WP_HTML_Processor::create_fragment(
+	 *         '<td>1<td>2<td>3',
+	 *         '<table><tbody><tr>'
+	 *     );
+	 *
+	 * In order to create a fragment processor at the correct location, the
+	 * provided fragment will be processed as part of a full HTML document.
+	 * The processor will search for the last opener tag in the document and
+	 * create a fragment processor at that location. The document will be
+	 * forced into "no-quirks" mode by including the HTML5 doctype.
+	 *
+	 * For advanced usage and precise control over the context element, use
+	 * `WP_HTML_Processor::create_full_processor()` and
+	 * `WP_HTML_Processor::create_fragment_at_current_node()`.
+	 *
 	 * UTF-8 is the only allowed encoding. If working with a document that
 	 * isn't UTF-8, first convert the document to UTF-8, then pass in the
 	 * converted HTML.
 	 *
 	 * @since 6.4.0
 	 * @since 6.6.0 Returns `static` instead of `self` so it can create subclass instances.
+	 * @since 6.8.0 Can create fragments with any context element.
 	 *
 	 * @param string $html     Input HTML fragment to process.
 	 * @param string $context  Context element for the fragment. Defaults to `<body>`.
