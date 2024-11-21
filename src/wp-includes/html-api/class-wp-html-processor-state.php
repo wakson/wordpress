@@ -357,17 +357,6 @@ class WP_HTML_Processor_State {
 	public $insertion_mode = self::INSERTION_MODE_INITIAL;
 
 	/**
-	 * Context node initializing fragment parser, if created as a fragment parser.
-	 *
-	 * @since 6.4.0
-	 *
-	 * @see https://html.spec.whatwg.org/#concept-frag-parse-context
-	 *
-	 * @var [string, array]|null
-	 */
-	public $context_node = null;
-
-	/**
 	 * The recognized encoding of the input byte stream.
 	 *
 	 * > The stream of code points that comprises the input to the tokenization
