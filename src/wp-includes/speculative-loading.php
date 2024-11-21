@@ -127,9 +127,12 @@ function wp_get_speculation_rules( array $configuration ): array {
 	) {
 		_doing_it_wrong(
 			__FUNCTION__,
-			sprintf(
-				esc_html__( 'The %s parameter was provided with an invalid value.' ),
-				'$configuration'
+			esc_html(
+				sprintf(
+					/* translators: %s is $configuration */
+					__( 'The %s parameter was provided with an invalid value.' ),
+					'$configuration'
+				)
 			),
 			'6.8.0'
 		);
