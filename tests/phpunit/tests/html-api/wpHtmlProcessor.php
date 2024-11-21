@@ -1117,7 +1117,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		);
 		$this->assertSame( 'P', $processor->get_tag() );
 		$this->assertTrue( $processor->is_tag_closer() );
-		$this->assertNull( $processor->create_fragment_at_current_node( '' ) );
+		$this->assertNull( $processor->create_fragment_at_current_node( '<i>fragment HTML</i>' ) );
 	}
 
 	/**
