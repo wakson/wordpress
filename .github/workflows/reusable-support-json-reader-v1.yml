@@ -1,6 +1,6 @@
 ##
 # A reusable workflow that reads the .version-support-*.json files and returns values for use in a
-# test matrix based on a WordPress version.
+# test matrix based on a given WordPress version.
 ##
 name: Determine test matrix values
 
@@ -23,7 +23,13 @@ on:
         value: ${{ jobs.mysql-versions.outputs.versions }}
 
 jobs:
-
+  # Determines the major version of WordPress being tested.
+  #
+  # The data in the JSON files are indexed by major version, so this is used to look up the appropriate support policy.
+  #
+  # Performs the following steps:
+  # - Checks out the repository
+  # - Returns the major WordPress version as an output based on the value passed to the wp-version input.
   major-wp-version:
     name: Determine major WordPress version
     runs-on: ubuntu-latest
@@ -34,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
@@ -49,6 +55,12 @@ jobs:
             echo "version=nightly" >> $GITHUB_OUTPUT
           fi
 
+  # Determines the versions of PHP supported for a version of WordPress.
+  #
+  # Performs the following steps:
+  # - Checks out the repository
+  # - Returns the versions of PHP supported for the major version of WordPress by parsing the
+  #   .version-support-php.json file and returning the values in that version's index.
   php-versions:
     name: Determine PHP versions
     runs-on: ubuntu-latest
@@ -60,7 +72,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
@@ -75,6 +87,12 @@ jobs:
             echo "versions=$(jq -r '.[ (keys[-1]) ] | @json' .version-support-php.json)" >> $GITHUB_OUTPUT
           fi
 
+  # Determines the versions of MySQL supported for a version of WordPress.
+  #
+  # Performs the following steps:
+  # - Checks out the repository
+  # - Returns the versions of MySQL supported for the major version of WordPress by parsing the
+  #   .version-support-mysql.json file and returning the values in that version's index.
   mysql-versions:
     name: Determine MySQL versions
     runs-on: ubuntu-latest
@@ -86,7 +104,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
