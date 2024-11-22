@@ -1,9 +1,9 @@
 ##
 # A reusable workflow that checks that the local Docker environment is working properly.
 #
-# This workflow is used by `trunk` and branches >= 6.7.
+# This workflow is used by `trunk` and branches >= 6.8.
 ##
-name: Test the local Docker environment
+name: Test local Docker environment
 
 on:
   workflow_call:
@@ -40,7 +40,7 @@ on:
         default: 'example.org'
 
 env:
-  LOCAL_PHP: ${{ inputs.php == 'latest' && 'latest' || inputs.php && '-fpm' }}
+  LOCAL_PHP: ${{ inputs.php == 'latest' && 'latest' || format( '{0}-fpm', inputs.php ) }}
   LOCAL_DB_TYPE: ${{ inputs.db-type }}
   LOCAL_DB_VERSION: ${{ inputs.db-version }}
   LOCAL_PHP_MEMCACHED: ${{ inputs.memcached }}
@@ -68,7 +68,7 @@ jobs:
   # - Checks out the WordPress Test reporter repository.
   # - Submit the test results to the WordPress.org host test results.
   local-docker-environment-tests:
-    name: PHP ${{ matrix.php }} / MySQL ${{ matrix.db-version }} / ${{ inputs.memcached && 'Memcached enabled' || '' }} ${{ 'example.org' != inputs.tests-domain && inputs.tests-domain || '' }}
+    name: PHP ${{ inputs.php }} / MySQL ${{ inputs.db-version }} / ${{ inputs.memcached && 'Memcached enabled' || '' }} ${{ 'example.org' != inputs.tests-domain && inputs.tests-domain || '' }}
     runs-on: ${{ inputs.os }}
     timeout-minutes: 20
 
