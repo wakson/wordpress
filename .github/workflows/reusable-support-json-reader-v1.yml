@@ -14,7 +14,7 @@ on:
     outputs:
       major-wp-version:
         description: "The major WordPress version based on the version provided in wp-version"
-        value: ${{ jobs.major-wp-version.outputs.version }}
+        value: ${{ jobs.major-wp-version.outputs.wp-version }}
       php-versions:
         description: "The PHP versions to test for the given wp-version"
         value: ${{ jobs.php-versions.outputs.versions }}
@@ -30,7 +30,7 @@ jobs:
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
     timeout-minutes: 5
     outputs:
-      version: ${{ steps.major-wp-version.outputs.major-wp-version }}
+      wp-version: ${{ steps.major-wp-version.outputs.major-wp-version }}
 
     steps:
       - name: Checkout repository
@@ -69,8 +69,8 @@ jobs:
       - name: Get supported PHP versions
         id: php-versions
         run: |
-          if [ "${{ needs.major-wp-version.outputs.version }}" != "latest" ] && [ "${{ needs.major-wp-version.outputs.version }}" != "nightly" ]; then
-            echo "versions=$(jq -r '.["${{ needs.major-wp-version.outputs.version }}"] | @json' .version-support-php.json)" >> $GITHUB_OUTPUT
+          if [ "${{ needs.major-wp-version.outputs.wp-version }}" != "latest" ] && [ "${{ needs.major-wp-version.outputs.wp-version }}" != "nightly" ]; then
+            echo "versions=$(jq -r '.["${{ needs.major-wp-version.outputs.wp-version }}"] | @json' .version-support-php.json)" >> $GITHUB_OUTPUT
           else
             echo "versions=$(jq -r '.[ (keys[-1]) ] | @json' .version-support-php.json)" >> $GITHUB_OUTPUT
           fi
