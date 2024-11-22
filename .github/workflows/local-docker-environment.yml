@@ -49,12 +49,13 @@ jobs:
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
 
   # Tests the local Docker environment.
-  docker-environment-tests-mysql:
+  environment-tests-mysql:
     name: ${{ contains( matrix.os, 'macos-' ) && 'MacOS' || contains( matrix.os, 'windows-' ) && 'Windows' || 'Linux' }}
     uses: ./.github/workflows/reusable-test-local-docker-environment-v1.yml
     permissions:
       contents: read
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
+    needs: [ build-test-matrix ]
     strategy:
       fail-fast: false
       matrix:
@@ -76,7 +77,7 @@ jobs:
     permissions:
       actions: read
       contents: read
-    needs: [ docker-environment-tests ]
+    needs: [ build-test-matrix, environment-tests-mysql ]
     if: ${{ github.repository == 'WordPress/wordpress-develop' && github.event_name != 'pull_request' && always() }}
     with:
       calling_status: ${{ contains( needs.*.result, 'cancelled' ) && 'cancelled' || contains( needs.*.result, 'failure' ) && 'failure' || 'success' }}
@@ -91,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
-    needs: [ docker-environment-tests, slack-notifications ]
+    needs: [ build-test-matrix, environment-tests-mysql, slack-notifications ]
     if: |
       always() &&
       github.repository == 'WordPress/wordpress-develop' &&
