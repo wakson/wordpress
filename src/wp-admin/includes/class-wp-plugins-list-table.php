@@ -502,7 +502,7 @@ class WP_Plugins_List_Table extends WP_List_Table {
 			$plugin_info = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( isset( $plugin_info['last_updated'] ) ) {
-				return esc_html( date( 'M j, Y', strtotime( $plugin_info['last_updated'] ) ) );
+				return esc_html( gmdate( 'M j, Y', strtotime( $plugin_info['last_updated'] ) ) );
 			}
 		}
 
