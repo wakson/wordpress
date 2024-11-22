@@ -85,9 +85,12 @@ class GetCalendarTest extends WP_UnitTestCase {
 	 */
 	public function testGet_calendar_day_of_week_starts_sunday() {
 
-		add_filter( 'pre_option_start_of_week', function () {
-			return 0;
-		} );
+		add_filter(
+			'pre_option_start_of_week',
+			function () {
+				return 0;
+			}
+		);
 
 		$calendar_html = get_calendar( true, false );
 
