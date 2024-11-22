@@ -50,7 +50,7 @@ jobs:
 
   # Tests the local Docker environment.
   environment-tests-mysql:
-    name: ${{ contains( matrix.os, 'macos-' ) && 'MacOS' || contains( matrix.os, 'windows-' ) && 'Windows' || 'Linux' }}
+    name: PHP ${{ matrix.php }} / MySQL ${{ matrix.db-version }}
     uses: ./.github/workflows/reusable-test-local-docker-environment-v1.yml
     permissions:
       contents: read
