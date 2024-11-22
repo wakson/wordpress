@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - trunk
-      - '[6-9].[0-9]'
+      - '[6-9].[8-9]'
+      - '[7-9].[0-9]'
   pull_request:
     branches:
       - trunk
-      - '[6-9].[0-9]'
+      - '[6-9].[8-9]'
+      - '[7-9].[0-9]'
     paths:
       # Any changes to Docker related files.
       - '.env.example'
@@ -19,8 +21,11 @@ on:
       - 'package*.json'
       # These files configure Composer. Changes could affect the local environment.
       - 'composer.*'
+      # These files define the versions to test.
+      - '.version-support-*.json'
       # Changes to this and related workflow files should always be verified.
       - '.github/workflows/local-docker-environment.yml'
+      - '.github/workflows/reusable-support-json-reader-v1.yml'
       - '.github/workflows/reusable-test-docker-environment-v1.yml'
   workflow_dispatch:
 
@@ -42,11 +47,13 @@ jobs:
   #
   build-test-matrix:
     name: Build Test Matrix
-    uses: desrosj/wordpress-develop/.github/workflows/reusable-support-json-reader-v1.yml@add/docker-environment-testing
+    uses: WordPress/wordpress-develop/.github/workflows/reusable-support-json-reader-v1.yml@trunk
     permissions:
       contents: read
     secrets: inherit
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
+    with:
+      wp-version: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
 
   # Tests the local Docker environment.
   environment-tests-mysql:
