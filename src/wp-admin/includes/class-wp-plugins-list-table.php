@@ -478,23 +478,23 @@ class WP_Plugins_List_Table extends WP_List_Table {
 			$columns['auto-updates'] = __( 'Automatic Updates' );
 		}
 
-     	$columns['last-updated'] = __( 'Last Updated' );
+		$columns['last-updated'] = __( 'Last Updated' );
 
 		return $columns;
 	}
 	protected function column_last_updated( $plugin_file ) {
-	
+
 		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_file );
-	
+
 		$plugin_uri = isset( $plugin_data['PluginURI'] ) ? $plugin_data['PluginURI'] : '';
-	
+
 		$plugin_slug = basename( parse_url( $plugin_uri, PHP_URL_PATH ) );
-	
+
 		$http_args = array(
 			'timeout'    => 10,
 			'user-agent' => 'WordPress/' . wp_get_wp_version() . '; ' . home_url( '/' ),
 		);
-    
+
 		// Fetch plugin info from WordPress API
 		$response = wp_remote_get( "https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]=$plugin_slug", $http_args );
 
@@ -1414,10 +1414,9 @@ class WP_Plugins_List_Table extends WP_List_Table {
 					echo '</td>';
 
 					break;
-				case 'last-updated':	
-
+				case 'last-updated':
 					echo "<td class='column-last-updated{$extra_classes}'>";
-					
+
 					$html = array();
 
 					$last_updated = $this->column_last_updated( $plugin_file );
@@ -1429,7 +1428,7 @@ class WP_Plugins_List_Table extends WP_List_Table {
 					$html = implode( '', $html );
 
 					echo apply_filters( 'plugin_last_updated_setting_html', $html, $plugin_file, $plugin_data );
-					
+
 					echo '</td>';
 
 					break;
@@ -1518,7 +1517,7 @@ class WP_Plugins_List_Table extends WP_List_Table {
 			);
 
 			echo '</td></tr>';
-			
+
 		}
 
 		/**
