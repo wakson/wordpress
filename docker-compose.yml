@@ -5,6 +5,7 @@ services:
   ##
   wordpress-develop:
     image: nginx:alpine
+    platform: linux/amd64
 
     networks:
       - wpdevnet
@@ -33,6 +34,7 @@ services:
   ##
   php:
     image: wordpressdevelop/php:${LOCAL_PHP-latest}
+    platform: linux/amd64
 
     networks:
       - wpdevnet
@@ -64,6 +66,7 @@ services:
   ##
   mysql:
     image: ${LOCAL_DB_TYPE-mysql}:${LOCAL_DB_VERSION-latest}
+    platform: linux/amd64
 
     networks:
       - wpdevnet
@@ -92,6 +95,7 @@ services:
   ##
   cli:
     image: wordpressdevelop/cli:${LOCAL_PHP-latest}
+    platform: linux/amd64
 
     networks:
       - wpdevnet
@@ -122,6 +126,7 @@ services:
   ##
   memcached:
     image: memcached
+    platform: linux/amd64
 
     networks:
       - wpdevnet
