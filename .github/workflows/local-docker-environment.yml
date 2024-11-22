@@ -79,6 +79,11 @@ jobs:
             db-version: '9.0'
           - php: '7.3'
             db-version: '9.0'
+          # Memcached container does not currently work with PHP >= 8.3
+          - php: '8.3'
+            memcached: true
+          - php: '8.4'
+            memcached: true
 
     with:
       os: ${{ matrix.os }}
