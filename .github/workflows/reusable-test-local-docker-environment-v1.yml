@@ -74,6 +74,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      - name: Set up Docker
+        if: ${{ contains( 'windows', inputs.os ) }}
+        uses: crazy-max/ghaction-setup-docker@v3
+
       - name: Configure environment variables
         run: |
           echo "PHP_FPM_UID=$(id -u)" >> $GITHUB_ENV

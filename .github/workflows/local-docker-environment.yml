@@ -21,7 +21,7 @@ on:
       # Changes to this and related workflow files should always be verified.
       - '.github/workflows/local-docker-environment.yml'
       - '.github/workflows/reusable-support-json-reader-v1.yml'
-      - '.github/workflows/reusable-test-docker-environment-v1.yml'        
+      - '.github/workflows/reusable-test-docker-environment-v1.yml'
   pull_request:
     branches:
       - trunk
@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-latest, windows-latest ]
         memcached: [ false, true ]
         php: ${{ fromJSON( needs.build-test-matrix.outputs.php-versions ) }}
         db-version: ${{ fromJSON( needs.build-test-matrix.outputs.mysql-versions ) }}
