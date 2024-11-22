@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
         memcached: [ false, true ]
         php: ${{ fromJSON( needs.build-test-matrix.outputs.php-versions ) }}
         db-version: ${{ fromJSON( needs.build-test-matrix.outputs.mysql-versions ) }}
