@@ -42,7 +42,7 @@ jobs:
   #
   build-test-matrix:
     name: Build Test Matrix
-    uses: desrosj/wordpress-develop/.github/workflows/reusable-support-json-reader-v1.yml@add/docker-environment-tests
+    uses: desrosj/wordpress-develop/.github/workflows/reusable-support-json-reader-v1.yml@add/docker-environment-testing
     permissions:
       contents: read
     secrets: inherit
