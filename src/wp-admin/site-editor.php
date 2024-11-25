@@ -72,7 +72,14 @@ if ( isset( $_GET['postId'] ) && $post_type_param ) {
 			$block_template = get_block_template( $_GET['postId'] );
 
 			if ( null === $block_template ) {
-				wp_die( __( 'Invalid template ID.' ) );
+				wp_die(
+					__( 'Invalid template ID.' ),
+					'',
+					array(
+						'link_url'  => add_query_arg( array( 'postType' => 'wp_template' ), admin_url( 'site-editor.php' ) ),
+						'link_text' => __( 'Return to templates page' ),
+					)
+				);
 			}
 			break;
 
