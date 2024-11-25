@@ -7,6 +7,24 @@
 			"defaultDuotone": false,
 			"defaultGradients": false,
 			"defaultPalette": false,
+			"duotone": [
+				{
+					"colors": [
+						"#111111",
+						"#FFFFFF"
+					],
+					"name": "Grayscale Filter",
+					"slug": "grayscale-filter"
+				},
+				{
+					"colors": [
+						"#686868",
+						"#FBFAF3"
+					],
+					"name": "Sepia Filter",
+					"slug": "sepia-filter"
+				}
+			],
 			"palette": [
 				{
 					"color": "#FFFFFF",
@@ -47,33 +65,6 @@
 					"color": "color-mix(in srgb, currentColor 20%, transparent)",
 					"name": "Accent 6",
 					"slug": "accent-6"
-				}
-			],
-			"duotone": [
-				{
-					"colors": [ "#111111", "#ffffff" ],
-					"slug": "duotone-1",
-					"name": "Black and white"
-				},
-				{
-					"colors": [ "#111111", "#C2A990" ],
-					"slug": "duotone-2",
-					"name": "Black and sandstone"
-				},
-				{
-					"colors": [ "#111111", "#D8613C" ],
-					"slug": "duotone-3",
-					"name": "Black and rust"
-				},
-				{
-					"colors": [ "#111111", "#B1C5A4" ],
-					"slug": "duotone-4",
-					"name": "Black and sage"
-				},
-				{
-					"colors": [ "#111111", "#B5BDBC" ],
-					"slug": "duotone-5",
-					"name": "Black and pastel blue"
 				}
 			]
 		},
