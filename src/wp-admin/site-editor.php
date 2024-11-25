@@ -42,7 +42,14 @@ if ( isset( $_GET['postId'] ) && $post_type_param ) {
 			$post = get_post( (int) $_GET['postId'] );
 
 			if ( null === $post || 'page' !== get_post_type( $post ) ) {
-				wp_die( __( 'Invalid page ID.' ) );
+				wp_die(
+					__( 'Invalid page ID.' ),
+					'',
+					array(
+						'link_url'  => admin_url( 'site-editor.php' ),
+						'link_text' => __( 'Return to site editor' ),
+					)
+				);
 			}
 			break;
 
