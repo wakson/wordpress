@@ -87,7 +87,14 @@ if ( isset( $_GET['postId'] ) && $post_type_param ) {
 			$block_template = get_block_template( $_GET['postId'], 'wp_template_part' );
 
 			if ( null === $block_template ) {
-				wp_die( __( 'Invalid template part ID.' ) );
+				wp_die(
+					__( 'Invalid template part ID.' ),
+					'',
+					array(
+						'link_url'  => add_query_arg( array( 'postType' => 'wp_template_part' ), admin_url( 'site-editor.php' ) ),
+						'link_text' => __( 'Return to template parts page' ),
+					)
+				);
 			}
 			break;
 	}
