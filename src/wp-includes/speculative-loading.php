@@ -12,10 +12,10 @@
  *
  * @since 6.8.0
  *
- * @return array<string, string>|false Associative array with 'mode' and 'eagerness' keys, or false if speculative
- *                                     loading is disabled.
+ * @return array<string, string>|null Associative array with 'mode' and 'eagerness' keys, or null if speculative
+ *                                    loading is disabled.
  */
-function wp_get_speculation_rules_configuration() {
+function wp_get_speculation_rules_configuration(): ?array {
 	$config = array(
 		'mode'      => 'auto',
 		'eagerness' => 'auto',
@@ -37,17 +37,17 @@ function wp_get_speculation_rules_configuration() {
 	 * @since 6.8.0
 	 * @see https://developer.chrome.com/docs/web-platform/prerender-pages
 	 *
-	 * @param array<string, string>|false $config Associative array with 'mode' and 'eagerness' keys. The default value
-	 *                                            for both of them is 'auto'. Other possible values for 'mode' are
-	 *                                            'prefetch' and 'prerender'. Other possible values for 'eagerness' are
-	 *                                            'eager', 'moderate', and 'conservative'. Alternatively, you may
-	 *                                            return `false` to disable speculative loading entirely.
+	 * @param array<string, string>|null $config Associative array with 'mode' and 'eagerness' keys. The default value
+	 *                                           for both of them is 'auto'. Other possible values for 'mode' are
+	 *                                           'prefetch' and 'prerender'. Other possible values for 'eagerness' are
+	 *                                           'eager', 'moderate', and 'conservative'. Alternatively, you may
+	 *                                           return `null` to disable speculative loading entirely.
 	 */
 	$config = apply_filters( 'wp_speculation_rules_configuration', $config );
 
-	// Allow the value `false` to indicate that speculative loading is disabled.
-	if ( false === $config ) {
-		return false;
+	// Allow the value `null` to indicate that speculative loading is disabled.
+	if ( null === $config ) {
+		return null;
 	}
 
 	// Sanitize the configuration and replace 'auto' with current defaults.
@@ -235,7 +235,7 @@ function wp_get_speculation_rules( array $configuration ): array {
  */
 function wp_print_speculation_rules(): void {
 	$configuration = wp_get_speculation_rules_configuration();
-	if ( false === $configuration ) {
+	if ( null === $configuration ) {
 		return;
 	}
 

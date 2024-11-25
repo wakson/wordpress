@@ -155,9 +155,16 @@ class Tests_Speculative_Loading_wpGetSpeculationRulesConfiguration extends WP_Un
 					'eagerness' => 'conservative',
 				),
 			),
+			'null'                  => array(
+				null,
+				null,
+			),
 			'false'                  => array(
 				false,
-				false,
+				array(
+					'mode'      => 'prefetch',
+					'eagerness' => 'conservative',
+				),
 			),
 			'true'                   => array(
 				true,
