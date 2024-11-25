@@ -1310,9 +1310,7 @@ $( function() {
 		$document.trigger( 'wp-notice-added' );
 	};
 
-	/**
-	 * Stores initial pagination value for comparison.
-	 */
+	// Stores initial pagination value for comparison.
 	var initialPagedValue = document.querySelector( '#current-page-selector' ).value;
 
 	$( '.bulkactions' ).parents( 'form' ).on( 'submit', function( event ) {
