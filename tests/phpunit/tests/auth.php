@@ -192,7 +192,7 @@ class Tests_Auth extends WP_UnitTestCase {
 	 * The test verifies this by reducing the cost used to generate the hash, therefore mimicing a hash
 	 * which was generated prior to the default cost being increased.
 	 *
-	 * Notably the bcrypt cost may get increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
+	 * Notably the bcrypt cost was increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
 	 *
 	 * @ticket 21022
 	 * @ticket 50027
@@ -818,7 +818,7 @@ class Tests_Auth extends WP_UnitTestCase {
 	 * The `wp_password_needs_rehash()` function is just a wrapper around `password_needs_rehash()`, but this ensures
 	 * that it works as expected.
 	 *
-	 * Notably the bcrypt cost may get increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
+	 * Notably the bcrypt cost was increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
 	 *
 	 * @ticket 21022
 	 * @ticket 50027
