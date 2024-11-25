@@ -1133,6 +1133,21 @@ function apply_block_hooks_to_content( $content, $context, $callback = 'insert_h
 }
 
 /**
+ * Runs the Block Hooks algorithm on the post content of the current post.
+ *
+ * @since 6.8.0
+ *
+ * @param string $content
+ * @return string The post content, with Block Hooks applied.
+ */
+function apply_block_hooks_to_post_content( $content ) {
+	// The `the_content` filter does not provide the post that the content is coming from.
+	// However, we can infer it by calling `get_post()`, which will return the current post
+	// if no post ID is provided.
+	return apply_block_hooks_to_content( $content, get_post(), 'insert_hooked_blocks' );
+}
+
+/**
  * Accepts the serialized markup of a block and its inner blocks, and returns serialized markup of the inner blocks.
  *
  * @since 6.6.0
