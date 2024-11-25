@@ -57,7 +57,14 @@ if ( isset( $_GET['postId'] ) && $post_type_param ) {
 			$post = get_post( (int) $_GET['postId'] );
 
 			if ( null === $post || 'wp_block' !== get_post_type( $post ) ) {
-				wp_die( __( 'Invalid pattern ID.' ) );
+				wp_die(
+					__( 'Invalid pattern ID.' ),
+					'',
+					array(
+						'link_url'  => add_query_arg( array( 'postType' => 'wp_block' ), admin_url( 'site-editor.php' ) ),
+						'link_text' => __( 'Return to patterns page' ),
+					)
+				);
 			}
 			break;
 
