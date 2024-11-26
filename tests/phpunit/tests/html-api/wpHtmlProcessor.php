@@ -133,7 +133,7 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 
 			// Create a bookmark inside of that stack.
 			if ( null !== $processor->get_attribute( 'two' ) ) {
-				$processor->set_bookmark( 'two' );
+				$this->assertTrue( $processor->set_bookmark( 'two' ) );
 				break;
 			}
 		}
@@ -562,6 +562,31 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensures that expects_closer works for void-like elements in foreign content.
+	 *
+	 * For example, `<svg><input>text` creates an `svg:input` that contains a text node.
+	 * This input should not be treated as a void tag and _should_ expect a close tag.
+	 *
+	 * @dataProvider data_void_tags
+	 *
+	 * @ticket 62363
+	 */
+	public function test_expects_closer_foreign_content_not_void( string $void_tag ) {
+		$processor = WP_HTML_Processor::create_fragment( "<svg><{$void_tag}>" );
+
+		$this->assertTrue( $processor->next_tag( $void_tag ) );
+
+		// Some void-like tags will close the SVG element and be HTML tags.
+		if ( $processor->get_namespace() === 'svg' ) {
+			$this->assertSame( array( 'HTML', 'BODY', 'SVG', $void_tag ), $processor->get_breadcrumbs() );
+			$this->assertTrue( $processor->expects_closer() );
+		} else {
+			$this->assertSame( array( 'HTML', 'BODY', $void_tag ), $processor->get_breadcrumbs() );
+			$this->assertFalse( $processor->expects_closer() );
+		}
+	}
+
+	/**
 	 * Ensures that self-closing foreign SCRIPT elements are properly found.
 	 *
 	 * @ticket 61576
@@ -862,5 +887,251 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 			$processor->get_namespace(),
 			'Found the wrong namespace for the transformed "IMAGE"/"IMG" element.'
 		);
+	}
+
+	/**
+	 * Ensures that the processor stops correctly on a FORM tag closer token.
+	 *
+	 * Form tag closers have complicated conditions. There was a bug where the processor
+	 * would not stop correctly on a FORM tag closer token. Ensure this token is reachable.
+	 *
+	 * @ticket 61576
+	 */
+	public function test_ensure_form_tag_closer_token_is_reachable() {
+		$processor = WP_HTML_Processor::create_fragment( '<form></form>' );
+
+		// Advance to </form>.
+		$processor->next_token();
+		$processor->next_token();
+
+		$this->assertSame( 'FORM', $processor->get_tag() );
+		$this->assertTrue( $processor->is_tag_closer() );
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array
+	 */
+	public function data_html_processor_with_extended_next_token() {
+		return array(
+			'single_instance_per_tag'   => array(
+				'html'                  => '
+					<html>
+						<head>
+							<meta charset="utf-8">
+							<title>Hello World</title>
+						</head>
+						<body>
+							<h1>Hello World!</h1>
+							<img src="example.png">
+							<p>Each tag should occur only once in this document.<!--Closing P tag omitted intentionally.-->
+							<footer>The end.</footer>
+						</body>
+					</html>
+				',
+				'expected_token_counts' => array(
+					'+HTML'    => 1,
+					'+HEAD'    => 1,
+					'#text'    => 14,
+					'+META'    => 1,
+					'+TITLE'   => 1,
+					'-HEAD'    => 1,
+					'+BODY'    => 1,
+					'+H1'      => 1,
+					'-H1'      => 1,
+					'+IMG'     => 1,
+					'+P'       => 1,
+					'#comment' => 1,
+					'-P'       => 1,
+					'+FOOTER'  => 1,
+					'-FOOTER'  => 1,
+					'-BODY'    => 1,
+					'-HTML'    => 1,
+					''         => 1,
+				),
+			),
+
+			'multiple_tag_instances'    => array(
+				'html'                  => '
+					<html>
+						<body>
+							<h1>Hello World!</h1>
+							<p>First
+							<p>Second
+							<p>Third
+							<ul>
+								<li>1
+								<li>2
+								<li>3
+							</ul>
+						</body>
+					</html>
+				',
+				'expected_token_counts' => array(
+					'+HTML' => 1,
+					'+HEAD' => 1,
+					'-HEAD' => 1,
+					'+BODY' => 1,
+					'#text' => 13,
+					'+H1'   => 1,
+					'-H1'   => 1,
+					'+P'    => 3,
+					'-P'    => 3,
+					'+UL'   => 1,
+					'+LI'   => 3,
+					'-LI'   => 3,
+					'-UL'   => 1,
+					'-BODY' => 1,
+					'-HTML' => 1,
+					''      => 1,
+				),
+			),
+
+			'extreme_nested_formatting' => array(
+				'html'                  => '
+					<html>
+						<body>
+							<p>
+								<strong><em><strike><i><b><u>FORMAT</u></b></i></strike></em></strong>
+							</p>
+						</body>
+					</html>
+				',
+				'expected_token_counts' => array(
+					'+HTML'   => 1,
+					'+HEAD'   => 1,
+					'-HEAD'   => 1,
+					'+BODY'   => 1,
+					'#text'   => 7,
+					'+P'      => 1,
+					'+STRONG' => 1,
+					'+EM'     => 1,
+					'+STRIKE' => 1,
+					'+I'      => 1,
+					'+B'      => 1,
+					'+U'      => 1,
+					'-U'      => 1,
+					'-B'      => 1,
+					'-I'      => 1,
+					'-STRIKE' => 1,
+					'-EM'     => 1,
+					'-STRONG' => 1,
+					'-P'      => 1,
+					'-BODY'   => 1,
+					'-HTML'   => 1,
+					''        => 1,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Ensures that subclasses to WP_HTML_Processor can do bookkeeping by extending the next_token() method.
+	 *
+	 * @ticket 62269
+	 * @dataProvider data_html_processor_with_extended_next_token
+	 */
+	public function test_ensure_next_token_method_extensibility( $html, $expected_token_counts ) {
+		require_once DIR_TESTDATA . '/html-api/token-counting-html-processor.php';
+
+		$processor = Token_Counting_HTML_Processor::create_full_parser( $html );
+		while ( $processor->next_tag() ) {
+			continue;
+		}
+
+		$this->assertEquals( $expected_token_counts, $processor->token_seen_count, 'Snapshot: ' . var_export( $processor->token_seen_count, true ) );
+	}
+
+	/**
+	 * @ticket 62357
+	 */
+	public function test_create_fragment_at_current_node_in_foreign_content() {
+		$processor = WP_HTML_Processor::create_full_parser( '<svg>' );
+		$this->assertTrue( $processor->next_tag( 'SVG' ) );
+
+		$fragment = $processor->create_fragment_at_current_node( "\0preceded-by-nul-byte<rect /><circle></circle><foreignobject><div></div></foreignobject><g>" );
+
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+		$this->assertTrue( $fragment->next_token() );
+
+		/*
+		 * In HTML parsing, a nul byte would be ignored.
+		 * In SVG it should be replaced with a replacement character.
+		 */
+		$this->assertSame( '#text', $fragment->get_token_type() );
+		$this->assertSame( "\u{FFFD}", $fragment->get_modifiable_text() );
+
+		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+
+		$this->assertTrue( $fragment->next_tag( 'CIRCLE' ) );
+		$this->assertSame( array( 'HTML', 'SVG', 'CIRCLE' ), $fragment->get_breadcrumbs() );
+		$this->assertTrue( $fragment->next_tag( 'foreignObject' ) );
+		$this->assertSame( 'svg', $fragment->get_namespace() );
+	}
+
+	/**
+	 * @ticket 62357
+	 */
+	public function test_create_fragment_at_current_node_in_foreign_content_integration_point() {
+		$processor = WP_HTML_Processor::create_full_parser( '<svg><foreignObject>' );
+		$this->assertTrue( $processor->next_tag( 'foreignObject' ) );
+
+		$fragment = $processor->create_fragment_at_current_node( "<image>\0not-preceded-by-nul-byte<rect />" );
+
+		// Nothing has been processed, the html namespace should be used for parsing as an integration point.
+		$this->assertSame( 'html', $fragment->get_namespace() );
+
+		// HTML parsing transforms IMAGE into IMG.
+		$this->assertTrue( $fragment->next_tag( 'IMG' ) );
+
+		$this->assertTrue( $fragment->next_token() );
+
+		// In HTML parsing, the nul byte is ignored and the text is reached.
+		$this->assertSame( '#text', $fragment->get_token_type() );
+		$this->assertSame( 'not-preceded-by-nul-byte', $fragment->get_modifiable_text() );
+
+		/*
+		 * svg:foreignObject is an HTML integration point, so the processor should be in the HTML namespace.
+		 * RECT is an HTML element here, meaning it may have the self-closing flag but does not self-close.
+		 */
+		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
+		$this->assertSame( array( 'HTML', 'FOREIGNOBJECT', 'RECT' ), $fragment->get_breadcrumbs() );
+		$this->assertSame( 'html', $fragment->get_namespace() );
+		$this->assertTrue( $fragment->has_self_closing_flag() );
+		$this->assertTrue( $fragment->expects_closer() );
+	}
+
+	/**
+	 * @ticket 62357
+	 */
+	public function test_prevent_fragment_creation_on_closers() {
+		$processor = WP_HTML_Processor::create_full_parser( '<p></p>' );
+		$processor->next_tag( 'P' );
+		$processor->next_tag(
+			array(
+				'tag_name'    => 'P',
+				'tag_closers' => 'visit',
+			)
+		);
+		$this->assertSame( 'P', $processor->get_tag() );
+		$this->assertTrue( $processor->is_tag_closer() );
+		$this->assertNull( $processor->create_fragment_at_current_node( '<i>fragment HTML</i>' ) );
+	}
+
+	/**
+	 * Ensure that lowercased tag_name query matches tags case-insensitively.
+	 *
+	 * @group 62427
+	 */
+	public function test_next_tag_lowercase_tag_name() {
+		// The upper case <DIV> is irrelevant but illustrates the case-insentivity.
+		$processor = WP_HTML_Processor::create_fragment( '<section><DIV>' );
+		$this->assertTrue( $processor->next_tag( array( 'tag_name' => 'div' ) ) );
+
+		// The upper case <RECT> is irrelevant but illustrates the case-insentivity.
+		$processor = WP_HTML_Processor::create_fragment( '<svg><RECT>' );
+		$this->assertTrue( $processor->next_tag( array( 'tag_name' => 'rect' ) ) );
 	}
 }
