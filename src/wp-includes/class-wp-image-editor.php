@@ -243,7 +243,7 @@ abstract class WP_Image_Editor {
 	 * @since 6.8.0 The `$dims` parameter was added.
 	 *
 	 * @param int   $quality Compression Quality. Range: [1,100]
-	 * @param array $dims    Optional. Image dimensions.
+	 * @param array $dims    Optional. Image dimensions array with 'width' and 'height' keys.
 	 * @return true|WP_Error True if set successfully; WP_Error on failure.
 
 	 */

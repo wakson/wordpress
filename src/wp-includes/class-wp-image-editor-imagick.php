@@ -193,7 +193,7 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 	 * @since 6.8.0 The `$dims` parameter was added.
 	 *
 	 * @param int   $quality Compression Quality. Range: [1,100]
-	 * @param array $dims    Optional. Image dimensions.
+	 * @param array $dims    Optional. Image dimensions array with 'width' and 'height' keys.
 	 * @return true|WP_Error True if set successfully; WP_Error on failure.
 	 */
 	public function set_quality( $quality = null, $dims = array() ) {
@@ -369,7 +369,10 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 			return $this->crop( $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h );
 		}
 
-		$this->set_quality( null, array( $dst_w, $dst_h ) );
+		$this->set_quality( null, array(
+			'width' => $dst_w,
+			'height' => $dst_h,
+		) );
 
 		// Execute the resize.
 		$thumb_result = $this->thumbnail_image( $dst_w, $dst_h );
