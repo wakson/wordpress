@@ -221,10 +221,13 @@ class WP_Image_Editor_GD extends WP_Image_Editor {
 
 		list( $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h ) = $dims;
 
-		$this->set_quality( null, array(
-			'width'  => $dst_w,
-			'height' => $dst_h,
-		) );
+		$this->set_quality(
+			null,
+			array(
+				'width'  => $dst_w,
+				'height' => $dst_h,
+			)
+		);
 
 		$resized = wp_imagecreatetruecolor( $dst_w, $dst_h );
 		imagecopyresampled( $resized, $this->image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h );
