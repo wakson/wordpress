@@ -363,7 +363,7 @@ class WP_HTML_Processor_State {
 	 *
 	 * @see https://html.spec.whatwg.org/#concept-frag-parse-context
 	 *
-	 * @var [string, array]|null
+	 * @var array{string,array}|null
 	 */
 	public $context_node = null;
 
