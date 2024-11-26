@@ -2073,7 +2073,7 @@ function wp_print_auto_sizes_contain_css_fix() {
 	}
 
 	?>
-	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 300px 150px }</style>
 	<?php
 }
 
