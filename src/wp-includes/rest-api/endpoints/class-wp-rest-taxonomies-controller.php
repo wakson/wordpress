@@ -191,6 +191,10 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 			);
 		}
 
+		if ( $request->is_method( 'head' ) ) {
+			return new WP_REST_Response();
+		}
+
 		$data = $this->prepare_item_for_response( $tax_obj, $request );
 
 		return rest_ensure_response( $data );
