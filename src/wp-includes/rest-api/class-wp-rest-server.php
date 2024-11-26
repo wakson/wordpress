@@ -1410,7 +1410,6 @@ class WP_REST_Server {
 			$this->add_default_template_types_to_index( $response );
 		}
 
-
 		/**
 		 * Filters the REST API root index data.
 		 *
@@ -1497,7 +1496,7 @@ class WP_REST_Server {
 	 *
 	 * @param WP_REST_Response $response REST API response.
 	 */
-	protected function add_default_template_part_areas_to_index(WP_REST_Response $response) {
+	protected function add_default_template_part_areas_to_index( WP_REST_Response $response ) {
 		$response->data['default_template_part_areas'] = get_allowed_block_template_part_areas();
 	}
 
@@ -1508,7 +1507,7 @@ class WP_REST_Server {
 	 *
 	 * @param WP_REST_Response $response REST API response.
 	 */
-	protected function add_default_template_types_to_index(WP_REST_Response $response) {
+	protected function add_default_template_types_to_index( WP_REST_Response $response ) {
 		$indexed_template_types = array();
 		foreach ( get_default_block_template_types() as $slug => $template_type ) {
 			$template_type['slug']    = (string) $slug;
