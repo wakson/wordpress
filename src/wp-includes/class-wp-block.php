@@ -582,7 +582,12 @@ class WP_Block {
  */
 class PrivateProcessor extends WP_HTML_Processor {
 
-	public function set_inner_html( ?string $html ) {
+	/**
+	 * @param string $html
+	 *
+	 * @return bool
+	 */
+	public function set_inner_html( string $html ): bool {
 		if ( $this->is_virtual() ) {
 			return false;
 		}
@@ -607,14 +612,9 @@ class PrivateProcessor extends WP_HTML_Processor {
 		/*  return false;*/
 		/*}*/
 
-		if ( null === $html ) {
-			$html = '';
-		}
 		if ( '' !== $html ) {
-			$fragment_parser = $this->spawn_fragment_parser( $html );
-			if (
-				null === $fragment_parser
-			) {
+			$fragment_parser = $this->create_fragment_at_current_node( $html );
+			if ( null === $fragment_parser ) {
 				return false;
 			}
 
