@@ -580,9 +580,15 @@ final class WP_Interactivity_API {
 		$current       = $store;
 		foreach ( $path_segments as $path_segment ) {
 			// Special case for numeric arrays to add a length property like JavaScript arrays.
-			if ( 'length' === $path_segment && is_array( $current ) && array_is_list( $current ) ) {
-				$current = count( $current );
-				break;
+			if ( 'length' === $path_segment ) {
+				if ( is_array( $current ) && array_is_list( $current ) ) {
+					$current = count( $current );
+					break;
+				}
+				if ( is_string( $current ) ) {
+					$current = strlen( $current );
+					break;
+				}
 			}
 
 			if ( ( is_array( $current ) || $current instanceof ArrayAccess ) && isset( $current[ $path_segment ] ) ) {
