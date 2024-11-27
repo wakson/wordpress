@@ -1550,8 +1550,12 @@ HTML;
 	 * @covers ::process_directives
 	 *
 	 * @dataProvider data_length_directives
+	 *
+	 * @param mixed $value     The property value.
+	 * @param string $expected The expected property length as a string,
+	 *                         or "" if no length is expected.
 	 */
-	public function test_process_directives_string_array_length( mixed $value, string $expected ) {
+	public function test_process_directives_string_array_length( $value, string $expected ) {
 		$this->interactivity->state(
 			'myPlugin',
 			array( 'prop' => $value )
