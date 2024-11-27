@@ -326,9 +326,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$context_processor->set_bookmark( 'final_node' );
 		}
 
-		if ( $context_processor->has_bookmark( 'final_node' ) ) {
-			$context_processor->seek( 'final_node' );
-		} else {
+		if (
+			! $context_processor->has_bookmark( 'final_node' ) ||
+			! $context_processor->seek( 'final_node' )
+		) {
 			_doing_it_wrong( __METHOD__, __( 'No valid context element was detected.' ), '6.8.0' );
 			return null;
 		}
