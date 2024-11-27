@@ -2816,7 +2816,7 @@ function trailingslashit( $value ) {
  * @return string String without the trailing slashes.
  */
 function untrailingslashit( $value ) {
-	return ! empty( $value ) && is_string( $value ) ? rtrim( $value, '/\\' ) : '';
+	return ! empty( $value ) ? rtrim( $value, '/\\' ) : $value;
 }
 
 /**
