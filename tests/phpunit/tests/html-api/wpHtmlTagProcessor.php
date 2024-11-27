@@ -2991,6 +2991,10 @@ HTML
 	 * @dataProvider data_alphabet_by_characters_lowercase
 	 */
 	public function test_recognizes_lowercase_tag_name( string $char ) {
+		/*
+		 * The spacing in the HTML string is important to the problematic
+		 * codepath in ticket #62522.
+		 */
 		$html      = " <{$char}> </{$char}>";
 		$processor = new WP_HTML_Tag_Processor( $html );
 		$this->assertTrue( $processor->next_tag(), "Failed to find open tag in '{$html}'." );
@@ -3006,6 +3010,10 @@ HTML
 	 * @dataProvider data_alphabet_by_characters_uppercase
 	 */
 	public function test_recognizes_uppercase_tag_name( string $char ) {
+		/*
+		 * The spacing in the HTML string is important to the problematic
+		 * codepath in ticket #62522.
+		 */
 		$html      = " <{$char}> </{$char}>";
 		$processor = new WP_HTML_Tag_Processor( $html );
 		$this->assertTrue( $processor->next_tag(), "Failed to find open tag in '{$html}'." );
