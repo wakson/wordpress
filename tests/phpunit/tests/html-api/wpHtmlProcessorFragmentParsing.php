@@ -97,7 +97,7 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 	 * contain no inner HTML. Operations on self-contained elements should occur
 	 * through methods such as {@see WP_HTML_Tag_Processor::set_modifiable_text}.
 	 *
-	 * @ticket 62357
+	 * @ticket 62584
 	 *
 	 * @dataProvider data_invalid_fragment_contexts
 	 *
@@ -113,8 +113,6 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 
 	/**
 	 * Data provider.
-	 *
-	 * @ticket 62357
 	 *
 	 * @return array[]
 	 */
