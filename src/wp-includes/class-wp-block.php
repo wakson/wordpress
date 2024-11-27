@@ -657,6 +657,9 @@ class PrivateProcessor extends WP_HTML_Processor {
 		return true;
 	}
 
+	/**
+	 * @todo check for self-closing foreign content tags
+	 */
 	public function proceed_to_matching_closer(): bool {
 		$tag_name = $this->get_tag();
 
