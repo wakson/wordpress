@@ -114,6 +114,11 @@ class WP_REST_Taxonomies_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 
+		if ( $request->is_method( 'head' ) ) {
+			// Return early as this method doesn't add any headers.
+			return new WP_REST_Response();
+		}
+
 		// Retrieve the list of registered collection query parameters.
 		$registered = $this->get_collection_params();
 
