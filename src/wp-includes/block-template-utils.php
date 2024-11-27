@@ -1189,7 +1189,11 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 			} elseif (
 				// If the query doesn't specify a post type, or it does and the template has the post type, add it.
 				! isset( $query['post_type'] ) ||
-				( isset( $query['post_type'] ) && isset( $template_file['postTypes'] ) && in_array( $query['post_type'], $template_file['postTypes'], true ) )
+				(
+					isset( $query['post_type'] ) &&
+					isset( $template_file['postTypes'] ) &&
+					in_array( $query['post_type'], $template_file['postTypes'], true )
+				)
 			) {
 				$query_result[] = _build_block_template_result_from_file( $template_file, $template_type );
 			}
