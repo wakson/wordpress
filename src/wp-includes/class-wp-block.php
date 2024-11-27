@@ -583,9 +583,13 @@ class WP_Block {
 class PrivateProcessor extends WP_HTML_Processor {
 
 	/**
-	 * @param string $html
+	 * Set the inner HTML of the currrent node.
 	 *
-	 * @return bool
+	 * @todo This method needs to check if the inner HTML can leak out of the current node.
+	 *
+	 * @param string $html The inner HTML to set.
+	 *
+	 * @return bool True if the inner HTML was set, false otherwise.
 	 */
 	public function set_inner_html( string $html ): bool {
 		if ( $this->is_virtual() ) {
@@ -659,6 +663,7 @@ class PrivateProcessor extends WP_HTML_Processor {
 
 	/**
 	 * @todo check for self-closing foreign content tags
+	 * @todo document
 	 */
 	public function proceed_to_matching_closer(): bool {
 		$tag_name = $this->get_tag();
