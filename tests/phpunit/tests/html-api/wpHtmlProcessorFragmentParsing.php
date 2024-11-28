@@ -35,7 +35,7 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 		$this->assertSame( 'svg', $fragment->get_namespace() );
 
 		$this->assertTrue( $fragment->next_tag( 'CIRCLE' ) );
-		$this->assertSame( array( 'HTML', 'SVG', 'CIRCLE' ), $fragment->get_breadcrumbs() );
+		$this->assertSame( array( 'HTML', 'BODY', 'SVG', 'CIRCLE' ), $fragment->get_breadcrumbs() );
 		$this->assertTrue( $fragment->next_tag( 'foreignObject' ) );
 		$this->assertSame( 'svg', $fragment->get_namespace() );
 	}
@@ -48,9 +48,7 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 		$this->assertTrue( $processor->next_tag( 'foreignObject' ) );
 
 		$fragment = $processor->create_fragment_at_current_node( "<image>\0not-preceded-by-nul-byte<rect />" );
-
-		// Nothing has been processed, the html namespace should be used for parsing as an integration point.
-		$this->assertSame( 'html', $fragment->get_namespace() );
+		$this->assertSame( 'svg', $fragment->get_namespace() );
 
 		// HTML parsing transforms IMAGE into IMG.
 		$this->assertTrue( $fragment->next_tag( 'IMG' ) );
@@ -66,7 +64,7 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 		 * RECT is an HTML element here, meaning it may have the self-closing flag but does not self-close.
 		 */
 		$this->assertTrue( $fragment->next_tag( 'RECT' ) );
-		$this->assertSame( array( 'HTML', 'FOREIGNOBJECT', 'RECT' ), $fragment->get_breadcrumbs() );
+		$this->assertSame( array( 'HTML', 'BODY', 'SVG', 'FOREIGNOBJECT', 'RECT' ), $fragment->get_breadcrumbs() );
 		$this->assertSame( 'html', $fragment->get_namespace() );
 		$this->assertTrue( $fragment->has_self_closing_flag() );
 		$this->assertTrue( $fragment->expects_closer() );
