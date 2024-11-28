@@ -236,15 +236,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	private $breadcrumbs = array();
 
 	/**
-	 * Stores the context breadcrumbs.
-	 *
-	 * @since 6.7.0
-	 *
-	 * @var string[]|null
-	 */
-	private $context_breadcrumbs = null;
-
-	/**
 	 * Current stack event, if set, representing a matched token.
 	 *
 	 * Because the parser may internally point to a place further along in a document
@@ -607,9 +598,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$fragment_processor->next_token();
 		}
 
-		$fragment_processor->context_breadcrumbs = $fragment_processor->breadcrumbs;
-		$fragment_processor->breadcrumbs         = array();
-
 		return $fragment_processor;
 	}
 
@@ -968,9 +956,8 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			return false;
 		}
 
-		$breadcrumbs = $this->get_breadcrumbs();
-		for ( $i = count( $breadcrumbs ) - 1; $i >= 0; $i-- ) {
-			$node  = $breadcrumbs[ $i ];
+		for ( $i = count( $this->breadcrumbs ) - 1; $i >= 0; $i-- ) {
+			$node  = $this->breadcrumbs[ $i ];
 			$crumb = strtoupper( current( $breadcrumbs ) );
 
 			if ( '*' !== $crumb && $node !== $crumb ) {
@@ -1222,9 +1209,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @return string[]|null Array of tag names representing path to matched node, if matched, otherwise NULL.
 	 */
 	public function get_breadcrumbs(): ?array {
-		return null === $this->context_breadcrumbs
-			? $this->breadcrumbs
-			: array_merge( $this->context_breadcrumbs, $this->breadcrumbs );
+		return $this->breadcrumbs;
 	}
 
 	/**
@@ -1253,7 +1238,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @return int Nesting-depth of current location in the document.
 	 */
 	public function get_current_depth(): int {
-		return count( $this->get_breadcrumbs() );
+		return count( $this->breadcrumbs );
 	}
 
 	/**
@@ -5585,7 +5570,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$this->state->current_token                     = null;
 			$this->current_element                          = null;
 			$this->element_queue                            = array();
-			$this->breadcrumbs                              = array();
 
 			/*
 			 * The absence of a context node indicates a full parse.
@@ -5594,6 +5578,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			if ( null === $this->context_node ) {
 				$this->change_parsing_namespace( 'html' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
+				$this->breadcrumbs           = array();
 
 				$this->bookmarks['initial'] = new WP_HTML_Span( 0, 0 );
 				parent::seek( 'initial' );
