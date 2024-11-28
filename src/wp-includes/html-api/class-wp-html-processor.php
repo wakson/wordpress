@@ -566,6 +566,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$fragment_processor->state->stack_of_template_insertion_modes[] = WP_HTML_Processor_State::INSERTION_MODE_IN_TEMPLATE;
 		}
 
+		// @todo should there be a seek to the context element here?
 		$fragment_processor->reset_insertion_mode_appropriately();
 
 		/*
