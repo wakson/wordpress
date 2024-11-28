@@ -526,20 +526,41 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->compat_mode = $this->compat_mode;
 
 		// @todo Create "fake" bookmarks for non-existent but implied nodes.
-		$fragment_processor->bookmarks['root-node'] = new WP_HTML_Span( 0, 0 );
-		$root_node                                  = new WP_HTML_Token(
-			'root-node',
-			'HTML',
-			false
-		);
-		$fragment_processor->state->stack_of_open_elements->push( $root_node );
+		$fragment_processor->bookmarks['root-node']    = new WP_HTML_Span( 0, 0 );
+		$fragment_processor->bookmarks['context-node'] = new WP_HTML_Span( 0, 0 );
 
-		$fragment_processor->bookmarks['context-node']   = new WP_HTML_Span( 0, 0 );
-		$fragment_processor->context_node                = clone $this->current_element->token;
-		$fragment_processor->context_node->bookmark_name = 'context-node';
-		$fragment_processor->context_node->on_destroy    = null;
+		$current_element_token    = $this->current_element->token;
+		$fragment_context_element = null;
+		foreach ( $this->state->stack_of_open_elements->walk_down() as $item ) {
+			$cloned = clone $item;
+			if ( $cloned->bookmark_name !== 'root-node' ) {
+				$cloned->bookmark_name = null;
+			}
+			if ( $cloned === $current_element_token ) {
+				\sirreal\d( 'got CET', $cloned, $current_element_token );
+				$cloned->bookmark_name = 'context-node';
+			}
+			$cloned->on_destroy = null;
+			$cloned->locked     = true;
 
-		$fragment_processor->breadcrumbs = array( 'HTML', $fragment_processor->context_node->node_name );
+			$fragment_processor->state->stack_of_open_elements->push( $cloned );
+			if ( $cloned->bookmark_name === 'context-node' ) {
+				$fragment_processor->context_node = $cloned;
+			}
+		}
+		foreach ( $this->state->active_formatting_elements->walk_down() as $item ) {
+			$cloned = clone $item;
+			if ( $cloned->bookmark_name !== 'root-node' ) {
+				$cloned->bookmark_name = null;
+			}
+			if ( $cloned === $current_element_token ) {
+				$cloned->bookmark_name = 'context-node';
+			}
+			$cloned->on_destroy = null;
+			$cloned->locked     = true;
+
+			$fragment_processor->state->active_formatting_elements->push( $cloned );
+		}
 
 		if ( 'TEMPLATE' === $fragment_processor->context_node->node_name ) {
 			$fragment_processor->state->stack_of_template_insertion_modes[] = WP_HTML_Processor_State::INSERTION_MODE_IN_TEMPLATE;
@@ -570,7 +591,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * elements does not change the parsing namespace.
 		 */
 		$fragment_processor->change_parsing_namespace(
-			$this->current_element->token->integration_node_type ? 'html' : $namespace
+			$current_element_token->integration_node_type ? 'html' : $namespace
 		);
 
 		return $fragment_processor;
@@ -819,8 +840,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$this->current_element = array_shift( $this->element_queue );
 		if ( ! isset( $this->current_element ) ) {
 			// There are no tokens left, so close all remaining open elements.
-			while ( $this->state->stack_of_open_elements->pop() ) {
-				continue;
+			try {
+				while ( $this->state->stack_of_open_elements->pop() ) {
+					continue;
+				}
+			} catch ( WP_HTML_Stack_Exception $e ) {
+				// Pop until we reach the context stack.
 			}
 
 			return empty( $this->element_queue ) ? false : $this->next_visitable_token();
