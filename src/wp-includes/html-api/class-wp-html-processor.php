@@ -529,17 +529,22 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->bookmarks['root-node']    = new WP_HTML_Span( 0, 0 );
 		$fragment_processor->bookmarks['context-node'] = new WP_HTML_Span( 0, 0 );
 
-		$fragment_context_element = null;
+		$current_element_bookmark_name = $this->current_element->token->bookmark_name;
+		$fragment_context_element      = null;
 		foreach ( $this->state->stack_of_open_elements->walk_down() as $item ) {
-			$cloned                = clone $item;
-			$cloned->bookmark_name = null;
-			$cloned->on_destroy    = null;
-			$cloned->locked        = true;
+			$cloned = clone $item;
+			if ( $cloned->bookmark_name === $current_element_bookmark_name ) {
+				$cloned->bookmark_name    = 'context-node';
+				$fragment_context_element = $cloned;
+			} else {
+				$cloned->bookmark_name = null;
+			}
+			$cloned->on_destroy = null;
+			$cloned->locked     = true;
 			$fragment_processor->state->stack_of_open_elements->push( $cloned );
 			$fragment_context_element = $cloned;
 		}
-		$fragment_processor->context_node                = $fragment_context_element;
-		$fragment_processor->context_node->bookmark_name = 'context-node';
+		$fragment_processor->context_node = $fragment_context_element;
 
 		foreach ( $this->state->active_formatting_elements->walk_down() as $item ) {
 			$cloned                    = clone $item;
@@ -582,6 +587,11 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->change_parsing_namespace(
 			$fragment_processor->context_node->integration_node_type ? 'html' : $namespace
 		);
+
+		// Advance to the end of the context stack.
+		while ( array() !== $fragment_processor->element_queue ) {
+			$fragment_processor->next_token();
+		}
 
 		return $fragment_processor;
 	}
