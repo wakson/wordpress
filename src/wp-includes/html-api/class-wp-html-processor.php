@@ -547,15 +547,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->context_node = $fragment_context_element;
 
 		foreach ( $this->state->active_formatting_elements->walk_down() as $item ) {
-			$cloned = clone $item;
-			if ( $cloned->bookmark_name === $current_element_bookmark_name ) {
-				$cloned->bookmark_name    = 'context-node';
-				$fragment_context_element = $cloned;
-			} else {
+			$cloned                    = clone $item;
 				$cloned->bookmark_name = null;
-			}
-			$cloned->on_destroy = null;
-			$cloned->locked     = true;
+			$cloned->on_destroy        = null;
+			$cloned->locked            = true;
 
 			$fragment_processor->state->active_formatting_elements->push( $cloned );
 		}
@@ -5545,16 +5540,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-				if ( 'context-node' === $item->bookmark_name ) {
-					break;
-				}
 				$this->state->stack_of_open_elements->remove_node( $item );
 			}
 
 			foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
-				if ( 'context-node' === $item->bookmark_name ) {
-					break;
-				}
 				$this->state->active_formatting_elements->remove_node( $item );
 			}
 
@@ -5584,6 +5573,21 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				parent::seek( 'initial' );
 				unset( $this->bookmarks['initial'] );
 			} else {
+
+				/*
+				 * Push the root-node (HTML) back onto the stack of open elements.
+				 *
+				 * Fragment parsers require this extra bit of setup.
+				 * It's handled in full parsers by advancing the processor state.
+				 */
+				$this->state->stack_of_open_elements->push(
+					new WP_HTML_Token(
+						'root-node',
+						'HTML',
+						false
+					)
+				);
+
 				$this->change_parsing_namespace(
 					$this->context_node->integration_node_type
 						? 'html'
@@ -5595,6 +5599,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				}
 
 				$this->reset_insertion_mode_appropriately();
+				$this->breadcrumbs = array_slice( $this->breadcrumbs, 0, 2 );
 				parent::seek( $this->context_node->bookmark_name );
 			}
 		}
