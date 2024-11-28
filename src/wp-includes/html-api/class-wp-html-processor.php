@@ -529,35 +529,23 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->bookmarks['root-node']    = new WP_HTML_Span( 0, 0 );
 		$fragment_processor->bookmarks['context-node'] = new WP_HTML_Span( 0, 0 );
 
-		$current_element_token    = $this->current_element->token;
 		$fragment_context_element = null;
 		foreach ( $this->state->stack_of_open_elements->walk_down() as $item ) {
-			$cloned = clone $item;
-			if ( $cloned->bookmark_name !== 'root-node' ) {
-				$cloned->bookmark_name = null;
-			}
-			if ( $cloned === $current_element_token ) {
-				\sirreal\d( 'got CET', $cloned, $current_element_token );
-				$cloned->bookmark_name = 'context-node';
-			}
-			$cloned->on_destroy = null;
-			$cloned->locked     = true;
-
+			$cloned                = clone $item;
+			$cloned->bookmark_name = null;
+			$cloned->on_destroy    = null;
+			$cloned->locked        = true;
 			$fragment_processor->state->stack_of_open_elements->push( $cloned );
-			if ( $cloned->bookmark_name === 'context-node' ) {
-				$fragment_processor->context_node = $cloned;
-			}
+			$fragment_context_element = $cloned;
 		}
+		$fragment_processor->context_node                = $fragment_context_element;
+		$fragment_processor->context_node->bookmark_name = 'context-node';
+
 		foreach ( $this->state->active_formatting_elements->walk_down() as $item ) {
-			$cloned = clone $item;
-			if ( $cloned->bookmark_name !== 'root-node' ) {
+			$cloned                    = clone $item;
 				$cloned->bookmark_name = null;
-			}
-			if ( $cloned === $current_element_token ) {
-				$cloned->bookmark_name = 'context-node';
-			}
-			$cloned->on_destroy = null;
-			$cloned->locked     = true;
+			$cloned->on_destroy        = null;
+			$cloned->locked            = true;
 
 			$fragment_processor->state->active_formatting_elements->push( $cloned );
 		}
@@ -592,7 +580,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		 * elements does not change the parsing namespace.
 		 */
 		$fragment_processor->change_parsing_namespace(
-			$current_element_token->integration_node_type ? 'html' : $namespace
+			$fragment_processor->context_node->integration_node_type ? 'html' : $namespace
 		);
 
 		return $fragment_processor;
