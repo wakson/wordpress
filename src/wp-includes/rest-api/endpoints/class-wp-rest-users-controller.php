@@ -331,7 +331,7 @@ class WP_REST_Users_Controller extends WP_REST_Controller {
 			if ( ! current_user_can( 'list_users' ) ) {
 				$prepared_args['search_columns'] = array( 'ID', 'user_login', 'user_nicename', 'display_name' );
 			}
-			$search_columns = $request->get_param( 'search_columns' );
+			$search_columns         = $request->get_param( 'search_columns' );
 			$valid_columns          = isset( $prepared_args['search_columns'] )
 				? $prepared_args['search_columns']
 				: array( 'ID', 'user_login', 'user_nicename', 'user_email', 'display_name' );

@@ -719,10 +719,12 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertCount( 0, $response->get_data() );
 
-		$yolo_id = self::factory()->user->create( array(
-			'display_name' => 'Adam',
-			'user_email'   => 'yololololo@example.localhost'
-		) );
+		$yolo_id = self::factory()->user->create(
+			array(
+				'display_name' => 'Adam',
+				'user_email'   => 'yololololo@example.localhost',
+			)
+		);
 
 		wp_set_current_user( self::$user );
 		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
