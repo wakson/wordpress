@@ -1112,7 +1112,7 @@ if ( 'upgrade-core' === $action ) {
 		/* translators: Last update date format. See https://www.php.net/manual/datetime.format.php */
 		date_i18n( __( 'F j, Y' ), $last_update_check ),
 		/* translators: Last update time format. See https://www.php.net/manual/datetime.format.php */
-		date_i18n( __( 'g:i a T' ), $last_update_check )
+		date_i18n( get_option( 'time_format' ), $last_update_check )
 	);
 	echo ' <a href="' . esc_url( self_admin_url( 'update-core.php?force-check=1' ) ) . '">' . __( 'Check again.' ) . '</a>';
 	echo '</p>';
