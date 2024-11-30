@@ -698,7 +698,7 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 	 * @ticket 62285
 	 */
 	public function test_imagick_resized_image_max_bit_depth() {
-		$file = DIR_TESTDATA . '/images/colors_hdr_p3.avif';
+		$file                 = DIR_TESTDATA . '/images/colors_hdr_p3.avif';
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		// Skip this test if the image editor doesn't support the AVIF file type.
 		if ( ! $imagick_image_editor->supports_mime_type( 'image/avif' ) ) {
