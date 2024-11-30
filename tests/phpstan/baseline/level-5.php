@@ -608,12 +608,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/plugin-install.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Parameter \\#2 \\$allowed_html of function wp_kses expects array\\<array\\>\\|string, array\\<string, array\\<string, bool\\>\\|true\\> given\\.$#',
-	'identifier' => 'argument.type',
-	'count' => 4,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/plugin.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Parameter \\#1 \\$text of function esc_attr expects string, int given\\.$#',
 	'identifier' => 'argument.type',
 	'count' => 1,
@@ -1373,6 +1367,12 @@ $ignoreErrors[] = [
 	'message' => '#^Parameter \\#1 \\$prefix of function uniqid expects string, int\\<0, max\\> given\\.$#',
 	'identifier' => 'argument.type',
 	'count' => 2,
+	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Parameter \\#2 \\$allowed_html of function wp_kses expects array\\<array\\>\\|string, array\\<string, array\\<string, bool\\>\\|true\\> given\\.$#',
+	'identifier' => 'argument.type',
+	'count' => 4,
 	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
 ];
 $ignoreErrors[] = [

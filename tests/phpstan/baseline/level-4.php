@@ -950,7 +950,7 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/update-core.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Strict comparison using \\!\\=\\= between \'\' and literal\\-string&non\\-falsy\\-string will always evaluate to true\\.$#',
+	'message' => '#^Strict comparison using \\!\\=\\= between \'\' and literal\\-string&lowercase\\-string&non\\-falsy\\-string will always evaluate to true\\.$#',
 	'identifier' => 'notIdentical.alwaysTrue',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/update-core.php',
@@ -3804,6 +3804,12 @@ $ignoreErrors[] = [
 	'identifier' => 'property.onlyWritten',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-template-autosaves-controller.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Right side of && is always true\\.$#',
+	'identifier' => 'booleanAnd.rightAlwaysTrue',
+	'count' => 1,
+	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Call to function is_string\\(\\) with string will always evaluate to true\\.$#',

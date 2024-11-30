@@ -536,12 +536,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/nav-menu.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Binary operation "/" between string\\|WP_Error and 50 results in an error\\.$#',
-	'identifier' => 'binaryOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/nav-menu.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Cannot access property \\$front_or_home on array\\|WP_Post\\.$#',
 	'identifier' => 'property.nonObject',
 	'count' => 1,
@@ -734,12 +728,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/includes/taxonomy.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Binary operation "\\+" between int\\<1, max\\> and string results in an error\\.$#',
-	'identifier' => 'binaryOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-admin/includes/upgrade.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^PHPDoc tag @var does not specify variable name\\.$#',
 	'identifier' => 'varTag.noVariable',
 	'count' => 1,
@@ -864,12 +852,6 @@ $ignoreErrors[] = [
 	'identifier' => 'property.nonObject',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-customize-manager.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Binary operation "\\+" between string and 1 results in an error\\.$#',
-	'identifier' => 'binaryOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-date-query.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Binary operation "/" between string and 255 results in an error\\.$#',
@@ -1106,12 +1088,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/comment.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Function array_key_first\\(\\) should return int\\|string\\|null but return statement is missing\\.$#',
-	'identifier' => 'return.missing',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/compat.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Cannot access property \\$term_id on string\\|WP_Customize_Setting\\.$#',
 	'identifier' => 'property.nonObject',
 	'count' => 1,
@@ -1184,12 +1160,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/fonts/class-wp-font-face-resolver.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Binary operation "\\+\\=" between string and 7 results in an error\\.$#',
-	'identifier' => 'assignOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^PHPDoc tag @param references unknown parameter\\: \\$key$#',
 	'identifier' => 'parameter.notFound',
 	'count' => 1,
@@ -1206,18 +1176,6 @@ $ignoreErrors[] = [
 	'identifier' => 'parameter.notFound',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/functions.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Binary operation "\\-" between string and int results in an error\\.$#',
-	'identifier' => 'binaryOp.invalid',
-	'count' => 3,
-	'path' => __DIR__ . '/../../../src/wp-includes/general-template.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^PHPDoc tag @var has invalid value \\(\\[string, array\\]\\|null\\)\\: Unexpected token "\\]", expected \'\\(\' at offset 202 on line 8$#',
-	'identifier' => 'phpDoc.parseError',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/html-api/class-wp-html-processor-state.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^PHPDoc tag @var does not specify variable name\\.$#',
@@ -1260,12 +1218,6 @@ $ignoreErrors[] = [
 	'identifier' => 'parameter.defaultValue',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/option.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Binary operation "\\+\\=" between string and 3600 results in an error\\.$#',
-	'identifier' => 'assignOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/pluggable.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Cannot access property \\$ID on array\\|object\\.$#',
@@ -1340,12 +1292,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-plugins-controller.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Method WP_REST_Posts_Controller\\:\\:handle_terms\\(\\) should return WP_Error\\|null but return statement is missing\\.$#',
-	'identifier' => 'return.missing',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Cannot access property \\$post_content on array\\|object\\.$#',
 	'identifier' => 'property.nonObject',
 	'count' => 1,
@@ -1362,12 +1308,6 @@ $ignoreErrors[] = [
 	'identifier' => 'property.nonObject',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/revision.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Binary operation "/" between string\\|WP_Error and int results in an error\\.$#',
-	'identifier' => 'binaryOp.invalid',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/sitemaps/providers/class-wp-sitemaps-taxonomies.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Cannot access property \\$object_id on array\\|int\\|string\\|WP_Term\\.$#',

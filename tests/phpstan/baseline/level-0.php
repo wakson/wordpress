@@ -32,12 +32,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-admin/press-this.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Function wp_get_duotone_filter_svg not found\\.$#',
-	'identifier' => 'function.notFound',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/class-wp-theme-json.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Method WP_Customize_Background_Image_Setting\\:\\:update\\(\\) should return bool but return statement is missing\\.$#',
 	'identifier' => 'return.missing',
 	'count' => 1,
@@ -66,12 +60,6 @@ $ignoreErrors[] = [
 	'identifier' => 'return.missing',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/plugin.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Cannot unset offset 0 on array\\<string, string\\>\\.$#',
-	'identifier' => 'unset.offset',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/rest-api.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Unsafe usage of new static\\(\\)\\.$#',

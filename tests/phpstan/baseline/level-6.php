@@ -9494,12 +9494,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/../../../src/wp-includes/html-api/class-wp-html-open-elements.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Property WP_HTML_Processor_State\\:\\:\\$context_node has no type specified\\.$#',
-	'identifier' => 'missingType.property',
-	'count' => 1,
-	'path' => __DIR__ . '/../../../src/wp-includes/html-api/class-wp-html-processor-state.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Method WP_HTML_Tag_Processor\\:\\:class_list\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
@@ -10053,6 +10047,12 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	'message' => '#^Function wp_plupload_default_settings\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/../../../src/wp-includes/media.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Function wp_print_auto_sizes_contain_css_fix\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
 	'path' => __DIR__ . '/../../../src/wp-includes/media.php',
