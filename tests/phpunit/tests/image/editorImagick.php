@@ -699,38 +699,40 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 	 */
 	public function test_imagick_resized_image_max_bit_depth() {
 		$file = DIR_TESTDATA . '/images/colors_hdr_p3.avif';
-
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
-
 		// Skip this test if the image editor doesn't support the AVIF file type.
 		if ( ! $imagick_image_editor->supports_mime_type( 'image/avif' ) ) {
 			$this->markTestSkipped( 'The image editor does not support the AVIF mime type.' );
 		}
 
-		$imagick_image_editor->load();
-
 		// Confirm this images has a bit depth of 10.
-		$this->assertSame( 10, $imagick_image_editor->image->getImageDepth() );
+		$imagick = new Imagick( $file );
+		$this->assertSame( 10, $imagick->getImageDepth() );
+
+		$imagick_image_editor->load();
 
 		// By default resized images are limited to 8 bits per channel.
 		$imagick_image_editor->resize( 100, 50 );
-		$save_to_file = tempnam( get_temp_dir(), '' ) . '.avif';
+		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test1.avif';
 		$imagick_image_editor->save( $save_to_file );
 		$im = new Imagick( $save_to_file );
 		$this->assertSame( 8, $im->getImageDepth() );
 		unlink( $save_to_file );
 
+		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
+		$imagick_image_editor->load();
+
 		// Test that the filter can be used to override the default.
-		add_filter( 'imagick_resized_image_max_bit_depth', '__return_10' );
-		$imagick_image_editor->resize( 100, 50 );
-		$save_to_file = tempnam( get_temp_dir(), '' ) . '.avif';
+		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
+		$imagick_image_editor->resize( 50, 25 );
+		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
 		$imagick_image_editor->save( $save_to_file );
 		$im = new Imagick( $save_to_file );
 		$this->assertSame( 10, $im->getImageDepth() );
 
 		// Clean up - remove the temporary file and restore the filter.
 		unlink( $save_to_file );
-		remove_filter( 'imagick_resized_image_max_bit_depth', '__return_10' );
+		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
 	}
 
 	/**
