@@ -109,6 +109,36 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		$this->check_taxonomy_object_response( 'view', $response );
 	}
 
+	/**
+	 * @ticket 56481
+	 */
+	public function test_get_item_with_head_request_should_not_prepare_taxonomy_data() {
+		$request  = new WP_REST_Request( 'HEAD', '/wp/v2/taxonomies/category' );
+		$hook_name = 'rest_prepare_taxonomy';
+		$filter   = new MockAction();
+		$callback = array( $filter, 'filter' );
+		add_filter( $hook_name, $callback );
+		$response = rest_get_server()->dispatch( $request );
+		remove_filter( $hook_name, $callback );
+
+		$this->assertSame( 200, $response->get_status(), 'The response status should be 200.' );
+
+		$this->assertSame( 0, $filter->get_call_count(), 'The "' . $hook_name . '" filter was called when it should not be for HEAD requests.' );
+		$this->assertNull( $response->get_data(), 'The server should not generate a body in response to a HEAD request.' );
+	}
+
+	/**
+	 * Data provider intended to provide HTTP method names for testing GET and HEAD requests.
+	 *
+	 * @return array
+	 */
+	public static function data_readable_http_methods() {
+		return array(
+			'GET request'  => array( 'GET' ),
+			'HEAD request' => array( 'HEAD' ),
+		);
+	}
+
 	public function test_get_item_edit_context() {
 		$editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
 		wp_set_current_user( $editor_id );
