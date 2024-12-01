@@ -705,6 +705,10 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 			$this->markTestSkipped( 'The image editor does not support the AVIF mime type.' );
 		}
 
+		if ( ! method_exists( 'Imagick', 'getImageDepth' ) || ! method_exists( 'Imagick', 'setImageDepth' ) ) {
+			$this->markTestSkipped( 'The image editor does not support get or setImageDepth.' );
+		}
+
 		// Confirm this images has a bit depth of 10.
 		$imagick = new Imagick( $file );
 		$this->assertSame( 10, $imagick->getImageDepth() );

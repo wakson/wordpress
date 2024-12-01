@@ -503,19 +503,20 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 				}
 			}
 
-			/**
-			 * Filters the maximum bit depth of resized images.
-			 *
-			 * Developers can use this to adjust the maximum bit depth of resized images, for example to enable HDR images.
-			 *
-			 * @since 6.8.0
-			 *
-			 * @param int $max_depth The maximum bit depth. Default is 8.
-			 */
-			$max_depth = apply_filters( 'imagick_resized_image_max_bit_depth', 8 );
 
-			// Limit the bit depth of resized images to 8 bits per channel.
+
+			// Limit the bit depth of resized images.
 			if ( is_callable( array( $this->image, 'getImageDepth' ) ) && is_callable( array( $this->image, 'setImageDepth' ) ) ) {
+				/**
+				 * Filters the maximum bit depth of resized images.
+				 *
+				 * Developers can use this to adjust the maximum bit depth of resized images, for example to enable HDR images.
+				 *
+				 * @since 6.8.0
+				 *
+				 * @param int $max_depth The maximum bit depth. Default is 8.
+				 */
+				$max_depth = apply_filters( 'imagick_resized_image_max_bit_depth', 8 );
 				if ( $max_depth < $this->image->getImageDepth() ) {
 					$this->image->setImageDepth( $max_depth );
 				}
