@@ -60,6 +60,24 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		$this->assertSame( 'tags', $data['post_tag']['rest_base'] );
 	}
 
+	/**
+	 * @ticket 56481
+	 */
+	public function test_get_items_with_head_request_should_not_prepare_taxonomy_data() {
+		$request   = new WP_REST_Request( 'HEAD', '/wp/v2/taxonomies' );
+		$hook_name = 'rest_prepare_taxonomy';
+		$filter    = new MockAction();
+		$callback  = array( $filter, 'filter' );
+		add_filter( $hook_name, $callback );
+		$response = rest_get_server()->dispatch( $request );
+		remove_filter( $hook_name, $callback );
+
+		$this->assertSame( 200, $response->get_status(), 'The response status should be 200.' );
+
+		$this->assertSame( 0, $filter->get_call_count(), 'The "' . $hook_name . '" filter was called when it should not be for HEAD requests.' );
+		$this->assertNull( $response->get_data(), 'The server should not generate a body in response to a HEAD request.' );
+	}
+
 	public function test_get_items_context_edit() {
 		wp_set_current_user( self::$contributor_id );
 		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
@@ -79,52 +97,19 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		$this->assertSame( 'tags', $data['post_tag']['rest_base'] );
 	}
 
-	public function test_get_items_invalid_permission_for_context() {
+
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_items_invalid_permission_for_context( $method ) {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
+		$request = new WP_REST_Request( $method, '/wp/v2/taxonomies' );
 		$request->set_param( 'context', 'edit' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_view', $response, 401 );
-	}
-
-	public function test_get_taxonomies_for_type() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
-		$request->set_param( 'type', 'post' );
-		$response = rest_get_server()->dispatch( $request );
-		$this->check_taxonomies_for_type_response( 'post', $response );
-	}
-
-	public function test_get_taxonomies_for_invalid_type() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
-		$request->set_param( 'type', 'wingding' );
-		$response = rest_get_server()->dispatch( $request );
-		$this->assertSame( 200, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertSame( '{}', json_encode( $data ) );
-	}
-
-	public function test_get_item() {
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
-		$response = rest_get_server()->dispatch( $request );
-		$this->check_taxonomy_object_response( 'view', $response );
-	}
-
-	/**
-	 * @ticket 56481
-	 */
-	public function test_get_item_with_head_request_should_not_prepare_taxonomy_data() {
-		$request  = new WP_REST_Request( 'HEAD', '/wp/v2/taxonomies/category' );
-		$hook_name = 'rest_prepare_taxonomy';
-		$filter   = new MockAction();
-		$callback = array( $filter, 'filter' );
-		add_filter( $hook_name, $callback );
-		$response = rest_get_server()->dispatch( $request );
-		remove_filter( $hook_name, $callback );
-
-		$this->assertSame( 200, $response->get_status(), 'The response status should be 200.' );
-
-		$this->assertSame( 0, $filter->get_call_count(), 'The "' . $hook_name . '" filter was called when it should not be for HEAD requests.' );
-		$this->assertNull( $response->get_data(), 'The server should not generate a body in response to a HEAD request.' );
 	}
 
 	/**
@@ -139,6 +124,61 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		);
 	}
 
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_taxonomies_for_type( $method ) {
+		$request = new WP_REST_Request( $method, '/wp/v2/taxonomies' );
+		$request->set_param( 'type', 'post' );
+		$response = rest_get_server()->dispatch( $request );
+		$this->check_taxonomies_for_type_response( 'post', $response );
+	}
+
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_taxonomies_for_invalid_type( $method ) {
+		$request = new WP_REST_Request( $method, '/wp/v2/taxonomies' );
+		$request->set_param( 'type', 'wingding' );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+		if ( 'HEAD' === $method ) {
+			return;
+		}
+		$data = $response->get_data();
+		$this->assertSame( '{}', json_encode( $data ) );
+	}
+
+	public function test_get_item() {
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
+		$response = rest_get_server()->dispatch( $request );
+		$this->check_taxonomy_object_response( 'view', $response );
+	}
+
+	/**
+	 * @ticket 56481
+	 */
+	public function test_get_item_with_head_request_should_not_prepare_taxonomy_data() {
+		$request   = new WP_REST_Request( 'HEAD', '/wp/v2/taxonomies/category' );
+		$hook_name = 'rest_prepare_taxonomy';
+		$filter    = new MockAction();
+		$callback  = array( $filter, 'filter' );
+		add_filter( $hook_name, $callback );
+		$response = rest_get_server()->dispatch( $request );
+		remove_filter( $hook_name, $callback );
+
+		$this->assertSame( 200, $response->get_status(), 'The response status should be 200.' );
+
+		$this->assertSame( 0, $filter->get_call_count(), 'The "' . $hook_name . '" filter was called when it should not be for HEAD requests.' );
+		$this->assertNull( $response->get_data(), 'The server should not generate a body in response to a HEAD request.' );
+	}
+
 	public function test_get_item_edit_context() {
 		$editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
 		wp_set_current_user( $editor_id );
@@ -148,33 +188,57 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		$this->check_taxonomy_object_response( 'edit', $response );
 	}
 
-	public function test_get_item_invalid_permission_for_context() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_item_invalid_permission_for_context( $method ) {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
+		$request = new WP_REST_Request( $method, '/wp/v2/taxonomies/category' );
 		$request->set_param( 'context', 'edit' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden_context', $response, 401 );
 	}
 
-	public function test_get_invalid_taxonomy() {
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/invalid' );
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_invalid_taxonomy( $method ) {
+		$request  = new WP_REST_Request( $method, '/wp/v2/taxonomies/invalid' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_taxonomy_invalid', $response, 404 );
 	}
 
-	public function test_get_non_public_taxonomy_not_authenticated() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_non_public_taxonomy_not_authenticated( $method ) {
 		register_taxonomy( 'api-private', 'post', array( 'public' => false ) );
 
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/api-private' );
+		$request  = new WP_REST_Request( $method, '/wp/v2/taxonomies/api-private' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden', $response, 401 );
 	}
 
-	public function test_get_non_public_taxonomy_no_permission() {
+	/**
+	 * @dataProvider data_readable_http_methods
+	 * @ticket 56481
+	 *
+	 * @param string $method HTTP method to use.
+	 */
+	public function test_get_non_public_taxonomy_no_permission( $method ) {
 		wp_set_current_user( self::$contributor_id );
 		register_taxonomy( 'api-private', 'post', array( 'public' => false ) );
 
-		$request  = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/api-private' );
+		$request  = new WP_REST_Request( $method, '/wp/v2/taxonomies/api-private' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden', $response, 403 );
 	}
