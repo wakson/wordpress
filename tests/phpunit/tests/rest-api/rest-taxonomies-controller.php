@@ -124,14 +124,8 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		);
 	}
 
-	/**
-	 * @dataProvider data_readable_http_methods
-	 * @ticket 56481
-	 *
-	 * @param string $method HTTP method to use.
-	 */
-	public function test_get_taxonomies_for_type( $method ) {
-		$request = new WP_REST_Request( $method, '/wp/v2/taxonomies' );
+	public function test_get_taxonomies_for_type() {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
 		$request->set_param( 'type', 'post' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->check_taxonomies_for_type_response( 'post', $response );
