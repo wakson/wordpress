@@ -188,7 +188,7 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 		$processor = WP_HTML_Processor::create_fragment( $html, $context );
 
 		while ( $processor->next_token() ) {
-			// Just progressing through the document.
+			// Progress through the document.
 		}
 		$this->assertSame( 'unsupported', $processor->get_last_error() );
 		$this->assertMatchesRegularExpression(
@@ -217,6 +217,39 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 
 			'Active formatting i'    => array( '<div><span><i><i><i></span><div>', '</i>' ),
 			'Active formatting a'    => array( '<div><span><a></span><div>', '</a>' ),
+		);
+	}
+
+	/**
+	 * Test that the fragment parser rejects invalid fragment HTML that would
+	 * close a FORM element outside of the fragment.
+	 *
+	 * @ticket 62357
+	 *
+	 * @dataProvider data_invalid_fragement_form_contents
+	 */
+	public function test_rejects_invalid_fragment_form_closers( string $context, string $html ) {
+		$processor = WP_HTML_Processor::create_fragment( $html, $context );
+		while ( $processor->next_token() ) {
+			// Progress through the document.
+		}
+		$this->assertSame( 'unsupported', $processor->get_last_error() );
+		$this->assertSame(
+			'Cannot pop locked FORM element.',
+			$processor->get_unsupported_exception()->getMessage()
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public static function data_invalid_fragement_form_contents() {
+		return array(
+			'FORM closing FORM'                   => array( '<form>', '</form>' ),
+			'FORM does not nest, not allowed'     => array( '<form>', '<form></form>' ),
+			'Arbitrary nesting still closes FORM' => array( '<form>', '<div><p></form>' ),
 		);
 	}
 }
