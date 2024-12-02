@@ -173,4 +173,47 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 			'XMP'                   => array( '<xmp></xmp>', 'create_fragment_at_current_node' ),
 		);
 	}
+
+	/**
+	 * Test that the fragment parser rejects invalid fragment HTML in a given context.
+	 *
+	 * @ticket 62357
+	 *
+	 * @dataProvider data_invalid_fragement_contents
+	 *
+	 * @param string $context Fragment context.
+	 * @param string $html    Fragment HTML.
+	 */
+	public function test_rejects_invalid_fragment_contents( string $context, string $html ) {
+		$processor = WP_HTML_Processor::create_fragment( $html, $context );
+
+		while ( $processor->next_token() ) {
+			// Just progressing through the document.
+		}
+		$this->assertSame( 'unsupported', $processor->get_last_error() );
+		$this->assertSame(
+			'Cannot pop a locked element from the stack of open elements.',
+			$processor->get_unsupported_exception()->getMessage()
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public static function data_invalid_fragement_contents() {
+		return array(
+			'P in P'                 => array( '<p>', '<p>' ),
+			/*
+			 * The fragment shorthand is always in no-quirks mode.
+			 * P > TABLE is allowed in quirks mode.
+			 */
+			'TABLE in P (no-quirks)' => array( '<p>', '<table>' ),
+			'TD in TD'               => array( '<table><td>', '<td>' ),
+			'LI in LI'               => array( '<ul><li>', '<li>' ),
+			'OPTION in OPTION'       => array( '<select><option>', '<option>' ),
+			'DIV in SVG'             => array( '<svg>', '<div>' ),
+		);
+	}
 }
