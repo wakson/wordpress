@@ -844,7 +844,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 					continue;
 				}
 			} catch ( WP_HTML_Stack_Exception $e ) {
-				// Pop until we reach the context stack.
+				// A fragment processor would reach a context stack and throw here.
 			}
 
 			return empty( $this->element_queue ) ? false : $this->next_visitable_token();
@@ -5540,19 +5540,17 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-				try {
-					$this->state->stack_of_open_elements->remove_node( $item );
-				} catch ( WP_HTML_Stack_Exception $e ) {
+				if ( $item->locked ) {
 					break;
 				}
+				$this->state->stack_of_open_elements->remove_node( $item );
 			}
 
 			foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
-				try {
-					$this->state->active_formatting_elements->remove_node( $item );
-				} catch ( WP_HTML_Stack_Exception $e ) {
+				if ( $item->locked ) {
 					break;
 				}
+				$this->state->active_formatting_elements->remove_node( $item );
 			}
 
 			/*
