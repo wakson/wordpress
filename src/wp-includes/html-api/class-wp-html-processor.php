@@ -5540,11 +5540,19 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 * When moving backward, stateful stacks should be cleared.
 			 */
 			foreach ( $this->state->stack_of_open_elements->walk_up() as $item ) {
-				$this->state->stack_of_open_elements->remove_node( $item );
+				try {
+					$this->state->stack_of_open_elements->remove_node( $item );
+				} catch ( WP_HTML_Stack_Exception $e ) {
+					break;
+				}
 			}
 
 			foreach ( $this->state->active_formatting_elements->walk_up() as $item ) {
-				$this->state->active_formatting_elements->remove_node( $item );
+				try {
+					$this->state->active_formatting_elements->remove_node( $item );
+				} catch ( WP_HTML_Stack_Exception $e ) {
+					break;
+				}
 			}
 
 			/*
