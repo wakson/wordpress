@@ -215,7 +215,8 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 			'OPTION in OPTION'       => array( '<select><option>', '<option>' ),
 			'DIV in SVG'             => array( '<svg>', '<div>' ),
 
-			'Active formatting'      => array( '<div><span><i><i><i></span><div>', '</i>' ),
+			'Active formatting i'    => array( '<div><span><i><i><i></span><div>', '</i>' ),
+			'Active formatting a'    => array( '<div><span><a></span><div>', '</a>' ),
 		);
 	}
 }
