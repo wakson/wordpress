@@ -1478,6 +1478,8 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 	/**
 	 * Tests that separator block colors are correctly merged in user data.
 	 *
+	 * @ticket 62624
+	 *
 	 * @dataProvider data_separator_color_merge_user_data
 	 *
 	 * @param array $input_styles    The styles to test.
@@ -1508,6 +1510,8 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 
 	/**
 	 * Tests that separator block colors are correctly merged in theme data.
+	 *
+	 * @ticket 62624
 	 *
 	 * @dataProvider data_separator_color_merge_theme_data
 	 *
@@ -1558,6 +1562,8 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 
 	/**
 	 * Data provider for separator color merge tests in user data.
+	 *
+	 * @ticket 62624
 	 *
 	 * @return array
 	 */
@@ -1652,6 +1658,8 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 
 	/**
 	 * Data provider for separator color merge tests in theme data.
+	 *
+	 * @ticket 62624
 	 *
 	 * @return array
 	 */
