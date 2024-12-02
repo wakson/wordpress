@@ -252,4 +252,29 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 			'Arbitrary nesting still closes FORM' => array( '<form>', '<div><p></form>' ),
 		);
 	}
+
+	/**
+	 * Test that the fragment parser rejects invalid fragment HTML that would
+	 * close a FORM element outside of the fragment.
+	 *
+	 * Seeking adjusts state that could lose the context FORM element and allow bad HTML input.
+	 *
+	 * @ticket 62357
+	 */
+	public function test_rejects_invalid_form_closer_when_seeking() {
+		$processor = WP_HTML_Processor::create_fragment( '<div 1><div 2></form>', '<form>' );
+		$this->assertTrue( $processor->next_tag( 'DIV' ) );
+		$this->assertTrue( $processor->set_bookmark( 'mark' ) );
+		$this->assertTrue( $processor->next_tag( 'DIV' ) );
+		$this->assertTrue( $processor->seek( 'mark' ) );
+
+		while ( $processor->next_token() ) {
+			// Progress through the document.
+		}
+		$this->assertSame( 'unsupported', $processor->get_last_error() );
+		$this->assertSame(
+			'Cannot pop locked FORM element.',
+			$processor->get_unsupported_exception()->getMessage()
+		);
+	}
 }
