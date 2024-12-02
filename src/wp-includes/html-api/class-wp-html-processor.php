@@ -5567,6 +5567,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$this->state->current_token                     = null;
 			$this->current_element                          = null;
 			$this->element_queue                            = array();
+			$this->breadcrumbs                              = array();
 
 			/*
 			 * The absence of a context node indicates a full parse.
@@ -5575,26 +5576,15 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			if ( null === $this->context_node ) {
 				$this->change_parsing_namespace( 'html' );
 				$this->state->insertion_mode = WP_HTML_Processor_State::INSERTION_MODE_INITIAL;
-				$this->breadcrumbs           = array();
 
 				$this->bookmarks['initial'] = new WP_HTML_Span( 0, 0 );
 				parent::seek( 'initial' );
 				unset( $this->bookmarks['initial'] );
 			} else {
-
-				/*
-				 * Push the root-node (HTML) back onto the stack of open elements.
-				 *
-				 * Fragment parsers require this extra bit of setup.
-				 * It's handled in full parsers by advancing the processor state.
-				 */
-				$this->state->stack_of_open_elements->push(
-					new WP_HTML_Token(
-						'root-node',
-						'HTML',
-						false
-					)
-				);
+				// Restore breadcrumbs based on the stack of open elements
+				foreach ( $this->state->stack_of_open_elements->walk_down() as $item ) {
+					$this->breadcrumbs[] = $item->node_name;
+				}
 
 				$this->change_parsing_namespace(
 					$this->context_node->integration_node_type
@@ -5607,7 +5597,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				}
 
 				$this->reset_insertion_mode_appropriately();
-				$this->breadcrumbs = array_slice( $this->breadcrumbs, 0, 2 );
 				parent::seek( $this->context_node->bookmark_name );
 			}
 		}
