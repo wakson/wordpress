@@ -727,6 +727,9 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		$imagick_image_editor->load();
 
+		// Log the Imagick version.
+		error_log( 'Imagick version: ' . $imagick->getVersion()['versionNumber'] );
+
 		// Test that the filter can be used to override the default.
 		$imagick_image_editor->resize( 200, 200 );
 		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
@@ -737,6 +740,9 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		// Clean up - remove the temporary file and restore the filter.
 		unlink( $save_to_file );
 		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
+
+		// Log success.
+		error_log( 'Success' );
 	}
 
 	/**
