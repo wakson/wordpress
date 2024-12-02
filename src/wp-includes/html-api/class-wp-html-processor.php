@@ -573,6 +573,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 				$fragment_processor->state->form_element                = clone $element;
 				$fragment_processor->state->form_element->bookmark_name = null;
 				$fragment_processor->state->form_element->on_destroy    = null;
+				$fragment_processor->state->form_element->locked        = true;
 				break;
 			}
 		}
@@ -2636,6 +2637,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 */
 			case '-FORM':
 				if ( ! $this->state->stack_of_open_elements->contains( 'TEMPLATE' ) ) {
+					if ( null !== $this->state->form_element && $this->state->form_element->locked ) {
+						$this->bail( 'Cannot pop locked FORM element.' );
+					}
 					$node                      = $this->state->form_element;
 					$this->state->form_element = null;
 
@@ -5560,12 +5564,21 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			 */
 			$this->state->frameset_ok                       = true;
 			$this->state->stack_of_template_insertion_modes = array();
-			$this->state->head_element                      = null;
-			$this->state->form_element                      = null;
 			$this->state->current_token                     = null;
 			$this->current_element                          = null;
 			$this->element_queue                            = array();
 			$this->breadcrumbs                              = array();
+
+			/*
+			 * Clear existing form element and head element pointers if they are not locked.
+			 * Locked pointers are not allowed to be touched.
+			 */
+			if ( null !== $this->state->head_element && ! $this->state->head_element->locked ) {
+				$this->state->head_element = null;
+			}
+			if ( null !== $this->state->form_element && ! $this->state->form_element->locked ) {
+				$this->state->form_element = null;
+			}
 
 			/*
 			 * The absence of a context node indicates a full parse.
