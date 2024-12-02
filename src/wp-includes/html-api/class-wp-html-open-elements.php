@@ -520,7 +520,7 @@ class WP_HTML_Open_Elements {
 			return false;
 		}
 		if ( $item->locked ) {
-			throw new WP_HTML_Stack_Exception( 'Cannot pop a locked element from the stack of open elements.' );
+			throw new WP_HTML_Stack_Exception( 'Cannot remove a locked element from the stack of open elements.' );
 		}
 		array_pop( $this->stack );
 		$this->after_element_pop( $item );

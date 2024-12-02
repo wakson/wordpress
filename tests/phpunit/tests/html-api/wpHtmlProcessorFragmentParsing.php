@@ -191,8 +191,8 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 			// Just progressing through the document.
 		}
 		$this->assertSame( 'unsupported', $processor->get_last_error() );
-		$this->assertSame(
-			'Cannot pop a locked element from the stack of open elements.',
+		$this->assertMatchesRegularExpression(
+			'/^Cannot remove a locked element from the stack of [a-z ]+ elements.$/',
 			$processor->get_unsupported_exception()->getMessage()
 		);
 	}
@@ -214,6 +214,8 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 			'LI in LI'               => array( '<ul><li>', '<li>' ),
 			'OPTION in OPTION'       => array( '<select><option>', '<option>' ),
 			'DIV in SVG'             => array( '<svg>', '<div>' ),
+
+			'Active formatting'      => array( '<div><span><i><i><i></span><div>', '</i>' ),
 		);
 	}
 }
