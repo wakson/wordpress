@@ -71,4 +71,35 @@ class Tests_HtmlApi_WpHtmlProcessorSetHtml extends WP_UnitTestCase {
 			),
 		);
 	}
+
+	/**
+	 * @ticket TBD
+	 *
+	 * @dataProvider data_set_inner_html
+	 */
+	public function test_set_inner_html( string $html, string $replacement, string $expected ) {
+		$processor = WP_HTML_Processor::create_fragment( $html );
+		while ( $processor->next_tag() ) {
+			if ( $processor->get_attribute( 'target' ) ) {
+				break;
+			}
+		}
+		$this->assertTrue( $processor->set_inner_html( $replacement ) );
+		$this->assertSame( $expected, $processor->get_updated_html() );
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public static function data_set_inner_html(): array {
+		return array(
+			'P text replacement'     => array( '<p target>Hello</p>', 'Goodbye', '<p target>Goodbye</p>' ),
+			'Clear P tag text'       => array( '<p target>Hello</p>', '', '<p target></p>' ),
+			'Set text in empty P'    => array( '<p target></p>', 'Hello', '<p target>Hello</p>' ),
+			'Set HTML in P'          => array( '<p target>X</p>', 'Text <em>replaced.', '<p target>Text <em>replaced.</em></p>' ),
+			'Replace TABLE contents' => array( '<table target><td>foo<td>bar</table>', '<thead><th><strong>Magical', '<table target><thead><tr><th><strong>Magical</strong></th></tr></thead></table>' ),
+		);
+	}
 }
