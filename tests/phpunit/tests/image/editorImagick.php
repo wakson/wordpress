@@ -723,12 +723,12 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$this->assertSame( 8, $im->getImageDepth() );
 		unlink( $save_to_file );
 
+		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		$imagick_image_editor->load();
 
 		// Test that the filter can be used to override the default.
-		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
-		$imagick_image_editor->resize( 50, 25 );
+		$imagick_image_editor->resize( 200, 200 );
 		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
 		$imagick_image_editor->save( $save_to_file );
 		$im = new Imagick( $save_to_file );
