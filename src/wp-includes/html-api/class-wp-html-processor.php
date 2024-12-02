@@ -366,6 +366,114 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	}
 
 	/**
+	 * Sets the inner HTML of the node.
+	 *
+	 * @todo add informative _doing_it_wrong messages.
+	 *
+	 * @param $html string The HTML to set. Provide the empty string to clear contents.
+	 * @return bool True if the operation was successful, false otherwise.
+	 */
+	public function set_inner_html( $html ): bool {
+		if ( $this->is_virtual() ) {
+			return false;
+		}
+
+		if ( $this->get_token_type() !== '#tag' ) {
+			return false;
+		}
+
+		if ( $this->is_tag_closer() ) {
+			return false;
+		}
+
+		if ( ! $this->expects_closer() ) {
+			return false;
+		}
+
+		if ( null === $html ) {
+			$html = '';
+		}
+
+		if ( ! is_string( $html ) ) {
+			return false;
+		}
+
+		// Flush any pending updates to the document before beginning.
+		$this->get_updated_html();
+
+		$open_bookmark_name  = 'SET_INNER_HTML: opener';
+		$close_bookmark_name = 'SET_INNER_HTML: closer';
+
+		if ( ! parent::set_bookmark( $open_bookmark_name ) ) {
+			return false;
+		}
+
+		// Seek to the matching close tag
+		$breadcrumbs = $this->breadcrumbs;
+		array_pop( $breadcrumbs );
+		$query = array(
+			'tag_name'    => $this->get_tag(),
+			'tag_closers' => 'visit',
+		);
+		while ( $this->next_tag( $query ) ) {
+			if ( $this->get_breadcrumbs() === $breadcrumbs ) {
+				break;
+			}
+		}
+
+		// Confirm this is an acceptable close tag and set a bookmark.
+		if (
+			$this->is_virtual() ||
+			! $this->is_tag_closer() ||
+			! parent::set_bookmark( $close_bookmark_name )
+		) {
+			parent::seek( $open_bookmark_name );
+			parent::release_bookmark( $open_bookmark_name );
+			return false;
+		}
+
+		parent::seek( $open_bookmark_name );
+
+		/*
+		 * Normalize the inner HTML string.
+		 * This ensures the HTML is well-formed and is valid in the context.
+		 * HTML serialized in this way cannot leak out of the context element.
+		 */
+		if ( '' !== $html ) {
+			$fragment_parser = $this->create_fragment_at_current_node( $html );
+			if ( null === $fragment_parser ) {
+				return false;
+			}
+
+			try {
+				$html = $fragment_parser->serialize();
+			} catch ( Exception $e ) {
+				$html = null;
+			}
+		}
+
+		// Invalid HTML contents were found.
+		if ( null === $html ) {
+			parent::release_bookmark( $open_bookmark_name );
+			parent::release_bookmark( $close_bookmark_name );
+			return false;
+		}
+
+		$inner_html_start        = $this->bookmarks[ $open_bookmark_name ]->start + $this->bookmarks[ $open_bookmark_name ]->length;
+		$inner_html_length       = $this->bookmarks[ $close_bookmark_name ]->start - $inner_html_start;
+		$this->lexical_updates[] = new WP_HTML_Text_Replacement(
+			$inner_html_start,
+			$inner_html_length,
+			$html
+		);
+
+		parent::release_bookmark( $open_bookmark_name );
+		parent::release_bookmark( $close_bookmark_name );
+
+		return true;
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 * Do not use this method. Use the static creator methods instead.
