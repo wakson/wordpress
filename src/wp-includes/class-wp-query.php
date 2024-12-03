@@ -648,6 +648,7 @@ class WP_Query {
 	 * @since 5.3.0 Introduced the `$meta_type_key` parameter.
 	 * @since 6.1.0 Introduced the `$update_menu_item_cache` parameter.
 	 * @since 6.2.0 Introduced the `$search_columns` parameter.
+	 * @since 6.8.0 Introduced the `$lazy_load_post_meta` parameter.
 	 *
 	 * @param string|array $query {
 	 *     Optional. Array or string of Query parameters.
@@ -784,6 +785,10 @@ class WP_Query {
 	 *                                                   disable cache priming for term meta, so that each
 	 *                                                   get_term_meta() call will hit the database.
 	 *                                                   Defaults to the value of `$update_post_term_cache`.
+	 *     @type bool            $lazy_load_post_meta    Whether to lazy-load post meta. Setting to false will
+	 *                                                   disable cache priming for post meta, so that each
+	 *                                                   get_post_meta() call will hit the database.
+	 *                                                   Defaults to the value of `$update_post_meta_cache`.
 	 *     @type int             $w                      The week number of the year. Default empty. Accepts numbers 0-53.
 	 *     @type int             $year                   The four-digit year. Default empty. Accepts any four-digit year.
 	 * }
@@ -1965,6 +1970,12 @@ class WP_Query {
 
 		if ( ! isset( $q['update_post_meta_cache'] ) ) {
 			$q['update_post_meta_cache'] = true;
+		}
+
+		if ( ! isset( $q['lazy_load_post_meta'] ) ) {
+			$q['lazy_load_post_meta'] = false;
+		} elseif ( $q['lazy_load_post_meta'] ) {
+			$q['update_post_meta_cache'] = false;
 		}
 
 		if ( ! isset( $q['post_type'] ) ) {
@@ -3226,6 +3237,9 @@ class WP_Query {
 						return $post_parents;
 					} else {
 						_prime_post_caches( $post_ids, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
+						if ( $q['lazy_load_post_meta'] ) {
+							wp_lazyload_post_meta( $post_ids );
+						}
 						/** @var WP_Post[] */
 						$this->posts = array_map( 'get_post', $post_ids );
 					}
@@ -3242,6 +3256,10 @@ class WP_Query {
 			$this->posts      = array_map( 'intval', $this->posts );
 			$this->post_count = count( $this->posts );
 			$this->set_found_posts( $q, $limits );
+
+			if ( $q['lazy_load_post_meta'] ) {
+				wp_lazyload_post_meta( $this->posts );
+			}
 
 			if ( $q['cache_results'] && $id_query_is_cacheable ) {
 				$cache_value = array(
@@ -3280,6 +3298,10 @@ class WP_Query {
 			}
 			// Prime post parent caches, so that on second run, there is not another database query.
 			wp_cache_add_multiple( $post_parents_cache, 'posts' );
+
+			if ( $q['lazy_load_post_meta'] ) {
+				wp_lazyload_post_meta( $post_ids );
+			}
 
 			if ( $q['cache_results'] && $id_query_is_cacheable ) {
 				$cache_value = array(
@@ -3360,6 +3382,9 @@ class WP_Query {
 					$this->posts = $post_ids;
 					$this->set_found_posts( $q, $limits );
 					_prime_post_caches( $post_ids, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
+					if ( $q['lazy_load_post_meta'] ) {
+						wp_lazyload_post_meta( $post_ids );
+					}
 				} else {
 					$this->posts = array();
 				}
@@ -3535,6 +3560,7 @@ class WP_Query {
 						'update_post_meta_cache' => $q['update_post_meta_cache'],
 						'update_post_term_cache' => $q['update_post_term_cache'],
 						'lazy_load_term_meta'    => $q['lazy_load_term_meta'],
+						'lazy_load_post_meta'    => $q['lazy_load_post_meta'],
 					)
 				);
 
@@ -3574,6 +3600,9 @@ class WP_Query {
 				} else {
 					$post_ids = wp_list_pluck( $this->posts, 'ID' );
 					_prime_post_caches( $post_ids, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
+					if ( $q['lazy_load_post_meta'] ) {
+						wp_lazyload_post_meta( $post_ids );
+					}
 				}
 			}
 
@@ -3692,6 +3721,9 @@ class WP_Query {
 			$post_ids = array_filter( $post_ids );
 			if ( $post_ids ) {
 				_prime_post_caches( $post_ids, $this->query_vars['update_post_term_cache'], $this->query_vars['update_post_meta_cache'] );
+				if ( $this->query_vars['lazy_load_post_meta'] ) {
+					wp_lazyload_post_meta( $post_ids );
+				}
 			}
 			$post_objects = array_map( 'get_post', $this->posts );
 			update_post_author_caches( $post_objects );
@@ -4880,6 +4912,7 @@ class WP_Query {
 			$args['cache_results'],
 			$args['fields'],
 			$args['lazy_load_term_meta'],
+			$args['lazy_load_post_meta'],
 			$args['update_post_meta_cache'],
 			$args['update_post_term_cache'],
 			$args['update_menu_item_cache'],
