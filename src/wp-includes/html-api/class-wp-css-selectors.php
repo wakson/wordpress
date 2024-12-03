@@ -16,8 +16,8 @@
  *
  * This class is designed for internal use by the HTML processor.
  *
- * This class is instantiated via the `WP_CSS_Selector_List::from_selector( string $selector )` method.
- * It accepts a CSS selector string and returns an instance of itself or `null` if the selector
+ * This class is instantiated via the `WP_CSS_Selector::from_selectors( string $input )` method.
+ * It takes a CSS selector string and returns an instance of itself or `null` if the selector
  * is invalid or unsupported.
  *
  * A subset of the CSS selector grammar is supported. The grammar is defined in the CSS Syntax
@@ -39,7 +39,7 @@
  *     <attribute-selector> = '[' <ident-token> ']' |
  *                            '[' <ident-token> <attr-matcher> [ <string-token> | <ident-token> ] <attr-modifier>? ']'
  *     <attr-matcher> = [ '~' | '|' | '^' | '$' | '*' ]? '='
- *     <attr-modifier> = i | s
+ *     <attr-modifier> = i | I | s | S
  *
  * @link https://www.w3.org/TR/selectors/#grammar Refer to the grammar for more details.
  *
@@ -77,7 +77,7 @@
  * @see {@link https://www.w3.org/TR/selectors-4/}
  *
  */
-class WP_CSS_Selector_List extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Matcher {
+class WP_CSS_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		if ( $processor->get_token_type() !== '#tag' ) {
 			return false;
@@ -97,34 +97,25 @@ class WP_CSS_Selector_List extends WP_CSS_Selector_Parser implements IWP_CSS_Sel
 	private $selectors;
 
 	/**
+	 * Constructor.
+	 *
 	 * @param array<WP_CSS_Complex_Selector> $selectors
 	 */
-	private function __construct( array $selectors ) {
+	protected function __construct( array $selectors ) {
 		$this->selectors = $selectors;
 	}
 
 	/**
-	 * Takes a CSS selectors string and returns an instance of itself or `null` if the selector
-	 * is invalid or unsupported.
+	 * Takes a CSS selector string and returns an instance of itself or `null` if the selector
+	 * string is invalid or unsupported.
 	 *
 	 * @since TBD
 	 *
-	 * @param string $selectors CSS selectors string.
+	 * @param string $input CSS selectors.
 	 * @return self|null
 	 */
-	public static function from_selectors( string $selectors ): ?self {
-		return self::parse( $selectors );
-	}
-
-	/**
-	 * Returns a list of selectors.
-	 *
-	 * @since TBD
-	 *
-	 * @return self|null
-	 */
-	private static function parse( string $input ) {
-		// > A selector string is a list of one or more complex selectors ([SELECTORS4], section 3.1) that may be surrounded by whitespace and matches the dom_selectors_group production.
+	public static function from_selectors( string $input ): ?self {
+		// > A selector string is a list of one or more complex selectors ([SELECTORS4], section 3.1) that may be surrounded by whitespace…
 		$input = trim( $input, " \t\r\n\r" );
 
 		if ( '' === $input ) {
@@ -146,7 +137,7 @@ class WP_CSS_Selector_List extends WP_CSS_Selector_Parser implements IWP_CSS_Sel
 
 		$offset = 0;
 
-		$selector = WP_CSS_Complex_Selector::parse( $input, $offset );
+		$selector = self::parse_complex_selector( $input, $offset );
 		if ( null === $selector ) {
 			return null;
 		}
@@ -160,7 +151,7 @@ class WP_CSS_Selector_List extends WP_CSS_Selector_Parser implements IWP_CSS_Sel
 			}
 			++$offset;
 			self::parse_whitespace( $input, $offset );
-			$selector = WP_CSS_Complex_Selector::parse( $input, $offset );
+			$selector = self::parse_complex_selector( $input, $offset );
 			if ( null === $selector ) {
 				return null;
 			}
@@ -170,23 +161,343 @@ class WP_CSS_Selector_List extends WP_CSS_Selector_Parser implements IWP_CSS_Sel
 
 		return new self( $selectors );
 	}
-}
 
-interface IWP_CSS_Selector_Matcher {
-	/**
-	 * @return bool
+	/*
+	 * ------------------------------
+	 * Selector parsing functionality
+	 * ------------------------------
 	 */
-	public function matches( WP_HTML_Processor $processor ): bool;
-}
 
-interface IWP_CSS_Selector_Parser {
 	/**
-	 * @return static|null
+	 * Parse an ID selector
+	 *
+	 * > <id-selector> = <hash-token>
+	 *
+	 * https://www.w3.org/TR/selectors/#grammar
+	 *
+	 * @return WP_CSS_ID_Selector|null
 	 */
-	public static function parse( string $input, int &$offset );
-}
+	final protected static function parse_id_selector( string $input, int &$offset ): ?WP_CSS_ID_Selector {
+		$ident = self::parse_hash_token( $input, $offset );
+		if ( null === $ident ) {
+			return null;
+		}
+		return new WP_CSS_ID_Selector( $ident );
+	}
 
-abstract class WP_CSS_Selector_Parser {
+	/**
+	 * Parse a class selector
+	 *
+	 * > <class-selector> = '.' <ident-token>
+	 *
+	 * https://www.w3.org/TR/selectors/#grammar
+	 *
+	 * @return WP_CSS_Class_Selector|null
+	 */
+	final protected static function parse_class_selector( string $input, int &$offset ): ?WP_CSS_Class_Selector {
+		if ( $offset + 1 >= strlen( $input ) || '.' !== $input[ $offset ] ) {
+			return null;
+		}
+
+		$updated_offset = $offset + 1;
+		$result         = self::parse_ident( $input, $updated_offset );
+
+		if ( null === $result ) {
+			return null;
+		}
+
+		$offset = $updated_offset;
+		return new WP_CSS_Class_Selector( $result );
+	}
+
+	/**
+	 * Parse a type selector
+	 *
+	 * > <type-selector> = <wq-name> | <ns-prefix>? '*'
+	 * > <ns-prefix> = [ <ident-token> | '*' ]? '|'
+	 * > <wq-name> = <ns-prefix>? <ident-token>
+	 *
+	 * Namespaces (e.g. |div, *|div, or namespace|div) are not supported,
+	 * so this selector effectively matches * or ident.
+	 *
+	 * https://www.w3.org/TR/selectors/#grammar
+	 *
+	 * @return WP_CSS_Type_Selector|null
+	 */
+	final protected static function parse_type_selector( string $input, int &$offset ): ?WP_CSS_Type_Selector {
+		if ( $offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		if ( '*' === $input[ $offset ] ) {
+			++$offset;
+			return new WP_CSS_Type_Selector( '*' );
+		}
+
+		$result = self::parse_ident( $input, $offset );
+		if ( null === $result ) {
+			return null;
+		}
+
+		return new WP_CSS_Type_Selector( $result );
+	}
+
+	/**
+	 * Parse an attribute selector
+	 *
+	 * > <attribute-selector> = '[' <wq-name> ']' |
+	 * >                        '[' <wq-name> <attr-matcher> [ <string-token> | <ident-token> ] <attr-modifier>? ']'
+	 * > <attr-matcher> = [ '~' | '|' | '^' | '$' | '*' ]? '='
+	 * > <attr-modifier> = i | s
+	 * > <wq-name> = <ns-prefix>? <ident-token>
+	 *
+	 * Namespaces are not supported, so attribute names are effectively identifiers.
+	 *
+	 * https://www.w3.org/TR/selectors/#grammar
+	 *
+	 * @return WP_CSS_Attribute_Selector|null
+	 */
+	final protected static function parse_attribute_selector( string $input, int &$offset ): ?WP_CSS_Attribute_Selector {
+		// Need at least 3 bytes [x]
+		if ( $offset + 2 >= strlen( $input ) ) {
+			return null;
+		}
+
+		$updated_offset = $offset;
+
+		if ( '[' !== $input[ $updated_offset ] ) {
+			return null;
+		}
+		++$updated_offset;
+
+		self::parse_whitespace( $input, $updated_offset );
+		$attr_name = self::parse_ident( $input, $updated_offset );
+		if ( null === $attr_name ) {
+			return null;
+		}
+		self::parse_whitespace( $input, $updated_offset );
+
+		if ( $updated_offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		if ( ']' === $input[ $updated_offset ] ) {
+			$offset = $updated_offset + 1;
+			return new WP_CSS_Attribute_Selector( $attr_name );
+		}
+
+		// need to match at least `=x]` at this point
+		if ( $updated_offset + 3 >= strlen( $input ) ) {
+			return null;
+		}
+
+		if ( '=' === $input[ $updated_offset ] ) {
+			++$updated_offset;
+			$attr_matcher = WP_CSS_Attribute_Selector::MATCH_EXACT;
+		} elseif ( '=' === $input[ $updated_offset + 1 ] ) {
+			switch ( $input[ $updated_offset ] ) {
+				case '~':
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_ONE_OF_EXACT;
+					$updated_offset += 2;
+					break;
+				case '|':
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_EXACT_OR_EXACT_WITH_HYPHEN;
+					$updated_offset += 2;
+					break;
+				case '^':
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_PREFIXED_BY;
+					$updated_offset += 2;
+					break;
+				case '$':
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_SUFFIXED_BY;
+					$updated_offset += 2;
+					break;
+				case '*':
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_CONTAINS;
+					$updated_offset += 2;
+					break;
+				default:
+					return null;
+			}
+		} else {
+			return null;
+		}
+
+		self::parse_whitespace( $input, $updated_offset );
+		$attr_val =
+			self::parse_string( $input, $updated_offset ) ??
+			self::parse_ident( $input, $updated_offset );
+
+		if ( null === $attr_val ) {
+			return null;
+		}
+
+		self::parse_whitespace( $input, $updated_offset );
+		if ( $updated_offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		$attr_modifier = null;
+		switch ( $input[ $updated_offset ] ) {
+			case 'i':
+			case 'I':
+				$attr_modifier = WP_CSS_Attribute_Selector::MODIFIER_CASE_INSENSITIVE;
+				++$updated_offset;
+				break;
+
+			case 's':
+			case 'S':
+				$attr_modifier = WP_CSS_Attribute_Selector::MODIFIER_CASE_SENSITIVE;
+				++$updated_offset;
+				break;
+		}
+
+		if ( null !== $attr_modifier ) {
+			self::parse_whitespace( $input, $updated_offset );
+			if ( $updated_offset >= strlen( $input ) ) {
+				return null;
+			}
+		}
+
+		if ( ']' === $input[ $updated_offset ] ) {
+			$offset = $updated_offset + 1;
+			return new WP_CSS_Attribute_Selector( $attr_name, $attr_matcher, $attr_val, $attr_modifier );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Parses a compound selector.
+	 *
+	 * > <compound-selector> = [ <type-selector>? <subclass-selector>* ]!
+	 *
+	 * @return WP_CSS_Compound_Selector|null
+	 */
+	final protected static function parse_compound_selector( string $input, int &$offset ): ?WP_CSS_Compound_Selector {
+		if ( $offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		$updated_offset = $offset;
+		$type_selector  = self::parse_type_selector( $input, $updated_offset );
+
+		$subclass_selectors            = array();
+		$last_parsed_subclass_selector = self::parse_subclass_selector( $input, $updated_offset );
+		while ( null !== $last_parsed_subclass_selector ) {
+			$subclass_selectors[]          = $last_parsed_subclass_selector;
+			$last_parsed_subclass_selector = self::parse_subclass_selector( $input, $updated_offset );
+		}
+
+		if ( null !== $type_selector || array() !== $subclass_selectors ) {
+			$offset = $updated_offset;
+			return new WP_CSS_Compound_Selector( $type_selector, $subclass_selectors );
+		}
+		return null;
+	}
+
+	/**
+	 * Parses a complex selector.
+	 *
+	 * > <complex-selector> = [ <type-selector> <combinator>? ]* <compound-selector>
+	 *
+	 * @return WP_CSS_Complex_Selector|null
+	 */
+	final protected static function parse_complex_selector( string $input, int &$offset ): ?WP_CSS_Complex_Selector {
+		if ( $offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		$updated_offset = $offset;
+		$selector       = self::parse_compound_selector( $input, $updated_offset );
+		if ( null === $selector ) {
+			return null;
+		}
+
+		$selectors                       = array( $selector );
+		$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
+
+		$found_whitespace = self::parse_whitespace( $input, $updated_offset );
+		while ( $updated_offset < strlen( $input ) ) {
+			if (
+				WP_CSS_Complex_Selector::COMBINATOR_CHILD === $input[ $updated_offset ] ||
+				WP_CSS_Complex_Selector::COMBINATOR_NEXT_SIBLING === $input[ $updated_offset ] ||
+				WP_CSS_Complex_Selector::COMBINATOR_SUBSEQUENT_SIBLING === $input[ $updated_offset ]
+			) {
+				$combinator = $input[ $updated_offset ];
+				++$updated_offset;
+				self::parse_whitespace( $input, $updated_offset );
+
+				// Failure to find a selector here is a parse error
+				$selector = self::parse_compound_selector( $input, $updated_offset );
+			} elseif ( $found_whitespace ) {
+				/*
+				* Whitespace is ambiguous, it could be a descendant combinator or
+				* insignificant whitespace.
+				*/
+				$selector = self::parse_compound_selector( $input, $updated_offset );
+				if ( null === $selector ) {
+					break;
+				}
+				$combinator = WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT;
+			} else {
+				break;
+			}
+
+			if ( null === $selector ) {
+				return null;
+			}
+
+			// `div > .className` is valid, but `.className > div` is not.
+			if ( $has_preceding_subclass_selector ) {
+				throw new Exception( 'Unsupported non-final subclass selector.' );
+			}
+			$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
+
+			$selectors[] = $combinator;
+			$selectors[] = $selector;
+
+			$found_whitespace = self::parse_whitespace( $input, $updated_offset );
+		}
+		$offset = $updated_offset;
+		return new WP_CSS_Complex_Selector( $selectors );
+	}
+
+	/**
+	 * Parses a subclass selector.
+	 *
+	 * > <subclass-selector> = <id-selector> | <class-selector> | <attribute-selector>
+	 *
+	 * @return WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector|null
+	 */
+	private static function parse_subclass_selector( string $input, int &$offset ) {
+		if ( $offset >= strlen( $input ) ) {
+			return null;
+		}
+
+		$next_char = $input[ $offset ];
+		return '.' === $next_char
+			? self::parse_class_selector( $input, $offset )
+			: (
+				'#' === $next_char
+				? self::parse_id_selector( $input, $offset )
+				: ( '[' === $next_char
+					? self::parse_attribute_selector( $input, $offset )
+					: null
+				)
+			);
+	}
+
+
+	/*
+	 * ------------------------
+	 * Selector partial parsing
+	 * ------------------------
+	 *
+	 * These functions consume parts of a selector string input when successful
+	 * and return meaningful values to be used by selectors.
+	 */
+
 	const UTF8_MAX_CODEPOINT_VALUE = 0x10FFFF;
 	const WHITESPACE_CHARACTERS    = " \t\r\n\f";
 
@@ -212,7 +523,7 @@ abstract class WP_CSS_Selector_Parser {
 	 *
 	 * This implementation is not interested in the <delim-token>, a '#' delim token is not relevant for selectors.
 	 */
-	protected static function parse_hash_token( string $input, int &$offset ): ?string {
+	final protected static function parse_hash_token( string $input, int &$offset ): ?string {
 		if ( $offset + 1 >= strlen( $input ) || '#' !== $input[ $offset ] ) {
 			return null;
 		}
@@ -253,7 +564,7 @@ abstract class WP_CSS_Selector_Parser {
 	 *
 	 * @return string|null
 	 */
-	protected static function parse_ident( string $input, int &$offset ): ?string {
+	final protected static function parse_ident( string $input, int &$offset ): ?string {
 		if ( ! self::check_if_three_code_points_would_start_an_ident_sequence( $input, $offset ) ) {
 			return null;
 		}
@@ -312,7 +623,7 @@ abstract class WP_CSS_Selector_Parser {
 	 *
 	 * @return string|null
 	 */
-	protected static function parse_string( string $input, int &$offset ): ?string {
+	final protected static function parse_string( string $input, int &$offset ): ?string {
 		if ( $offset + 1 >= strlen( $input ) ) {
 			return null;
 		}
@@ -388,16 +699,24 @@ abstract class WP_CSS_Selector_Parser {
 	 * @param int $offset
 	 * @return string|null
 	 */
-	protected static function consume_escaped_codepoint( $input, &$offset ): ?string {
+	final protected static function consume_escaped_codepoint( $input, &$offset ): ?string {
 		$hex_length = strspn( $input, '0123456789abcdefABCDEF', $offset, 6 );
 		if ( $hex_length > 0 ) {
+			/**
+			 * The 6-character hex string has a maximum value of 0xFFFFFF.
+			 * It is likely to fit in an int value and not be a float.
+			 *
+			 * @var int
+			 */
 			$codepoint_value = hexdec( substr( $input, $offset, $hex_length ) );
 
-			// > A surrogate is a leading surrogate or a trailing surrogate.
-			// > A leading surrogate is a code point that is in the range U+D800 to U+DBFF, inclusive.
-			// > A trailing surrogate is a code point that is in the range U+DC00 to U+DFFF, inclusive.
-			// The surrogate ranges are adjacent, so the complete range is 0xD800..=0xDFFF,
-			// inclusive.
+			/*
+			 * > A surrogate is a leading surrogate or a trailing surrogate.
+			 * > A leading surrogate is a code point that is in the range U+D800 to U+DBFF, inclusive.
+			 * > A trailing surrogate is a code point that is in the range U+DC00 to U+DFFF, inclusive.
+			 *
+			 * The surrogate ranges are adjacent, so the complete range is 0xD800 to 0xDFFF, inclusive.
+			 */
 			$codepoint_char = (
 				0 === $codepoint_value ||
 				$codepoint_value > self::UTF8_MAX_CODEPOINT_VALUE ||
@@ -428,13 +747,16 @@ abstract class WP_CSS_Selector_Parser {
 	}
 
 	/*
-	 * Utiltities
-	 * ==========
+	 * ---------------------------
+	 * Selector parsing utiltities
+	 * ---------------------------
 	 *
-	 * The following functions do not consume any input.
+	 * The following functions are used for parsing but do not consume any input.
 	 */
 
 	/**
+	 * Checks for two valid escape codepoints.
+	 *
 	 * > 4.3.8. Check if two code points are a valid escape
 	 * > This section describes how to check if two code points are a valid escape. The algorithm described here can be called explicitly with two code points, or can be called with the input stream itself. In the latter case, the two code points in question are the current input code point and the next input code point, in that order.
 	 * >
@@ -449,8 +771,12 @@ abstract class WP_CSS_Selector_Parser {
 	 * https://www.w3.org/TR/css-syntax-3/#starts-with-a-valid-escape
 	 *
 	 * @todo this does not check whether the second codepoint is valid.
+	 *
+	 * @param string $input The input string.
+	 * @param int $offset The byte offset in the string.
+	 * @return bool True if the next two codepoints are a valid escape, otherwise false.
 	 */
-	protected static function next_two_are_valid_escape( string $input, int $offset ): bool {
+	private static function next_two_are_valid_escape( string $input, int $offset ): bool {
 		if ( $offset + 1 >= strlen( $input ) ) {
 			return false;
 		}
@@ -458,7 +784,7 @@ abstract class WP_CSS_Selector_Parser {
 	}
 
 	/**
-	 * Check if the next code point is an "ident start code point".
+	 * Checks if the next code point is an "ident start code point".
 	 *
 	 * Caution! This method does not do any bounds checking, it should not be passed
 	 * a string with an offset that is out of bounds.
@@ -474,9 +800,13 @@ abstract class WP_CSS_Selector_Parser {
 	 * > non-ASCII code point
 	 * >   A code point with a value equal to or greater than U+0080 <control>.
 	 *
-	 * https://www.w3.org/TR/css-syntax-3/#ident-start-code-point
+	 * @link https://www.w3.org/TR/css-syntax-3/#ident-start-code-point
+	 *
+	 * @param string $input The input string.
+	 * @param int $offset The byte offset in the string.
+	 * @return bool True if the next codepoint is an ident start code point, otherwise false.
 	 */
-	protected static function is_ident_start_codepoint( string $input, int $offset ): bool {
+	final protected static function is_ident_start_codepoint( string $input, int $offset ): bool {
 		return (
 			'_' === $input[ $offset ] ||
 			( 'a' <= $input[ $offset ] && $input[ $offset ] <= 'z' ) ||
@@ -486,7 +816,7 @@ abstract class WP_CSS_Selector_Parser {
 	}
 
 	/**
-	 * Check if the next code point is an "ident code point".
+	 * Checks if the next code point is an "ident code point".
 	 *
 	 * Caution! This method does not do any bounds checking, it should not be passed
 	 * a string with an offset that is out of bounds.
@@ -496,15 +826,21 @@ abstract class WP_CSS_Selector_Parser {
 	 * > digit
 	 * >   A code point between U+0030 DIGIT ZERO (0) and U+0039 DIGIT NINE (9) inclusive.
 	 *
-	 * https://www.w3.org/TR/css-syntax-3/#ident-code-point
+	 * @link https://www.w3.org/TR/css-syntax-3/#ident-code-point
+	 *
+	 * @param string $input The input string.
+	 * @param int $offset The byte offset in the string.
+	 * @return bool True if the next codepoint is an ident code point, otherwise false.
 	 */
-	protected static function is_ident_codepoint( string $input, int $offset ): bool {
+	final protected static function is_ident_codepoint( string $input, int $offset ): bool {
 		return '-' === $input[ $offset ] ||
 			( '0' <= $input[ $offset ] && $input[ $offset ] <= '9' ) ||
 			self::is_ident_start_codepoint( $input, $offset );
 	}
 
 	/**
+	 * Checks if three code points would start an ident sequence.
+	 *
 	 * > 4.3.9. Check if three code points would start an ident sequence
 	 * > This section describes how to check if three code points would start an ident sequence. The algorithm described here can be called explicitly with three code points, or can be called with the input stream itself. In the latter case, the three code points in question are the current input code point and the next two input code points, in that order.
 	 * >
@@ -521,9 +857,13 @@ abstract class WP_CSS_Selector_Parser {
 	 * > anything else
 	 * >   Return false.
 	 *
-	 * https://www.w3.org/TR/css-syntax-3/#would-start-an-identifier
+	 * @link https://www.w3.org/TR/css-syntax-3/#would-start-an-identifier
+	 *
+	 * @param string $input The input string.
+	 * @param int $offset The byte offset in the string.
+	 * @return bool True if the next three codepoints would start an ident sequence, otherwise false.
 	 */
-	protected static function check_if_three_code_points_would_start_an_ident_sequence( string $input, int $offset ): bool {
+	private static function check_if_three_code_points_would_start_an_ident_sequence( string $input, int $offset ): bool {
 		if ( $offset >= strlen( $input ) ) {
 			return false;
 		}
@@ -567,30 +907,19 @@ abstract class WP_CSS_Selector_Parser {
 	}
 }
 
-final class WP_CSS_ID_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+interface IWP_CSS_Selector_Matcher {
+	/**
+	 * @return bool
+	 */
+	public function matches( WP_HTML_Processor $processor ): bool;
+}
 
+final class WP_CSS_ID_Selector implements IWP_CSS_Selector_Matcher {
 	/** @var string */
 	public $ident;
 
-	private function __construct( string $ident ) {
+	public function __construct( string $ident ) {
 		$this->ident = $ident;
-	}
-
-	/**
-	 * Parse an ID selector
-	 *
-	 * > <id-selector> = <hash-token>
-	 *
-	 * https://www.w3.org/TR/selectors/#grammar
-	 *
-	 * @return self|null
-	 */
-	public static function parse( string $input, int &$offset ): ?self {
-		$ident = self::parse_hash_token( $input, $offset );
-		if ( null === $ident ) {
-			return null;
-		}
-		return new self( $ident );
 	}
 
 	public function matches( WP_HTML_Processor $processor ): bool {
@@ -606,7 +935,7 @@ final class WP_CSS_ID_Selector extends WP_CSS_Selector_Parser implements IWP_CSS
 	}
 }
 
-final class WP_CSS_Class_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+final class WP_CSS_Class_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		return (bool) $processor->has_class( $this->ident );
 	}
@@ -614,42 +943,21 @@ final class WP_CSS_Class_Selector extends WP_CSS_Selector_Parser implements IWP_
 	/** @var string */
 	public $ident;
 
-	private function __construct( string $ident ) {
+	public function __construct( string $ident ) {
 		$this->ident = $ident;
-	}
-
-	/**
-	 * Parse a class selector
-	 *
-	 * > <class-selector> = '.' <ident-token>
-	 *
-	 * https://www.w3.org/TR/selectors/#grammar
-	 *
-	 * @return self|null
-	 */
-	public static function parse( string $input, int &$offset ): ?self {
-		if ( $offset + 1 >= strlen( $input ) || '.' !== $input[ $offset ] ) {
-			return null;
-		}
-
-		$updated_offset = $offset + 1;
-		$result         = self::parse_ident( $input, $updated_offset );
-
-		if ( null === $result ) {
-			return null;
-		}
-
-		$offset = $updated_offset;
-		return new self( $result );
 	}
 }
 
-final class WP_CSS_Type_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+final class WP_CSS_Type_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
+		$tag_name = $processor->get_tag();
+		if ( null === $tag_name ) {
+			return false;
+		}
 		if ( '*' === $this->ident ) {
 			return true;
 		}
-		return 0 === strcasecmp( $processor->get_tag(), $this->ident );
+		return 0 === strcasecmp( $tag_name, $this->ident );
 	}
 
 	/**
@@ -659,44 +967,12 @@ final class WP_CSS_Type_Selector extends WP_CSS_Selector_Parser implements IWP_C
 	 */
 	public $ident;
 
-	private function __construct( string $ident ) {
+	public function __construct( string $ident ) {
 		$this->ident = $ident;
-	}
-
-	/**
-	 * Parse a type selector
-	 *
-	 * > <type-selector> = <wq-name> | <ns-prefix>? '*'
-	 * > <ns-prefix> = [ <ident-token> | '*' ]? '|'
-	 * > <wq-name> = <ns-prefix>? <ident-token>
-	 *
-	 * Namespaces (e.g. |div, *|div, or namespace|div) are not supported,
-	 * so this selector effectively matches * or ident.
-	 *
-	 * https://www.w3.org/TR/selectors/#grammar
-	 *
-	 * @return self|null
-	 */
-	public static function parse( string $input, int &$offset ): ?self {
-		if ( $offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		if ( '*' === $input[ $offset ] ) {
-			++$offset;
-			return new self( '*' );
-		}
-
-		$result = self::parse_ident( $input, $offset );
-		if ( null === $result ) {
-			return null;
-		}
-
-		return new self( $result );
 	}
 }
 
-final class WP_CSS_Attribute_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+final class WP_CSS_Attribute_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		$att_value = $processor->get_attribute( $this->name );
 		if ( null === $att_value ) {
@@ -772,17 +1048,17 @@ final class WP_CSS_Attribute_Selector extends WP_CSS_Selector_Parser implements 
 	 * @return Generator<string>
 	 */
 	private function whitespace_delimited_list( string $input ): Generator {
-		$offset = strspn( $input, self::WHITESPACE_CHARACTERS );
+		$offset = strspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS );
 
 		while ( $offset < strlen( $input ) ) {
 			// Find the byte length until the next boundary.
-			$length = strcspn( $input, self::WHITESPACE_CHARACTERS, $offset );
+			$length = strcspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS, $offset );
 			if ( 0 === $length ) {
 				return;
 			}
 
 			$value   = substr( $input, $offset, $length );
-			$offset += $length + strspn( $input, self::WHITESPACE_CHARACTERS, $offset + $length );
+			$offset += $length + strspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS, $offset + $length );
 
 			yield $value;
 		}
@@ -877,136 +1153,11 @@ final class WP_CSS_Attribute_Selector extends WP_CSS_Selector_Parser implements 
 	 * @param null|string $value
 	 * @param null|self::MODIFIER_* $modifier
 	 */
-	private function __construct( string $name, ?string $matcher = null, ?string $value = null, ?string $modifier = null ) {
+	public function __construct( string $name, ?string $matcher = null, ?string $value = null, ?string $modifier = null ) {
 		$this->name     = $name;
 		$this->matcher  = $matcher;
 		$this->value    = $value;
 		$this->modifier = $modifier;
-	}
-
-	/**
-	 * Parse a attribute selector
-	 *
-	 * > <attribute-selector> = '[' <wq-name> ']' |
-	 * >                        '[' <wq-name> <attr-matcher> [ <string-token> | <ident-token> ] <attr-modifier>? ']'
-	 * > <attr-matcher> = [ '~' | '|' | '^' | '$' | '*' ]? '='
-	 * > <attr-modifier> = i | s
-	 * > <wq-name> = <ns-prefix>? <ident-token>
-	 *
-	 * Namespaces are not supported, so attribute names are effectively identifiers.
-	 *
-	 * https://www.w3.org/TR/selectors/#grammar
-	 *
-	 * @return self|null
-	 */
-	public static function parse( string $input, int &$offset ): ?self {
-		// Need at least 3 bytes [x]
-		if ( $offset + 2 >= strlen( $input ) ) {
-			return null;
-		}
-
-		$updated_offset = $offset;
-
-		if ( '[' !== $input[ $updated_offset ] ) {
-			return null;
-		}
-		++$updated_offset;
-
-		self::parse_whitespace( $input, $updated_offset );
-		$attr_name = self::parse_ident( $input, $updated_offset );
-		if ( null === $attr_name ) {
-			return null;
-		}
-		self::parse_whitespace( $input, $updated_offset );
-
-		if ( $updated_offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		if ( ']' === $input[ $updated_offset ] ) {
-			$offset = $updated_offset + 1;
-			return new self( $attr_name );
-		}
-
-		// need to match at least `=x]` at this point
-		if ( $updated_offset + 3 >= strlen( $input ) ) {
-			return null;
-		}
-
-		if ( '=' === $input[ $updated_offset ] ) {
-			++$updated_offset;
-			$attr_matcher = WP_CSS_Attribute_Selector::MATCH_EXACT;
-		} elseif ( '=' === $input[ $updated_offset + 1 ] ) {
-			switch ( $input[ $updated_offset ] ) {
-				case '~':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_ONE_OF_EXACT;
-					$updated_offset += 2;
-					break;
-				case '|':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_EXACT_OR_EXACT_WITH_HYPHEN;
-					$updated_offset += 2;
-					break;
-				case '^':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_PREFIXED_BY;
-					$updated_offset += 2;
-					break;
-				case '$':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_SUFFIXED_BY;
-					$updated_offset += 2;
-					break;
-				case '*':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_CONTAINS;
-					$updated_offset += 2;
-					break;
-				default:
-					return null;
-			}
-		} else {
-			return null;
-		}
-
-		self::parse_whitespace( $input, $updated_offset );
-		$attr_val =
-			self::parse_string( $input, $updated_offset ) ??
-			self::parse_ident( $input, $updated_offset );
-
-		if ( null === $attr_val ) {
-			return null;
-		}
-
-		self::parse_whitespace( $input, $updated_offset );
-		if ( $updated_offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		$attr_modifier = null;
-		switch ( $input[ $updated_offset ] ) {
-			case 'i':
-			case 'I':
-				$attr_modifier = WP_CSS_Attribute_Selector::MODIFIER_CASE_INSENSITIVE;
-				++$updated_offset;
-				break;
-
-			case 's':
-			case 'S':
-				$attr_modifier = WP_CSS_Attribute_Selector::MODIFIER_CASE_SENSITIVE;
-				++$updated_offset;
-				break;
-		}
-
-		if ( null !== $attr_modifier ) {
-			self::parse_whitespace( $input, $updated_offset );
-			if ( $updated_offset >= strlen( $input ) ) {
-				return null;
-			}
-		}
-
-		if ( ']' === $input[ $updated_offset ] ) {
-			$offset = $updated_offset + 1;
-			return new self( $attr_name, $attr_matcher, $attr_val, $attr_modifier );
-		}
-
-		return null;
 	}
 }
 
@@ -1015,7 +1166,7 @@ final class WP_CSS_Attribute_Selector extends WP_CSS_Selector_Parser implements 
  *
  * > <compound-selector> = [ <type-selector>? <subclass-selector>* ]!
  */
-final class WP_CSS_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+final class WP_CSS_Compound_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		if ( $this->type_selector ) {
 			if ( ! $this->type_selector->matches( $processor ) ) {
@@ -1042,65 +1193,18 @@ final class WP_CSS_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Se
 	 * @param WP_CSS_Type_Selector|null $type_selector
 	 * @param array<WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector> $subclass_selectors
 	 */
-	private function __construct( ?WP_CSS_Type_Selector $type_selector, array $subclass_selectors ) {
+	public function __construct( ?WP_CSS_Type_Selector $type_selector, array $subclass_selectors ) {
 		$this->type_selector      = $type_selector;
 		$this->subclass_selectors = array() === $subclass_selectors ? null : $subclass_selectors;
 	}
-
-	/**
-	 * > <compound-selector> = [ <type-selector>? <subclass-selector>* ]!
-	 */
-	public static function parse( string $input, int &$offset ): ?self {
-		if ( $offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		$updated_offset = $offset;
-		$type_selector  = WP_CSS_Type_Selector::parse( $input, $updated_offset );
-
-		$subclass_selectors            = array();
-		$last_parsed_subclass_selector = self::parse_subclass_selector( $input, $updated_offset );
-		while ( null !== $last_parsed_subclass_selector ) {
-			$subclass_selectors[]          = $last_parsed_subclass_selector;
-			$last_parsed_subclass_selector = self::parse_subclass_selector( $input, $updated_offset );
-		}
-
-		if ( null !== $type_selector || array() !== $subclass_selectors ) {
-			$offset = $updated_offset;
-			return new self( $type_selector, $subclass_selectors );
-		}
-		return null;
-	}
-
-	/**
-	 * @return WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector|null
-	 */
-	private static function parse_subclass_selector( string $input, int &$offset ) {
-		if ( $offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		$next_char = $input[ $offset ];
-		return '.' === $next_char
-			? WP_CSS_Class_Selector::parse( $input, $offset )
-			: (
-				'#' === $next_char
-				? WP_CSS_ID_Selector::parse( $input, $offset )
-				: ( '[' === $next_char
-					? WP_CSS_Attribute_Selector::parse( $input, $offset )
-					: null
-				)
-			);
-	}
 }
-
 
 /**
  * This corresponds to <complex-selector> in the grammar.
  *
  * > <complex-selector> = <compound-selector> [ <combinator>? <compound-selector> ] *
  */
-final class WP_CSS_Complex_Selector extends WP_CSS_Selector_Parser implements IWP_CSS_Selector_Parser, IWP_CSS_Selector_Matcher {
+final class WP_CSS_Complex_Selector implements IWP_CSS_Selector_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		// First selector must match this location.
 		if ( ! $this->selectors[0]->matches( $processor ) ) {
@@ -1120,7 +1224,7 @@ final class WP_CSS_Complex_Selector extends WP_CSS_Selector_Parser implements IW
 	/**
 	 * This only looks at breadcrumbs and can therefore only support type selectors.
 	 *
-	 * @param array<WP_CSS_Selector|self::COMBINATOR_*> $selectors
+	 * @param array<WP_CSS_Compound_Selector|self::COMBINATOR_*> $selectors
 	 * @param array<string> $breadcrumbs
 	 */
 	private function explore_matches( array $selectors, array $breadcrumbs ): bool {
@@ -1133,7 +1237,7 @@ final class WP_CSS_Complex_Selector extends WP_CSS_Selector_Parser implements IW
 
 		/** @var self::COMBINATOR_* $combinator */
 		$combinator = $selectors[0];
-		/** @var WP_CSS_Selector $selector */
+		/** @var WP_CSS_Compound_Selector $selector */
 		$selector = $selectors[1];
 
 		switch ( $combinator ) {
@@ -1166,78 +1270,18 @@ final class WP_CSS_Complex_Selector extends WP_CSS_Selector_Parser implements IW
 	const COMBINATOR_SUBSEQUENT_SIBLING = '~';
 
 	/**
-	 * even indexes are WP_CSS_Selector, odd indexes are string combinators.
+	 * even indexes are WP_CSS_Compound_Selector, odd indexes are string combinators.
 	 * In reverse order to match the current element and then work up the tree.
 	 * Any non-final selector is a type selector.
 	 *
-	 * @var array<WP_CSS_Selector|self::COMBINATOR_*>
+	 * @var array<WP_CSS_Compound_Selector|self::COMBINATOR_*>
 	 */
 	public $selectors = array();
 
 	/**
-	 * @param array<WP_CSS_Selector|self::COMBINATOR_*> $selectors
+	 * @param array<WP_CSS_Compound_Selector|self::COMBINATOR_*> $selectors
 	 */
-	private function __construct( array $selectors ) {
+	public function __construct( array $selectors ) {
 		$this->selectors = array_reverse( $selectors );
-	}
-
-	public static function parse( string $input, int &$offset ): ?self {
-		if ( $offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		$updated_offset = $offset;
-		$selector       = WP_CSS_Selector::parse( $input, $updated_offset );
-		if ( null === $selector ) {
-			return null;
-		}
-
-		$selectors                       = array( $selector );
-		$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
-
-		$found_whitespace = self::parse_whitespace( $input, $updated_offset );
-		while ( $updated_offset < strlen( $input ) ) {
-			if (
-				self::COMBINATOR_CHILD === $input[ $updated_offset ] ||
-				self::COMBINATOR_NEXT_SIBLING === $input[ $updated_offset ] ||
-				self::COMBINATOR_SUBSEQUENT_SIBLING === $input[ $updated_offset ]
-			) {
-				$combinator = $input[ $updated_offset ];
-				++$updated_offset;
-				self::parse_whitespace( $input, $updated_offset );
-
-				// Failure to find a selector here is a parse error
-				$selector = WP_CSS_Selector::parse( $input, $updated_offset );
-			} elseif ( $found_whitespace ) {
-				/*
-				* Whitespace is ambiguous, it could be a descendant combinator or
-				* insignificant whitespace.
-				*/
-				$selector = WP_CSS_Selector::parse( $input, $updated_offset );
-				if ( null === $selector ) {
-					break;
-				}
-				$combinator = self::COMBINATOR_DESCENDANT;
-			} else {
-				break;
-			}
-
-			if ( null === $selector ) {
-				return null;
-			}
-
-			// `div > .className` is valid, but `.className > div` is not.
-			if ( $has_preceding_subclass_selector ) {
-				throw new Exception( 'Unsupported non-final subclass selector.' );
-			}
-			$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
-
-			$selectors[] = $combinator;
-			$selectors[] = $selector;
-
-			$found_whitespace = self::parse_whitespace( $input, $updated_offset );
-		}
-		$offset = $updated_offset;
-		return new self( $selectors );
 	}
 }

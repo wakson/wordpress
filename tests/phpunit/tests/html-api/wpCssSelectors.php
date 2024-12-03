@@ -11,6 +11,63 @@
  * @group html-api
  */
 class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
+	private $test_class;
+
+	public function set_up(): void {
+		parent::set_up();
+		$this->test_class = new class() extends WP_CSS_Selector {
+			public function __construct() {
+				parent::__construct( array() );
+			}
+
+			/*
+			 * Parsing
+			 */
+			public static function test_parse_ident( string $input, int &$offset ) {
+				return self::parse_ident( $input, $offset );
+			}
+
+			public static function test_parse_string( string $input, int &$offset ) {
+				return self::parse_string( $input, $offset );
+			}
+
+			public static function test_parse_type_selector( string $input, int &$offset ) {
+				return self::parse_type_selector( $input, $offset );
+			}
+
+			public static function test_parse_id_selector( string $input, int &$offset ) {
+				return self::parse_id_selector( $input, $offset );
+			}
+
+			public static function test_parse_class_selector( string $input, int &$offset ) {
+				return self::parse_class_selector( $input, $offset );
+			}
+
+			public static function test_parse_attribute_selector( string $input, int &$offset ) {
+				return self::parse_attribute_selector( $input, $offset );
+			}
+
+			public static function test_parse_compound_selector( string $input, int &$offset ) {
+				return self::parse_compound_selector( $input, $offset );
+			}
+
+			public static function test_parse_complex_selector( string $input, int &$offset ) {
+				return self::parse_complex_selector( $input, $offset );
+			}
+
+			/*
+			 * Utilities
+			 */
+			public static function test_is_ident_codepoint( string $input, int $offset ) {
+				return self::is_ident_codepoint( $input, $offset );
+			}
+
+			public static function test_is_ident_start_codepoint( string $input, int $offset ) {
+				return self::is_ident_start_codepoint( $input, $offset );
+			}
+		};
+	}
+
 	/**
 	 * Data provider.
 	 *
@@ -64,22 +121,10 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 * @ticket TBD
 	 */
 	public function test_is_ident_and_is_ident_start() {
-		$c = new class() extends WP_CSS_Selector_Parser {
-			public static function parse( string $input, int &$offset ) {}
-
-			public static function test_is_ident( string $input, int $offset ) {
-				return self::is_ident_codepoint( $input, $offset );
-			}
-
-			public static function test_is_ident_start( string $input, int $offset ) {
-				return self::is_ident_start_codepoint( $input, $offset );
-			}
-		};
-
-		$this->assertFalse( $c::test_is_ident( '[', 0 ) );
-		$this->assertFalse( $c::test_is_ident( ']', 0 ) );
-		$this->assertFalse( $c::test_is_ident_start( '[', 0 ) );
-		$this->assertFalse( $c::test_is_ident_start( ']', 0 ) );
+		$this->assertFalse( $this->test_class::test_is_ident_codepoint( '[', 0 ) );
+		$this->assertFalse( $this->test_class::test_is_ident_codepoint( ']', 0 ) );
+		$this->assertFalse( $this->test_class::test_is_ident_start_codepoint( '[', 0 ) );
+		$this->assertFalse( $this->test_class::test_is_ident_start_codepoint( ']', 0 ) );
 	}
 
 	/**
@@ -88,15 +133,9 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 * @dataProvider data_idents
 	 */
 	public function test_parse_ident( string $input, ?string $expected = null, ?string $rest = null ) {
-		$c = new class() extends WP_CSS_Selector_Parser {
-			public static function parse( string $input, int &$offset ) {}
-			public static function test( string $input, &$offset ) {
-				return self::parse_ident( $input, $offset );
-			}
-		};
 
 		$offset = 0;
-		$result = $c::test( $input, $offset );
+		$result = $this->test_class::test_parse_ident( $input, $offset );
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
@@ -111,15 +150,8 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 * @dataProvider data_strings
 	 */
 	public function test_parse_string( string $input, ?string $expected = null, ?string $rest = null ) {
-		$c = new class() extends WP_CSS_Selector_Parser {
-			public static function parse( string $input, int &$offset ) {}
-			public static function test( string $input, &$offset ) {
-				return self::parse_string( $input, $offset );
-			}
-		};
-
 		$offset = 0;
-		$result = $c::test( $input, $offset );
+		$result = $this->test_class::test_parse_string( $input, $offset );
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
@@ -170,7 +202,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_id( string $input, ?string $expected = null, ?string $rest = null ) {
 		$offset = 0;
-		$result = WP_CSS_ID_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_id_selector( $input, $offset );
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
@@ -204,7 +236,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_class( string $input, ?string $expected = null, ?string $rest = null ) {
 		$offset = 0;
-		$result = WP_CSS_Class_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_class_selector( $input, $offset );
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
@@ -238,7 +270,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_type( string $input, ?string $expected = null, ?string $rest = null ) {
 		$offset = 0;
-		$result = WP_CSS_Type_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_type_selector( $input, $offset );
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
@@ -281,7 +313,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 		?string $rest = null
 	) {
 		$offset = 0;
-		$result = WP_CSS_Attribute_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_attribute_selector( $input, $offset );
 		if ( null === $expected_name ) {
 			$this->assertNull( $result );
 		} else {
@@ -347,7 +379,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	public function test_parse_selector() {
 		$input  = 'el.foo#bar[baz=quux] > .child';
 		$offset = 0;
-		$sel    = WP_CSS_Selector::parse( $input, $offset );
+		$sel    = $this->test_class::test_parse_compound_selector( $input, $offset );
 
 		$this->assertSame( 'el', $sel->type_selector->ident );
 		$this->assertSame( 3, count( $sel->subclass_selectors ) );
@@ -365,8 +397,9 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	public function test_parse_empty_selector() {
 		$input  = '';
 		$offset = 0;
-		$result = WP_CSS_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_compound_selector( $input, $offset );
 		$this->assertNull( $result );
+		$this->assertSame( 0, $offset );
 	}
 
 	/**
@@ -375,7 +408,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	public function test_parse_complex_selector() {
 		$input  = 'el1 > .child#bar[baz=quux] , rest';
 		$offset = 0;
-		$sel    = WP_CSS_Complex_Selector::parse( $input, $offset );
+		$sel    = $this->test_class::test_parse_complex_selector( $input, $offset );
 
 		$this->assertSame( 3, count( $sel->selectors ) );
 
@@ -398,14 +431,14 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	public function test_parse_invalid_complex_selector() {
 		$input  = 'el.foo#bar[baz=quux] > , rest';
 		$offset = 0;
-		$result = WP_CSS_Complex_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_complex_selector( $input, $offset );
 		$this->assertNull( $result );
 	}
 
 	public function test_parse_empty_complex_selector() {
 		$input  = '';
 		$offset = 0;
-		$result = WP_CSS_Complex_Selector::parse( $input, $offset );
+		$result = $this->test_class::test_parse_complex_selector( $input, $offset );
 		$this->assertNull( $result );
 	}
 
@@ -415,7 +448,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_selector_list() {
 		$input  = 'el1 el2 el.foo#bar[baz=quux], rest';
-		$result = WP_CSS_Selector_List::from_selectors( $input );
+		$result = WP_CSS_Selector::from_selectors( $input );
 		$this->assertNotNull( $result );
 	}
 
@@ -424,7 +457,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_invalid_selector_list() {
 		$input  = 'el,,';
-		$result = WP_CSS_Selector_List::from_selectors( $input );
+		$result = WP_CSS_Selector::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 
@@ -433,7 +466,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_invalid_selector_list2() {
 		$input  = 'el!';
-		$result = WP_CSS_Selector_List::from_selectors( $input );
+		$result = WP_CSS_Selector::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 
@@ -442,7 +475,7 @@ class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
 	 */
 	public function test_parse_empty_selector_list() {
 		$input  = " \t   \t\n\r\f";
-		$result = WP_CSS_Selector_List::from_selectors( $input );
+		$result = WP_CSS_Selector::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 }

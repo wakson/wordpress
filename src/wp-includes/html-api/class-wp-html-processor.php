@@ -642,7 +642,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @return Generator<void>|null
 	 */
 	public function select_all( string $selectors ): ?Generator {
-		$select = WP_CSS_Selector_List::from_selectors( $selectors );
+		$select = WP_CSS_Selector::from_selectors( $selectors );
 		if ( null === $select ) {
 			return null;
 		}
