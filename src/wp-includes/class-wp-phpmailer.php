@@ -19,7 +19,7 @@ class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer {
 	 *
 	 * @param bool $exceptions Whether to throw exceptions for errors.
 	 */
-	function __construct( $exceptions = false ) {
+	public function __construct( $exceptions = false ) {
 		parent::__construct( $exceptions );
 		$this->SetLanguage();
 	}
@@ -29,13 +29,11 @@ class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer {
 	 *
 	 * @return bool Always returns true in order to mimic PHPMailer's setLanguage() behavior
 	 */
-	function SetLanguage( $langcode = 'en', $lang_path = '' ) {
+	public function SetLanguage( $langcode = 'en', $lang_path = '' ) {
 		$error_strings  = array(
 			'authenticate'         => __( 'SMTP Error: Could not authenticate.' ),
 			'buggy_php'            => __(
-				'Your version of PHP is affected by a bug that may result in corrupted messages. ' .
-				'To fix it, switch to sending using SMTP, disable the mail.add_x_header option in your php.ini, ' .
-				'switch to MacOS or Linux, or upgrade your PHP to version 7.0.17+ or 7.1.3+.'
+				'Your version of PHP is affected by a bug that may result in corrupted messages. To fix it, switch to sending using SMTP, disable the mail.add_x_header option in your php.ini, switch to MacOS or Linux, or upgrade your PHP to version 7.0.17+ or 7.1.3+.'
 			),
 			'connect_host'         => __( 'SMTP Error: Could not connect to SMTP host.' ),
 			'data_not_accepted'    => __( 'SMTP Error: data not accepted.' ),
