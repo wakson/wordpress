@@ -529,30 +529,26 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->bookmarks['root-node']    = new WP_HTML_Span( 0, 0 );
 		$fragment_processor->bookmarks['context-node'] = new WP_HTML_Span( 0, 0 );
 
-		$current_element_bookmark_name = $this->current_element->token->bookmark_name;
-		$fragment_context_element      = null;
 		foreach ( $this->state->stack_of_open_elements->walk_down() as $item ) {
-			$cloned = clone $item;
-			if ( $cloned->bookmark_name === $current_element_bookmark_name ) {
-				$cloned->bookmark_name    = 'context-node';
-				$fragment_context_element = $cloned;
+			$fragment_item = clone $item;
+			if ( $fragment_item->bookmark_name === $this->current_element->token->bookmark_name ) {
+				$fragment_item->bookmark_name     = 'context-node';
+				$fragment_processor->context_node = $fragment_item;
 			} else {
-				$cloned->bookmark_name = null;
+				$fragment_item->bookmark_name = null;
 			}
-			$cloned->on_destroy = null;
-			$cloned->locked     = true;
-			$fragment_processor->state->stack_of_open_elements->push( $cloned );
-			$fragment_context_element = $cloned;
+			$fragment_item->on_destroy = null;
+			$fragment_item->locked     = true;
+			$fragment_processor->state->stack_of_open_elements->push( $fragment_item );
 		}
-		$fragment_processor->context_node = $fragment_context_element;
 
 		foreach ( $this->state->active_formatting_elements->walk_down() as $item ) {
-			$cloned                    = clone $item;
-				$cloned->bookmark_name = null;
-			$cloned->on_destroy        = null;
-			$cloned->locked            = true;
+			$fragment_item                = clone $item;
+			$fragment_item->bookmark_name = null;
+			$fragment_item->on_destroy    = null;
+			$fragment_item->locked        = true;
 
-			$fragment_processor->state->active_formatting_elements->push( $cloned );
+			$fragment_processor->state->active_formatting_elements->push( $fragment_item );
 		}
 
 		if ( 'TEMPLATE' === $fragment_processor->context_node->node_name ) {
@@ -562,23 +558,22 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		// @todo should there be a seek to the context element here?
 		$fragment_processor->reset_insertion_mode_appropriately();
 
-		/*
-		 * > Set the parser's form element pointer to the nearest node to the context element that
-		 * > is a form element (going straight up the ancestor chain, and including the element
-		 * > itself, if it is a form element), if any. (If there is no such form element, the
-		 * > form element pointer keeps its initial value, null.)
-		 */
-		foreach ( $this->state->stack_of_open_elements->walk_up() as $element ) {
-			if ( 'FORM' === $element->node_name && 'html' === $element->namespace ) {
-				$fragment_processor->state->form_element                = clone $element;
-				$fragment_processor->state->form_element->bookmark_name = null;
-				$fragment_processor->state->form_element->on_destroy    = null;
-				$fragment_processor->state->form_element->locked        = true;
-				break;
-			}
+		// Set the form element pointer.
+		if ( null !== $this->state->form_element ) {
+			$fragment_processor->state->form_element                = clone $this->state->form_element;
+			$fragment_processor->state->form_element->bookmark_name = null;
+			$fragment_processor->state->form_element->on_destroy    = null;
+			$fragment_processor->state->form_element->locked        = true;
 		}
 
 		$fragment_processor->state->encoding_confidence = 'irrelevant';
+
+		// Consume activitity from the context stack and clear parsing state.
+		while ( array() !== $fragment_processor->element_queue ) {
+			$fragment_processor->next_token();
+		}
+		$fragment_processor->current_element      = null;
+		$fragment_processor->state->current_token = null;
 
 		/*
 		 * Update the parsing namespace near the end of the process.
@@ -588,13 +583,6 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		$fragment_processor->change_parsing_namespace(
 			$fragment_processor->context_node->integration_node_type ? 'html' : $namespace
 		);
-
-		// Consume activitity from the context stack and clear parsing state.
-		while ( array() !== $fragment_processor->element_queue ) {
-			$fragment_processor->next_token();
-		}
-		$fragment_processor->current_element      = null;
-		$fragment_processor->state->current_token = null;
 
 		return $fragment_processor;
 	}
