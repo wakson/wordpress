@@ -10,7 +10,7 @@
  *
  * @group html-api
  */
-class Tests_HtmlApi_WpCssSelectors extends WP_UnitTestCase {
+class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 	private $test_class;
 
 	public function set_up(): void {
