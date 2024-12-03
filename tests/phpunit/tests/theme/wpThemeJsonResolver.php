@@ -1563,8 +1563,6 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 	/**
 	 * Data provider for separator color merge tests in user data.
 	 *
-	 * @ticket 62624
-	 *
 	 * @return array
 	 */
 	public function data_separator_color_merge_user_data() {
@@ -1658,8 +1656,6 @@ class Tests_Theme_wpThemeJsonResolver extends WP_UnitTestCase {
 
 	/**
 	 * Data provider for separator color merge tests in theme data.
-	 *
-	 * @ticket 62624
 	 *
 	 * @return array
 	 */
