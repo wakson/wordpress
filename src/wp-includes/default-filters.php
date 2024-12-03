@@ -761,6 +761,8 @@ add_filter( 'rest_pre_insert_wp_template', 'inject_ignored_hooked_blocks_metadat
 add_filter( 'rest_pre_insert_wp_template_part', 'inject_ignored_hooked_blocks_metadata_attributes' );
 
 // Update ignoredHookedBlocks postmeta for wp_navigation post type.
+add_filter( 'rest_pre_insert_page', 'update_ignored_hooked_blocks_postmeta' );
+add_filter( 'rest_pre_insert_post', 'update_ignored_hooked_blocks_postmeta' );
 add_filter( 'rest_pre_insert_wp_navigation', 'update_ignored_hooked_blocks_postmeta' );
 
 // Inject hooked blocks into the Posts endpoint REST response for some given post types.

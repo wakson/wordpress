@@ -1172,10 +1172,11 @@ function extract_serialized_parent_block( $serialized_block ) {
 }
 
 /**
- * Updates the wp_postmeta with the list of ignored hooked blocks where the inner blocks are stored as post content.
- * Currently only supports `wp_navigation` post types.
+ * Updates the wp_postmeta with the list of ignored hooked blocks
+ * where the inner blocks are stored as post content.
  *
  * @since 6.6.0
+ * @since 6.8.0 Support non-`wp_navigation` post types.
  * @access private
  *
  * @param stdClass $post Post object.
@@ -1183,7 +1184,7 @@ function extract_serialized_parent_block( $serialized_block ) {
  */
 function update_ignored_hooked_blocks_postmeta( $post ) {
 	/*
-	 * In this scenario the user has likely tried to create a navigation via the REST API.
+	 * In this scenario the user has likely tried to create a new post object via the REST API.
 	 * In which case we won't have a post ID to work with and store meta against.
 	 */
 	if ( empty( $post->ID ) ) {
@@ -1191,17 +1192,10 @@ function update_ignored_hooked_blocks_postmeta( $post ) {
 	}
 
 	/*
-	 * Skip meta generation when consumers intentionally update specific Navigation fields
+	 * Skip meta generation when consumers intentionally update specific fields
 	 * and omit the content update.
 	 */
 	if ( ! isset( $post->post_content ) ) {
-		return $post;
-	}
-
-	/*
-	 * Skip meta generation when the post content is not a navigation block.
-	 */
-	if ( ! isset( $post->post_type ) || 'wp_navigation' !== $post->post_type ) {
 		return $post;
 	}
 
@@ -1215,8 +1209,14 @@ function update_ignored_hooked_blocks_postmeta( $post ) {
 		);
 	}
 
+	if ( 'wp_navigation' === $post->post_type ) {
+		$wrapper_block_type = 'core/navigation';
+	} else {
+		$wrapper_block_type = 'core/post-content';
+	}
+
 	$markup = get_comment_delimited_block_content(
-		'core/navigation',
+		$wrapper_block_type,
 		$attributes,
 		$post->post_content
 	);
