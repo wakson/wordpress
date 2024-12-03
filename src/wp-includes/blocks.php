@@ -1044,8 +1044,9 @@ function set_ignored_hooked_blocks_metadata( &$parsed_anchor_block, $relative_po
  *
  * @param string                               $content  Serialized content.
  * @param WP_Block_Template|WP_Post|array|null $context  A block template, template part, post object, or pattern
- *                                                       that the blocks belong to. If set to `null`, the current
- *                                                       post is used. Default: `null`.
+ *                                                       that the blocks belong to. If set to `null`, `get_post()`
+ *                                                       will be called to use the current post as context.
+ *                                                       Default: `null`.
  * @param callable                             $callback A function that will be called for each block to generate
  *                                                       the markup for a given list of blocks that are hooked to it.
  *                                                       Default: 'insert_hooked_blocks'.
