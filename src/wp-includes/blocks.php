@@ -1039,7 +1039,7 @@ function set_ignored_hooked_blocks_metadata( &$parsed_anchor_block, $relative_po
  *
  * @since 6.6.0
  * @since 6.7.0 Injects the `theme` attribute into Template Part blocks, even if no hooked blocks are registered.
- * @since 6.8.0 Have the `$context` parameter default to `null`, in which case the current post will be used.
+ * @since 6.8.0 Have the `$context` parameter default to `null`, in which case `get_post()` will be called to use the current post as context.
  * @access private
  *
  * @param string                               $content  Serialized content.
