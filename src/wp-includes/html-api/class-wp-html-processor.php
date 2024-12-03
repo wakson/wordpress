@@ -589,10 +589,12 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 			$fragment_processor->context_node->integration_node_type ? 'html' : $namespace
 		);
 
-		// Advance to the end of the context stack.
+		// Consume activitity from the context stack and clear parsing state.
 		while ( array() !== $fragment_processor->element_queue ) {
 			$fragment_processor->next_token();
 		}
+		$fragment_processor->current_element      = null;
+		$fragment_processor->state->current_token = null;
 
 		return $fragment_processor;
 	}
