@@ -48,10 +48,10 @@ class Tests_HtmlApi_WpHtmlProcessorFragmentParsing extends WP_UnitTestCase {
 		$this->assertTrue( $processor->next_tag( 'foreignObject' ) );
 
 		$fragment = $processor->create_fragment_at_current_node( "<image>\0not-preceded-by-nul-byte<rect />" );
-		$this->assertSame( 'svg', $fragment->get_namespace() );
 
 		// HTML parsing transforms IMAGE into IMG.
 		$this->assertTrue( $fragment->next_tag( 'IMG' ) );
+		$this->assertSame( 'html', $fragment->get_namespace() );
 
 		$this->assertTrue( $fragment->next_token() );
 
