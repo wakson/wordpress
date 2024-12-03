@@ -1199,6 +1199,13 @@ function update_ignored_hooked_blocks_postmeta( $post ) {
 		return $post;
 	}
 
+	/*
+	 * Skip meta generation if post type is not set.
+	 */
+	if ( ! isset( $post->post_type ) ) {
+		return $post;
+	}
+
 	$attributes = array();
 
 	$ignored_hooked_blocks = get_post_meta( $post->ID, '_wp_ignored_hooked_blocks', true );
