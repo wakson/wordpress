@@ -13,6 +13,6 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 
 		$wp_phpmailer = new WP_PHPMailer();
 
-		$this->assertTrue( array_keys( $phpmailer->GetTranslations() ) == array_keys( $wp_phpmailer->GetTranslations() ) );
+		$this->assertTrue( array_keys( $phpmailer->GetTranslations() ) === array_keys( $wp_phpmailer->GetTranslations() ) );
 	}
 }
