@@ -638,13 +638,15 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	/**
 	 * Use a selector to advance.
 	 *
+	 * @todo _doing_it_wrong on null selector?
+	 *
 	 * @param string $selectors
-	 * @return Generator<void>|null
+	 * @return Generator<void>
 	 */
 	public function select_all( string $selectors ): ?Generator {
 		$select = WP_CSS_Selector::from_selectors( $selectors );
 		if ( null === $select ) {
-			return null;
+			return;
 		}
 
 		while ( $this->next_tag() ) {
@@ -660,13 +662,10 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * If iterating through matching elements, use `select_all` instead.
 	 *
 	 * @param string $selectors
-	 * @return bool|null
+	 * @return bool
 	 */
 	public function select( string $selectors ) {
 		$selection = $this->select_all( $selectors );
-		if ( null === $selection ) {
-			return null;
-		}
 		foreach ( $selection as $_ ) {
 			return true;
 		}
