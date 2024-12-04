@@ -850,4 +850,107 @@ class Tests_Blocks_wpBlockType extends WP_UnitTestCase {
 
 		$this->assertSameSetsWithIndex( $expected, $actual, 'Merged stabilized block support config does not match when stable keys are first.' );
 	}
+
+	/**
+	 * Tests that boolean block support configurations are handled correctly.
+	 *
+	 * @ticket 61728
+	 * @covers WP_Block_Type::stabilize_supports
+	 * @dataProvider data_boolean_block_supports
+	 *
+	 * @param array         $supports       The supports configuration to test.
+	 * @param boolean|array $expected_value The expected final border support value.
+	 */
+	public function test_should_handle_boolean_block_supports( $supports, $expected_value ) {
+		$reflection = new ReflectionClass( WP_Block_Type::class );
+		$method     = $reflection->getMethod( 'stabilize_supports' );
+		$method->setAccessible( true );
+		$block_type = new WP_Block_Type( 'test/block' );
+
+		$actual = $method->invoke( $block_type, $supports );
+
+		$this->assertSame( $expected_value, $actual['border'] );
+	}
+
+	/**
+	 * Data provider for boolean block support tests.
+	 *
+	 * @return array Test parameters.
+	 */
+	public function data_boolean_block_supports() {
+		return array(
+			'experimental true only'                   => array(
+				array(
+					'__experimentalBorder' => true,
+				),
+				true,
+			),
+			'experimental false only'                  => array(
+				array(
+					'__experimentalBorder' => false,
+				),
+				false,
+			),
+			'experimental true before stable false'    => array(
+				array(
+					'__experimentalBorder' => true,
+					'border'               => false,
+				),
+				false,
+			),
+			'stable true before experimental false'    => array(
+				array(
+					'border'               => true,
+					'__experimentalBorder' => false,
+				),
+				false,
+			),
+			'experimental array before stable boolean' => array(
+				array(
+					'__experimentalBorder' => array(
+						'color' => true,
+						'width' => true,
+					),
+					'border'               => false,
+				),
+				false,
+			),
+			'stable array before experimental boolean' => array(
+				array(
+					'border'               => array(
+						'color' => true,
+						'width' => true,
+					),
+					'__experimentalBorder' => true,
+				),
+				true,
+			),
+			'experimental boolean before stable array' => array(
+				array(
+					'__experimentalBorder' => true,
+					'border'               => array(
+						'color' => true,
+						'width' => true,
+					),
+				),
+				array(
+					'color' => true,
+					'width' => true,
+				),
+			),
+			'stable boolean before experimental array' => array(
+				array(
+					'border'               => false,
+					'__experimentalBorder' => array(
+						'color' => true,
+						'width' => true,
+					),
+				),
+				array(
+					'color' => true,
+					'width' => true,
+				),
+			),
+		);
+	}
 }
