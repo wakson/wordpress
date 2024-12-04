@@ -55,14 +55,14 @@ jobs:
         include:
           # Include jobs for PHP 7.4 with memcached.
           - os: ubuntu-latest
-            php: '8.2'
+            php: '8.3'
             db-type: 'mysql'
             db-version: '8.4'
             tests-domain: 'example.org'
             multisite: false
             memcached: true
           - os: ubuntu-latest
-            php: '8.2'
+            php: '8.3'
             db-type: 'mysql'
             db-version: '8.4'
             tests-domain: 'example.org'
