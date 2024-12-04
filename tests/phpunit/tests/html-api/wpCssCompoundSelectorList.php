@@ -366,6 +366,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 			'Invalid: [att s]'         => array( '[att s]' ),
 			"Invalid: [att='val\\n']"  => array( "[att='val\n']" ),
 			'Invalid: [att=val i '     => array( '[att=val i ' ),
+			'Invalid: [att="val"ix'    => array( '[att="val"ix' ),
 		);
 	}
 
