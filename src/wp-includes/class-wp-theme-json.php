@@ -470,7 +470,7 @@ class WP_Theme_JSON {
 		),
 	);
 
-	/*
+	/**
 	 * The valid properties for fontFamilies under settings key.
 	 *
 	 * @since 6.5.0
@@ -3325,7 +3325,7 @@ class WP_Theme_JSON {
 					continue;
 				}
 				foreach ( $duotone_presets[ $origin ] as $duotone_preset ) {
-					$filters .= wp_get_duotone_filter_svg( $duotone_preset );
+					$filters .= WP_Duotone::get_filter_svg_from_preset( $duotone_preset );
 				}
 			}
 		}
