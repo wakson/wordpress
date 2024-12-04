@@ -68,8 +68,6 @@ final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Match
 						: strpos( $att_value, $this->value )
 				);
 		}
-
-		throw new Exception( 'Unreachable' );
 	}
 
 	/**
