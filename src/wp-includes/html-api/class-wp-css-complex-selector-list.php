@@ -134,9 +134,13 @@ class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List impleme
 				return null;
 			}
 
-			// `div > .className` is valid, but `.className > div` is not.
+			/*
+			 * Subclass selectors in non-final position is not supported:
+			 *   - `div > .className` is valid
+			 *   - `.className > div` is not
+			 */
 			if ( $has_preceding_subclass_selector ) {
-				throw new Exception( 'Unsupported non-final subclass selector.' );
+				return null;
 			}
 			$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
 

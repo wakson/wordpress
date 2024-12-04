@@ -62,6 +62,16 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	/**
 	 * @ticket TBD
 	 */
+	public function test_parse_invalid_complex_selector_nonfinal_subclass() {
+		$input  = 'el.foo#bar[baz=quux] > final, rest';
+		$offset = 0;
+		$result = $this->test_class::test_parse_complex_selector( $input, $offset );
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * @ticket TBD
+	 */
 	public function test_parse_empty_complex_selector() {
 		$input  = '';
 		$offset = 0;
