@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML API: WP_CSS_Selector class
+ * HTML API: WP_CSS_Compound_Selector_List class
  *
  * @package WordPress
  * @subpackage HTML-API
@@ -8,18 +8,20 @@
  */
 
 /**
- * Core class used by the HTML processor to parse CSS selectors.
+ * Core class used by the {@see WP_HTML_Tag_Processor} to parse and match CSS selectors.
  *
- * This class is designed for internal use by the HTML processor.
+ * This class is designed for internal use by the HTML Tag Processor.
  *
- * This class is instantiated via the `WP_CSS_Selector::from_selectors( string $input )` method.
+ * For usage, see {@see WP_HTML_Tag_Processor::select()} or {@see WP_HTML_Tag_Processor::select_all()}.
+ *
+ * This class is instantiated via the {@see WP_CSS_Compound_Selector_List::from_selectors()} method.
  * It takes a CSS selector string and returns an instance of itself or `null` if the selector
  * is invalid or unsupported.
  *
  * A subset of the CSS selector grammar is supported. The grammar is defined in the CSS Syntax
  * specification, which is available at {@link https://www.w3.org/TR/selectors/#grammar}.
  *
- * This class is rougly analogous to the <selector-list> in the grammar. The supported grammar is:
+ * This class is analogous to <compound-selector-list> in the grammar. The supported grammar is:
  *
  *     <selector-list> = <complex-selector-list>
  *     <complex-selector-list> = <complex-selector>#
@@ -38,6 +40,10 @@
  *
  * @link https://www.w3.org/TR/selectors/#grammar Refer to the grammar for more details.
  *
+ * This class of selectors does not support "complex" selectors. That is any selector with a
+ * combinator such as descendent (`.ancestor .descendant`) or child (`.parent > .child`).
+ * See {@see WP_CSS_Complex_Selector_List} for support of some combinators.
+ *
  * Note that this grammar has been adapted and does not support the full CSS selector grammar.
  * Supported selector syntax:
  * - Type selectors (tag names, e.g. `div`)
@@ -50,12 +56,10 @@
  *   - child (`el > .child`)
  *
  * Unsupported selector syntax:
- * - Pseudo-element selectors (e.g. `::before`)
- * - Pseudo-class selectors (e.g. `:hover` or `:nth-child(2)`)
- * - Namespace prefixes (e.g. `svg|title` or `[xlink|href]`)
- * - The following combinators:
- *   - Next sibling (`el + el`)
- *   - Subsequent sibling (`el ~ el`)
+ * - Pseudo-element selectors (`::before`)
+ * - Pseudo-class selectors (`:hover` or `:nth-child(2)`)
+ * - Namespace prefixes (`svg|title` or `[xlink|href]`)
+ * - No combinators are supported (descendant, child, next sibling, subsequent sibling)
  *
  * Future ideas:
  * - Namespace type selectors could be implemented with select namespaces in order to
@@ -72,8 +76,12 @@
  * @link https://www.w3.org/TR/selectors-api2/
  * @link https://www.w3.org/TR/selectors-4/
  */
-class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
-	public function matches( WP_HTML_Processor $processor ): bool {
+class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher {
+	/**
+	 * @param WP_HTML_Tag_Processor $processor
+	 * @return bool
+	 */
+	public function matches( $processor ): bool {
 		if ( $processor->get_token_type() !== '#tag' ) {
 			return false;
 		}
@@ -87,14 +95,16 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	}
 
 	/**
-	 * @var array<WP_CSS_Complex_Selector>
+	 * Array of selectors.
+	 *
+	 * @var array
 	 */
 	private $selectors;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param array<WP_CSS_Complex_Selector> $selectors
+	 * @param array $selectors Array of selectors.
 	 */
 	protected function __construct( array $selectors ) {
 		$this->selectors = $selectors;
@@ -107,10 +117,9 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * @since TBD
 	 *
 	 * @param string $input CSS selectors.
-	 * @return self|null
+	 * @return static|null
 	 */
-	public static function from_selectors( string $input ): ?self {
-		// > A selector string is a list of one or more complex selectors ([SELECTORS4], section 3.1) that may be surrounded by whitespace…
+	public static function from_selectors( string $input ) {
 		$input = trim( $input, " \t\r\n\r" );
 
 		if ( '' === $input ) {
@@ -132,7 +141,7 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 
 		$offset = 0;
 
-		$selector = self::parse_complex_selector( $input, $offset );
+		$selector = self::parse_compound_selector( $input, $offset );
 		if ( null === $selector ) {
 			return null;
 		}
@@ -146,7 +155,7 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 			}
 			++$offset;
 			self::parse_whitespace( $input, $offset );
-			$selector = self::parse_complex_selector( $input, $offset );
+			$selector = self::parse_compound_selector( $input, $offset );
 			if ( null === $selector ) {
 				return null;
 			}
@@ -392,73 +401,6 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	}
 
 	/**
-	 * Parses a complex selector.
-	 *
-	 * > <complex-selector> = [ <type-selector> <combinator>? ]* <compound-selector>
-	 *
-	 * @return WP_CSS_Complex_Selector|null
-	 */
-	final protected static function parse_complex_selector( string $input, int &$offset ): ?WP_CSS_Complex_Selector {
-		if ( $offset >= strlen( $input ) ) {
-			return null;
-		}
-
-		$updated_offset = $offset;
-		$selector       = self::parse_compound_selector( $input, $updated_offset );
-		if ( null === $selector ) {
-			return null;
-		}
-
-		$selectors                       = array( $selector );
-		$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
-
-		$found_whitespace = self::parse_whitespace( $input, $updated_offset );
-		while ( $updated_offset < strlen( $input ) ) {
-			if (
-				WP_CSS_Complex_Selector::COMBINATOR_CHILD === $input[ $updated_offset ] ||
-				WP_CSS_Complex_Selector::COMBINATOR_NEXT_SIBLING === $input[ $updated_offset ] ||
-				WP_CSS_Complex_Selector::COMBINATOR_SUBSEQUENT_SIBLING === $input[ $updated_offset ]
-			) {
-				$combinator = $input[ $updated_offset ];
-				++$updated_offset;
-				self::parse_whitespace( $input, $updated_offset );
-
-				// Failure to find a selector here is a parse error
-				$selector = self::parse_compound_selector( $input, $updated_offset );
-			} elseif ( $found_whitespace ) {
-				/*
-				* Whitespace is ambiguous, it could be a descendant combinator or
-				* insignificant whitespace.
-				*/
-				$selector = self::parse_compound_selector( $input, $updated_offset );
-				if ( null === $selector ) {
-					break;
-				}
-				$combinator = WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT;
-			} else {
-				break;
-			}
-
-			if ( null === $selector ) {
-				return null;
-			}
-
-			// `div > .className` is valid, but `.className > div` is not.
-			if ( $has_preceding_subclass_selector ) {
-				throw new Exception( 'Unsupported non-final subclass selector.' );
-			}
-			$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
-
-			$selectors[] = $combinator;
-			$selectors[] = $selector;
-
-			$found_whitespace = self::parse_whitespace( $input, $updated_offset );
-		}
-		$offset = $updated_offset;
-		return new WP_CSS_Complex_Selector( $selectors );
-	}
-
-	/**
 	 * Parses a subclass selector.
 	 *
 	 * > <subclass-selector> = <id-selector> | <class-selector> | <attribute-selector>
@@ -496,7 +438,7 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	const UTF8_MAX_CODEPOINT_VALUE = 0x10FFFF;
 	const WHITESPACE_CHARACTERS    = " \t\r\n\f";
 
-	public static function parse_whitespace( string $input, int &$offset ): bool {
+	final public static function parse_whitespace( string $input, int &$offset ): bool {
 		$length   = strspn( $input, self::WHITESPACE_CHARACTERS, $offset );
 		$advanced = $length > 0;
 		$offset  += $length;
@@ -692,9 +634,9 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 *
 	 * @param string $input
 	 * @param int $offset
-	 * @return string|null
+	 * @return string
 	 */
-	final protected static function consume_escaped_codepoint( $input, &$offset ): ?string {
+	final protected static function consume_escaped_codepoint( $input, &$offset ): string {
 		$hex_length = strspn( $input, '0123456789abcdefABCDEF', $offset, 6 );
 		if ( $hex_length > 0 ) {
 			/**
@@ -771,7 +713,7 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * @param int $offset The byte offset in the string.
 	 * @return bool True if the next two codepoints are a valid escape, otherwise false.
 	 */
-	private static function next_two_are_valid_escape( string $input, int $offset ): bool {
+	final protected static function next_two_are_valid_escape( string $input, int $offset ): bool {
 		if ( $offset + 1 >= strlen( $input ) ) {
 			return false;
 		}
@@ -858,7 +800,7 @@ class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * @param int $offset The byte offset in the string.
 	 * @return bool True if the next three codepoints would start an ident sequence, otherwise false.
 	 */
-	private static function check_if_three_code_points_would_start_an_ident_sequence( string $input, int $offset ): bool {
+	final protected static function check_if_three_code_points_would_start_an_ident_sequence( string $input, int $offset ): bool {
 		if ( $offset >= strlen( $input ) ) {
 			return false;
 		}

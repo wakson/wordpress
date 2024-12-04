@@ -1,7 +1,7 @@
 <?php
 
-final class WP_CSS_Class_Selector implements WP_CSS_HTML_Processor_Matcher {
-	public function matches( WP_HTML_Processor $processor ): bool {
+final class WP_CSS_Class_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+	public function matches( WP_HTML_Tag_Processor $processor ): bool {
 		return (bool) $processor->has_class( $this->ident );
 	}
 

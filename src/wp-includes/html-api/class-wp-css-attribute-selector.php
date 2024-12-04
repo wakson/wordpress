@@ -1,7 +1,9 @@
 <?php
 
-final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Processor_Matcher {
-	public function matches( WP_HTML_Processor $processor ): bool {
+final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+	const WHITESPACE_CHARACTERS = " \t\r\n\f";
+
+	public function matches( WP_HTML_Tag_Processor $processor ): bool {
 		$att_value = $processor->get_attribute( $this->name );
 		if ( null === $att_value ) {
 			return false;
@@ -76,17 +78,17 @@ final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * @return Generator<string>
 	 */
 	private function whitespace_delimited_list( string $input ): Generator {
-		$offset = strspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS );
+		$offset = strspn( $input, self::WHITESPACE_CHARACTERS );
 
 		while ( $offset < strlen( $input ) ) {
 			// Find the byte length until the next boundary.
-			$length = strcspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS, $offset );
+			$length = strcspn( $input, self::WHITESPACE_CHARACTERS, $offset );
 			if ( 0 === $length ) {
 				return;
 			}
 
 			$value   = substr( $input, $offset, $length );
-			$offset += $length + strspn( $input, WP_CSS_Selector::WHITESPACE_CHARACTERS, $offset + $length );
+			$offset += $length + strspn( $input, self::WHITESPACE_CHARACTERS, $offset + $length );
 
 			yield $value;
 		}

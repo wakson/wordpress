@@ -657,9 +657,14 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @param string $selector_string Selector string.
 	 * @return Generator<void> A generator pausing on each tag matching the selector.
 	 */
-	public function select_all( string $selector_string ): Generator {
-		$selector = WP_CSS_Selector::from_selectors( $selector_string );
+	public function select_all( $selector_string ): Generator {
+		$selector = WP_CSS_Complex_Selector_List::from_selectors( $selector_string );
 		if ( null === $selector ) {
+			_doing_it_wrong(
+				__METHOD__,
+				sprintf( 'Received unsupported or invalid selector "%s".', $selector_string ),
+				'6.8'
+			);
 			return;
 		}
 
@@ -692,7 +697,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @param string $selector_string
 	 * @return bool  True if a matching tag was found, otherwise false.
 	 */
-	public function select( string $selector_string ) {
+	public function select( string $selector_string ): bool {
 		foreach ( $this->select_all( $selector_string ) as $_ ) {
 			return true;
 		}

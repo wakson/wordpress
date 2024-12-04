@@ -10,12 +10,12 @@
  *
  * @group html-api
  */
-class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
+class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	private $test_class;
 
 	public function set_up(): void {
 		parent::set_up();
-		$this->test_class = new class() extends WP_CSS_Selector {
+		$this->test_class = new class() extends WP_CSS_Compound_Selector_List {
 			public function __construct() {
 				parent::__construct( array() );
 			}
@@ -49,10 +49,6 @@ class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 
 			public static function test_parse_compound_selector( string $input, int &$offset ) {
 				return self::parse_compound_selector( $input, $offset );
-			}
-
-			public static function test_parse_complex_selector( string $input, int &$offset ) {
-				return self::parse_complex_selector( $input, $offset );
 			}
 
 			/*
@@ -405,50 +401,9 @@ class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 	/**
 	 * @ticket TBD
 	 */
-	public function test_parse_complex_selector() {
-		$input  = 'el1 > .child#bar[baz=quux] , rest';
-		$offset = 0;
-		$sel    = $this->test_class::test_parse_complex_selector( $input, $offset );
-
-		$this->assertSame( 3, count( $sel->selectors ) );
-
-		$this->assertSame( 'el1', $sel->selectors[2]->type_selector->ident );
-		$this->assertNull( $sel->selectors[2]->subclass_selectors );
-
-		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_CHILD, $sel->selectors[1] );
-
-		$this->assertSame( 3, count( $sel->selectors[0]->subclass_selectors ) );
-		$this->assertNull( $sel->selectors[0]->type_selector );
-		$this->assertSame( 3, count( $sel->selectors[0]->subclass_selectors ) );
-		$this->assertSame( 'child', $sel->selectors[0]->subclass_selectors[0]->ident );
-
-		$this->assertSame( ', rest', substr( $input, $offset ) );
-	}
-
-	/**
-	 * @ticket TBD
-	 */
-	public function test_parse_invalid_complex_selector() {
-		$input  = 'el.foo#bar[baz=quux] > , rest';
-		$offset = 0;
-		$result = $this->test_class::test_parse_complex_selector( $input, $offset );
-		$this->assertNull( $result );
-	}
-
-	public function test_parse_empty_complex_selector() {
-		$input  = '';
-		$offset = 0;
-		$result = $this->test_class::test_parse_complex_selector( $input, $offset );
-		$this->assertNull( $result );
-	}
-
-
-	/**
-	 * @ticket TBD
-	 */
 	public function test_parse_selector_list() {
-		$input  = 'el1 el2 el.foo#bar[baz=quux], rest';
-		$result = WP_CSS_Selector::from_selectors( $input );
+		$input  = 'el1, el2, el.foo#bar[baz=quux]';
+		$result = WP_CSS_Compound_Selector_List::from_selectors( $input );
 		$this->assertNotNull( $result );
 	}
 
@@ -457,7 +412,7 @@ class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 	 */
 	public function test_parse_invalid_selector_list() {
 		$input  = 'el,,';
-		$result = WP_CSS_Selector::from_selectors( $input );
+		$result = WP_CSS_Compound_Selector_List::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 
@@ -466,7 +421,7 @@ class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 	 */
 	public function test_parse_invalid_selector_list2() {
 		$input  = 'el!';
-		$result = WP_CSS_Selector::from_selectors( $input );
+		$result = WP_CSS_Compound_Selector_List::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 
@@ -475,7 +430,7 @@ class Tests_HtmlApi_WpCssSelector_Parsing extends WP_UnitTestCase {
 	 */
 	public function test_parse_empty_selector_list() {
 		$input  = " \t   \t\n\r\f";
-		$result = WP_CSS_Selector::from_selectors( $input );
+		$result = WP_CSS_Compound_Selector_List::from_selectors( $input );
 		$this->assertNull( $result );
 	}
 }
