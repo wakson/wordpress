@@ -657,7 +657,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * @param string $selector_string Selector string.
 	 * @return Generator<void> A generator pausing on each tag matching the selector.
 	 */
-	public function select_all( string $selector_string ): ?Generator {
+	public function select_all( string $selector_string ): Generator {
 		$selector = WP_CSS_Selector::from_selectors( $selector_string );
 		if ( null === $selector ) {
 			return;
@@ -674,7 +674,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	 * Move to the next tag matching the provided CSS selector string.
 	 *
 	 * This method will stop at the next match. To progress through all matches, use
-	 * the `select_all` method.
+	 * the {@see WP_HTML_Processor::select_all()} method.
 	 *
 	 * @example
 	 *
