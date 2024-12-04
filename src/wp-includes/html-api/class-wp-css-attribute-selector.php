@@ -78,16 +78,15 @@ final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Match
 	 * @return Generator<string>
 	 */
 	private function whitespace_delimited_list( string $input ): Generator {
+		// Start by skipping whitespace.
 		$offset = strspn( $input, self::WHITESPACE_CHARACTERS );
 
 		while ( $offset < strlen( $input ) ) {
 			// Find the byte length until the next boundary.
 			$length = strcspn( $input, self::WHITESPACE_CHARACTERS, $offset );
-			if ( 0 === $length ) {
-				return;
-			}
+			$value  = substr( $input, $offset, $length );
 
-			$value   = substr( $input, $offset, $length );
+			// Move past trailing whitespace.
 			$offset += $length + strspn( $input, self::WHITESPACE_CHARACTERS, $offset + $length );
 
 			yield $value;
