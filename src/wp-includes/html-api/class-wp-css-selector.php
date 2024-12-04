@@ -67,11 +67,10 @@
  *
  * @access private
  *
- * @see {@link https://www.w3.org/TR/css-syntax-3/}
- * @see {@link https://www.w3.org/tr/selectors/}
- * @see {@link https://www.w3.org/TR/selectors-api2/}
- * @see {@link https://www.w3.org/TR/selectors-4/}
- *
+ * @link https://www.w3.org/TR/css-syntax-3/
+ * @link https://www.w3.org/tr/selectors/
+ * @link https://www.w3.org/TR/selectors-api2/
+ * @link https://www.w3.org/TR/selectors-4/
  */
 class WP_CSS_Selector implements WP_CSS_HTML_Processor_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
