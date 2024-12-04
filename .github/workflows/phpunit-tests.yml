@@ -131,15 +131,15 @@ jobs:
         memcached: [ false ]
 
         include:
-        # Include jobs for PHP 8.2 with memcached.
+        # Include jobs for PHP 8.3 with memcached.
         - os: ubuntu-latest
-          php: '8.2'
+          php: '8.3'
           db-type: 'mariadb'
           db-version: '11.2'
           multisite: false
           memcached: true
         - os: ubuntu-latest
-          php: '8.2'
+          php: '8.3'
           db-type: 'mariadb'
           db-version: '11.2'
           multisite: true
