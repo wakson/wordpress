@@ -1,6 +1,9 @@
 <?php
 /**
- * Unit tests covering WP_HTML_Processor functionality.
+ * Unit tests covering WP_HTML_Processor select functionality.
+ *
+ * Covers functionality related to CSS selectors and the {@see WP_HTML_Processor::select()}
+ * and {@see WP_HTML_Processor::select_all()} methods.
  *
  * @package WordPress
  * @subpackage HTML-API
@@ -8,8 +11,6 @@
  * @since TBD
  *
  * @group html-api
- *
- * @coversDefaultClass WP_HTML_Processor
  */
 class Tests_HtmlApi_WpHtmlProcessor_Select extends WP_UnitTestCase {
 	/**
