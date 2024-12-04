@@ -23,8 +23,7 @@
  * A subset of the CSS selector grammar is supported. The grammar is defined in the CSS Syntax
  * specification, which is available at {@link https://www.w3.org/TR/selectors/#grammar}.
  *
- * @todo Review this grammar, especially the complex selector for accurate support information.
- * The supported grammar is:
+ * This class is rougly analogous to the <selector-list> in the grammar. The supported grammar is:
  *
  *     <selector-list> = <complex-selector-list>
  *     <complex-selector-list> = <complex-selector>#
@@ -43,6 +42,7 @@
  *
  * @link https://www.w3.org/TR/selectors/#grammar Refer to the grammar for more details.
  *
+ * Note that this grammar has been adapted and does not support the full CSS selector grammar.
  * Supported selector syntax:
  * - Type selectors (tag names, e.g. `div`)
  * - Class selectors (e.g. `.class-name`)
@@ -61,11 +61,11 @@
  *   - Next sibling (`el + el`)
  *   - Subsequent sibling (`el ~ el`)
  *
- * Future ideas
- *   - Namespace type selectors could be implemented with select namespaces in order to
- *     select elements from a namespace, for example:
- *     - `svg|*` to select all SVG elements
- *     - `html|title` to select only HTML TITLE elements.
+ * Future ideas:
+ * - Namespace type selectors could be implemented with select namespaces in order to
+ *   select elements from a namespace, for example:
+ *   - `svg|*` to select all SVG elements
+ *   - `html|title` to select only HTML TITLE elements.
  *
  * @since TBD
  *
