@@ -267,13 +267,13 @@ class Tests_Post_Nav_Menu extends WP_UnitTestCase {
 
 		wp_cache_delete( $post_id, 'posts' );
 		$action = new MockAction();
-		add_filter( 'update_post_metadata_cache', array( $action, 'filter' ), 10, 2 );
+		add_action( 'metadata_lazyloader_queued_objects', array( $action, 'action' ) );
 
 		update_menu_item_cache( $query_result );
 
 		$args = $action->get_args();
 		$last = end( $args );
-		$this->assertSameSets( array( $post_id ), $last[1], '_prime_post_caches() was not executed.' );
+		$this->assertSameSets( array( $post_id ), $last[0], 'wp_lazyload_post_meta() was not executed.' );
 	}
 
 	/**
