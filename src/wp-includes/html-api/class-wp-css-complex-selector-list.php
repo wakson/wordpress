@@ -43,25 +43,11 @@ class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List impleme
 	 * @return static|null
 	 */
 	public static function from_selectors( string $input ) {
-		// > A selector string is a list of one or more complex selectors ([SELECTORS4], section 3.1) that may be surrounded by whitespace…
-		$input = trim( $input, " \t\r\n\r" );
+		$input = self::normalize_selector_input( $input );
 
 		if ( '' === $input ) {
 			return null;
 		}
-
-		/*
-		 * > The input stream consists of the filtered code points pushed into it as the input byte stream is decoded.
-		 * >
-		 * > To filter code points from a stream of (unfiltered) code points input:
-		 * > Replace any U+000D CARRIAGE RETURN (CR) code points, U+000C FORM FEED (FF) code points, or pairs of U+000D CARRIAGE RETURN (CR) followed by U+000A LINE FEED (LF) in input by a single U+000A LINE FEED (LF) code point.
-		 * > Replace any U+0000 NULL or surrogate code points in input with U+FFFD REPLACEMENT CHARACTER (�).
-		 *
-		 * https://www.w3.org/TR/css-syntax-3/#input-preprocessing
-		 */
-		$input = str_replace( array( "\r\n" ), "\n", $input );
-		$input = str_replace( array( "\r", "\f" ), "\n", $input );
-		$input = str_replace( "\0", "\u{FFFD}", $input );
 
 		$offset = 0;
 
