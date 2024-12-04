@@ -79,6 +79,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          repository: ${{ inputs.repository }}
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
       # Look up the major version's specific PHP support policy when a version is provided.
@@ -111,6 +112,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          repository: ${{ inputs.repository }}
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
 
       # Look up the major version's specific MySQL support policy when a version is provided.
