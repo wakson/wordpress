@@ -636,37 +636,64 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 	}
 
 	/**
-	 * Use a selector to advance.
+	 * Progress through a document pausing on tags matching the provided CSS selector string.
 	 *
-	 * @todo _doing_it_wrong on null selector?
+	 * @example
 	 *
-	 * @param string $selectors
-	 * @return Generator<void>
+	 *     $processor = WP_HTML_Processor::create_fragment(
+	 *         '<meta charset="utf-8"><title>Example</title><meta property="og:type" content="website"><meta property="og:description" content="An example.">'
+	 *     );
+	 *     foreach ( $processor->select_all( 'meta[property^="og:" i]' ) as $_ ) {
+	 *         // Loop is entered twice.
+	 *         var_dump(
+	 *             $processor->get_tag(),                   // string(4) "META"
+	 *             $processor->get_attribute( 'property' ), // string(7) "og:type" / string(14) "og:description"
+	 *             $processor->get_attribute( 'content' ),  // string(7) "website" / string(11) "An example."
+	 *         );
+	 *     }
+	 *
+	 * @since TBD
+	 *
+	 * @param string $selector_string Selector string.
+	 * @return Generator<void> A generator pausing on each tag matching the selector.
 	 */
-	public function select_all( string $selectors ): ?Generator {
-		$select = WP_CSS_Selector::from_selectors( $selectors );
-		if ( null === $select ) {
+	public function select_all( string $selector_string ): ?Generator {
+		$selector = WP_CSS_Selector::from_selectors( $selector_string );
+		if ( null === $selector ) {
 			return;
 		}
 
 		while ( $this->next_tag() ) {
-			if ( $select->matches( $this ) ) {
+			if ( $selector->matches( $this ) ) {
 				yield;
 			}
 		}
 	}
 
 	/**
-	 * Select the next matching element.
+	 * Move to the next tag matching the provided CSS selector string.
 	 *
-	 * If iterating through matching elements, use `select_all` instead.
+	 * This method will stop at the next match. To progress through all matches, use
+	 * the `select_all` method.
 	 *
-	 * @param string $selectors
-	 * @return bool
+	 * @example
+	 *
+	 *     $processor = WP_HTML_Processor::create_fragment(
+	 *         '<meta charset="utf-8"><title>Example</title><meta property="og:title" content="Example">'
+	 *     );
+	 *     $processor->select( 'meta[charset]' );
+	 *     var_dump(
+	 *         $processor->get_tag(),                  // string(4) "META"
+	 *         $processor->get_attribute( 'charset' ), // string(5) "utf-8"
+	 *     );
+	 *
+	 * @since TBD
+	 *
+	 * @param string $selector_string
+	 * @return bool  True if a matching tag was found, otherwise false.
 	 */
-	public function select( string $selectors ) {
-		$selection = $this->select_all( $selectors );
-		foreach ( $selection as $_ ) {
+	public function select( string $selector_string ) {
+		foreach ( $this->select_all( $selector_string ) as $_ ) {
 			return true;
 		}
 		return false;
