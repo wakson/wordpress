@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - trunk
-      - '[6-9].[8-9]'
+      - '6.[8-9]'
       - '[7-9].[0-9]'
     paths:
       # Any changes to Docker related files.
