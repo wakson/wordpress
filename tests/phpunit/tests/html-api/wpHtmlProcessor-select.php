@@ -43,16 +43,18 @@ class Tests_HtmlApi_WpHtmlProcessor_Select extends WP_UnitTestCase {
 	/**
 	 * Data provider.
 	 *
-	 * Most selectors are covered by the tag processor selector tests.
-	 * This suite should focus on complex selectors.
-	 *
 	 * @return array
 	 */
 	public static function data_selectors(): array {
 		return array(
-			'any descendant' => array( '<section><p match><i match><em match><p match>', 'section *', 4 ),
-			'any child 1'    => array( '<section><p match><i><em><p match>', 'section > *', 2 ),
-			'any child 2'    => array( '<div><section match><div>', 'div > *', 1 ),
+			'any'                  => array( '<html match><head match><meta match><body match><p match>', '*', 5 ),
+			'quirks mode ID'       => array( '<p id="id" match><p id="ID" match>In quirks mode, ID matching is case-insensitive.', '#id', 2 ),
+			'quirks mode class'    => array( '<p class="c" match><p class="C" match>In quirks mode, class matching is case-insensitive.', '.c', 2 ),
+			'no-quirks mode ID'    => array( '<!DOCTYPE html><p id="id" match><p id="ID" match>In no-quirks mode, ID matching is case-sensitive.', '#id', 1 ),
+			'no-quirks mode class' => array( '<!DOCTYPE html><p class="c" match><p class="C">In no-quirks mode, class matching is case-sensitive.', '.c', 1 ),
+			'any descendant'       => array( '<section><p match><i match><em match><p match>', 'section *', 4 ),
+			'any child 1'          => array( '<section><p match><i><em><p match>', 'section > *', 2 ),
+			'any child 2'          => array( '<div><section match><div>', 'div > *', 1 ),
 		);
 	}
 
