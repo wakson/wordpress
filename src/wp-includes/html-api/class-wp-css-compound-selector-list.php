@@ -548,7 +548,7 @@ class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher
 	 * @return string|null
 	 */
 	final protected static function parse_string( string $input, int &$offset ): ?string {
-		if ( $offset + 1 >= strlen( $input ) ) {
+		if ( $offset >= strlen( $input ) ) {
 			return null;
 		}
 
@@ -559,8 +559,19 @@ class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher
 
 		$string_token = '';
 
-		$updated_offset = $offset + 1;
+		$updated_offset     = $offset + 1;
+		$anything_else_mask = "\\\n{$ending_code_point}";
 		while ( $updated_offset < strlen( $input ) ) {
+			$anything_else_length = strcspn( $input, $anything_else_mask, $updated_offset );
+			if ( $anything_else_length > 0 ) {
+				$string_token   .= substr( $input, $updated_offset, $anything_else_length );
+				$updated_offset += $anything_else_length;
+
+				if ( $updated_offset >= strlen( $input ) ) {
+					break;
+				}
+			}
+
 			switch ( $input[ $updated_offset ] ) {
 				case '\\':
 					++$updated_offset;
@@ -587,10 +598,6 @@ class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher
 				case $ending_code_point:
 					++$updated_offset;
 					break 2;
-
-				default:
-					$string_token .= $input[ $updated_offset ];
-					++$updated_offset;
 			}
 		}
 

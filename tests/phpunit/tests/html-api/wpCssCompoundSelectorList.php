@@ -181,13 +181,16 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 
 			"'foo\\"                  => array( "'foo\\", 'foo', '' ),
 
+			'"'                       => array( '"', '', '' ),
+			'"\\"'                    => array( '"\\"', '"', '' ),
+			'"missing close'          => array( '"missing close', 'missing close', '' ),
+
 			// Invalid
 			'Invalid: (empty string)' => array( '' ),
-			"Invalid: 'newline\\n'"   => array( "'newline\n'" ),
-			'Invalid: foo'            => array( 'foo' ),
-			'Invalid: \\"'            => array( '\\"' ),
 			'Invalid: .foo'           => array( '.foo' ),
 			'Invalid: #foo'           => array( '#foo' ),
+			"Invalid: 'newline\\n'"   => array( "'newline\n'" ),
+			'Invalid: foo'            => array( 'foo' ),
 		);
 	}
 
