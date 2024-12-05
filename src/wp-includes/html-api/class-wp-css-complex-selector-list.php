@@ -32,7 +32,7 @@
  *
  * @access private
  */
-class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List {
+class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Processor_Matcher {
 	/**
 	 * Takes a CSS selector string and returns an instance of itself or `null` if the selector
 	 * string is invalid or unsupported.

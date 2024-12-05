@@ -76,7 +76,7 @@
  * @link https://www.w3.org/TR/selectors-api2/
  * @link https://www.w3.org/TR/selectors-4/
  */
-class WP_CSS_Compound_Selector_List extends WP_CSS_HTML_Tag_Processor_Matcher {
+class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher {
 	/**
 	 * @param WP_HTML_Tag_Processor $processor
 	 * @return bool

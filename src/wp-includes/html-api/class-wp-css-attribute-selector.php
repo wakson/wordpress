@@ -1,6 +1,6 @@
 <?php
 
-final class WP_CSS_Attribute_Selector extends WP_CSS_HTML_Tag_Processor_Matcher {
+final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
 	const WHITESPACE_CHARACTERS = " \t\r\n\f";
 
 	public function matches( WP_HTML_Tag_Processor $processor ): bool {
