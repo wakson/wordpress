@@ -16,7 +16,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 			return true;
 		}
 
-		/** @var array<string> $breadcrumbs */
+		/** @var string[] */
 		$breadcrumbs = array_slice( array_reverse( $processor->get_breadcrumbs() ), 1 );
 		$selectors   = array_slice( $this->selectors, 1 );
 		return $this->explore_matches( $selectors, $breadcrumbs );
@@ -26,7 +26,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * This only looks at breadcrumbs and can therefore only support type selectors.
 	 *
 	 * @param array<WP_CSS_Compound_Selector|self::COMBINATOR_*> $selectors
-	 * @param array<string> $breadcrumbs
+	 * @param string[] $breadcrumbs
 	 */
 	private function explore_matches( array $selectors, array $breadcrumbs ): bool {
 		if ( array() === $selectors ) {
@@ -36,9 +36,9 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 			return false;
 		}
 
-		/** @var self::COMBINATOR_* $combinator */
+		/** @var self::COMBINATOR_* */
 		$combinator = $selectors[0];
-		/** @var WP_CSS_Compound_Selector $selector */
+		/** @var WP_CSS_Compound_Selector */
 		$selector = $selectors[1];
 
 		switch ( $combinator ) {
