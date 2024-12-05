@@ -26,10 +26,17 @@ class Tests_HtmlApi_WpHtmlTagProcessor_Select extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_selectors
 	 */
-	public function test_select( string $html, string $selector ) {
+	public function test_select( string $html, string $selector, int $match_count ) {
 		$processor = new WP_HTML_Tag_Processor( $html );
-		$this->assertTrue( $processor->select( $selector ) );
-		$this->assertTrue( $processor->get_attribute( 'match' ) );
+		$count     = 0;
+		foreach ( $processor->select_all( $selector ) as $_ ) {
+			$this->assertTrue(
+				$processor->get_attribute( 'match' ),
+				"Matched unexpected tag {$processor->get_tag()}"
+			);
+			++$count;
+		}
+		$this->assertSame( $match_count, $count, 'Did not match expected number of tags.' );
 	}
 
 	/**
@@ -39,56 +46,42 @@ class Tests_HtmlApi_WpHtmlTagProcessor_Select extends WP_UnitTestCase {
 	 */
 	public static function data_selectors(): array {
 		return array(
-			'simple type'                           => array( '<p><div match>', 'div' ),
-			'any type'                              => array( '<div match>', '*' ),
-			'simple class'                          => array( '<div><div class="x" match>', '.x' ),
-			'simple id'                             => array( '<div><div id="x" match>', '#x' ),
-			'boolean attribute'                     => array( '<div tta><div att match>', '[att]' ),
-			'boolean attribute with string match'   => array( '<div tta><div att match>', '[att=""]' ),
+			'simple type'                         => array( '<div match><div match><span>', 'div', 2 ),
+			'any type'                            => array( '<div match><span match>', '*', 2 ),
+			'simple class'                        => array( '<div><div class="x" match><span><span class="x" match>', '.x', 2 ),
+			'simple id'                           => array( '<div><div id="x" match><span id="x" match>', '#x', 2 ),
 
-			'attribute value'                       => array( '<div att="v"><div att="val" match>', '[att=val]' ),
-			'attribute quoted value'                => array( '<div att><div att="::" match>', '[att="::"]' ),
-			'attribute case insensitive'            => array( '<div att="value"><div att="val" match>', '[att="VAL"i]' ),
-			'attribute case sensitive mod'          => array( '<div att="VAL"><div att="val" match>', '[att="val"s]' ),
+			'attribute presence'                  => array( '<div tta><div att match><span att="foo" match>', '[att]', 2 ),
+			'attribute empty string match'        => array( '<div tta><div att match><span match att=>', '[att=""]', 2 ),
+			'attribute value'                     => array( '<div att="v"><div att="val" match><p match att=val>', '[att=val]', 2 ),
+			'attribute quoted value'              => array( '<div att><div att="::" match><p att=\'::\' match>', '[att="::"]', 2 ),
+			'attribute case insensitive'          => array( '<div att="value"><div att="val" match><p match att=VaL>', '[att="VAL"i]', 2 ),
+			'attribute case sensitive mod'        => array( '<div att="VAL"><div att="val" match><p att=val match>', '[att="val"s]', 2 ),
 
-			'attribute one of'                      => array( '<div att="a B c"><div att="a b c" match>', '[att~="b"]' ),
-			'attribute one of insensitive'          => array( '<div att="a c"><div att="a B c" match>', '[att~="b"i]' ),
-			'attribute one of mod sensitive'        => array( '<div att="a B c"><div att="a b c" match>', '[att~="b"s]' ),
-			'attribute one of whitespace cases'     => array( "<div att='     a'><div att='\na\ta   b   ' match>", '[att~="b"]' ),
+			'attribute one of'                    => array( '<div att="a B c"><div att="a b c" match><p att="b" match><p att="abc"><p att="abcdef b   " match>', '[att~="b"]', 3 ),
+			'attribute one of insensitive'        => array( '<div att="a c"><div att="a B c" match>', '[att~="b"i]', 1 ),
+			'attribute one of mod sensitive'      => array( '<div att="a B c"><div att="a b c" match>', '[att~="b"s]', 1 ),
+			'attribute one of whitespace cases'   => array( "<div att='     a'><div att='\na\ta   b   ' match>", '[att~="b"]', 1 ),
 
-			'attribute with-hyphen (no hyphen)'     => array( '<p att="special_not"><p att="special" match>', '[att|="special"]' ),
-			'attribute with-hyphen (hyphen prefix)' => array( '<p att="special_not"><p att="special-yeah" match>', '[att|="special"]' ),
-			'attribute with-hyphen insensitive'     => array( '<p att="special_not"><p att="SPECIAL" match>', '[att|="special"i]' ),
-			'attribute with-hyphen sensitive mod'   => array( '<p att="spec"><p att="special" match>', '[att|="special"s]' ),
+			'attribute with-hyphen'               => array( '<p att="special_not"><p att="special" match><p att="special-great" match>', '[att|="special"]', 2 ),
+			'attribute with-hyphen insensitive'   => array( '<p att="special_not"><p att="SPECIAL" match><p att="SPECIAL-great" match>', '[att|="special" i]', 2 ),
+			'attribute with-hyphen sensitive mod' => array( '<p att="SPECIAL"><p att="special" match>', '[att|="special"s]', 1 ),
 
-			'attribute prefixed'                    => array( '<p att="fix"><p att="prefix" match>', '[att^="p"]' ),
-			'attribute prefixed insensitive'        => array( '<p att="fix"><p att="Prefix" match>', '[att^="p"i]' ),
-			'attribute prefixed sensitive mod'      => array( '<p att="Prefix"><p att="prefix" match>', '[att^="p"s]' ),
+			'attribute prefixed'                  => array( '<p att="notprefix"><p att="prefix" match><p att="perfect" match>', '[att^="p"]', 2 ),
+			'attribute prefixed insensitive'      => array( '<p att="notprefix"><p att="Prefix" match>', '[att^="p"i]', 1 ),
+			'attribute prefixed sensitive mod'    => array( '<p att="Prefix"><p att="prefix" match>', '[att^="p"s]', 1 ),
 
-			'attribute suffixed'                    => array( '<p att="suffix_"><p att="suffix" match>', '[att$="x"]' ),
-			'attribute suffixed insensitive'        => array( '<p att="suffix_"><p att="suffiX" match>', '[att$="x"i]' ),
-			'attribute suffixed sensitive mod'      => array( '<p att="suffiX"><p att="suffix" match>', '[att$="x"s]' ),
+			'attribute suffixed'                  => array( '<p att="suffix_"><p att="suffix" match><p att="brilliant…x" match>', '[att$="x"]', 2 ),
+			'attribute suffixed insensitive'      => array( '<p att="suffix_"><p att="suffiX" match>', '[att$="x"i]', 1 ),
+			'attribute suffixed sensitive mod'    => array( '<p att="suffiX"><p att="suffix" match>', '[att$="x"s]', 1 ),
 
-			'attribute contains'                    => array( '<p att="abcyz"><p att="abcxyz" match>', '[att*="x"]' ),
-			'attribute contains insensitive'        => array( '<p att="abcyz"><p att="abcXyz" match>', '[att*="x"i]' ),
-			'attribute contains sensitive mod'      => array( '<p att="abcXyz"><p att="abcxyz" match>', '[att*="x"s]' ),
+			'attribute contains'                  => array( '<p att="abcyz"><p att="abcxyz" match><p att="x" match>', '[att*="x"]', 2 ),
+			'attribute contains insensitive'      => array( '<p att="abcyz"><p att="abcXyz" match>', '[att*="x"i]', 1 ),
+			'attribute contains sensitive mod'    => array( '<p att="abcXyz"><p att="abcxyz" match>', '[att*="x"s]', 1 ),
 
-			'list'                                  => array( '<div><p match>', 'a, p' ),
-			'compound'                              => array( '<div att><section att="bar" match>', 'section[att="bar"]' ),
+			'list'                                => array( '<div><p match><a match><span>', 'a, p, .class, #id, [att]', 2 ),
+			'compound'                            => array( '<div att><custom-el att="bar" fruit="APPLE BANANA" match>', 'custom-el[att="bar"][    fruit ~= "banana" i]', 1 ),
 		);
-	}
-
-	/**
-	 * @ticket TBD
-	 */
-	public function test_select_all() {
-		$processor = new WP_HTML_Tag_Processor( '<div match><p class="x" match><svg><rect match/></svg><i id="y" match></i>' );
-		$count     = 0;
-		foreach ( $processor->select_all( 'div, .x, rect, #y' ) as $_ ) {
-			++$count;
-			$this->assertTrue( $processor->get_attribute( 'match' ) );
-		}
-		$this->assertSame( 4, $count );
 	}
 
 	/**
