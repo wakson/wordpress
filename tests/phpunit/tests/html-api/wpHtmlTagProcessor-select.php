@@ -14,7 +14,7 @@
  */
 class Tests_HtmlApi_WpHtmlTagProcessor_Select extends WP_UnitTestCase {
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_select_miss() {
 		$processor = new WP_HTML_Tag_Processor( '<span>' );
@@ -22,7 +22,7 @@ class Tests_HtmlApi_WpHtmlTagProcessor_Select extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_selectors
 	 */
@@ -85,7 +85,7 @@ class Tests_HtmlApi_WpHtmlTagProcessor_Select extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @expectedIncorrectUsage WP_HTML_Tag_Processor::select_all
 	 *

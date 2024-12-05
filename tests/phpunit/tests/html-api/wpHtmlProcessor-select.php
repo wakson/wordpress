@@ -14,7 +14,7 @@
  */
 class Tests_HtmlApi_WpHtmlProcessor_Select extends WP_UnitTestCase {
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_select_miss() {
 		$processor = WP_HTML_Processor::create_full_parser( '<span>' );
@@ -22,7 +22,7 @@ class Tests_HtmlApi_WpHtmlProcessor_Select extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_selectors
 	 */
@@ -57,7 +57,7 @@ class Tests_HtmlApi_WpHtmlProcessor_Select extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @expectedIncorrectUsage WP_HTML_Processor::select_all
 	 *

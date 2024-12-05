@@ -114,7 +114,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_is_ident_and_is_ident_start() {
 		$this->assertFalse( $this->test_class::test_is_ident_codepoint( '[', 0 ) );
@@ -124,7 +124,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_idents
 	 */
@@ -141,7 +141,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_strings
 	 */
@@ -192,7 +192,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_id_selectors
 	 */
@@ -226,7 +226,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_class_selectors
 	 */
@@ -260,7 +260,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_type_selectors
 	 */
@@ -296,7 +296,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 *
 	 * @dataProvider data_attribute_selectors
 	 */
@@ -371,7 +371,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_selector() {
 		$input  = 'el.foo#bar[baz=quux] > .child';
@@ -389,7 +389,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_empty_selector() {
 		$input  = '';
@@ -400,7 +400,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_selector_list() {
 		$input  = 'el1, el2, el.foo#bar[baz=quux]';
@@ -409,7 +409,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_selector_list() {
 		$input  = 'el,,';
@@ -418,7 +418,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_selector_list2() {
 		$input  = 'el!';
@@ -427,7 +427,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_empty_selector_list() {
 		$input  = " \t   \t\n\r\f";

@@ -27,7 +27,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_complex_selector() {
 		$input  = 'el1 > .child#bar[baz=quux] , rest';
@@ -50,7 +50,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_complex_selector() {
 		$input  = 'el.foo#bar[baz=quux] > , rest';
@@ -60,7 +60,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_complex_selector_nonfinal_subclass() {
 		$input  = 'el.foo#bar[baz=quux] > final, rest';
@@ -70,7 +70,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_empty_complex_selector() {
 		$input  = '';
@@ -80,7 +80,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_complex_selector_list() {
 		$input  = 'el1 el2 el.foo#bar[baz=quux], second > selector';
@@ -89,7 +89,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_selector_list() {
 		$input  = 'el,,';
@@ -98,7 +98,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_invalid_selector_list2() {
 		$input  = 'el!';
@@ -107,7 +107,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket TBD
+	 * @ticket 62653
 	 */
 	public function test_parse_empty_selector_list() {
 		$input  = " \t   \t\n\r\f";
