@@ -5,7 +5,7 @@
  *
  * > <complex-selector> = <compound-selector> [ <combinator>? <compound-selector> ] *
  */
-final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
+final class WP_CSS_Complex_Selector extends WP_CSS_HTML_Processor_Matcher {
 	public function matches( WP_HTML_Processor $processor ): bool {
 		// First selector must match this location.
 		if ( ! $this->selectors[0]->matches( $processor ) ) {

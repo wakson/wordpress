@@ -1,8 +1,8 @@
 <?php
 
-interface WP_CSS_HTML_Processor_Matcher {
+abstract class WP_CSS_HTML_Processor_Matcher {
 	/**
 	 * @return bool
 	 */
-	public function matches( WP_HTML_Processor $processor ): bool;
+	abstract public function matches( WP_HTML_Processor $processor ): bool;
 }

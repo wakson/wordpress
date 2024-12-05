@@ -1,6 +1,6 @@
 <?php
 
-final class WP_CSS_ID_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+final class WP_CSS_ID_Selector extends WP_CSS_HTML_Tag_Processor_Matcher {
 	/** @var string */
 	public $ident;
 

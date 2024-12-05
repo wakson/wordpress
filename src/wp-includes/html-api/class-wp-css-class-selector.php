@@ -1,6 +1,6 @@
 <?php
 
-final class WP_CSS_Class_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+final class WP_CSS_Class_Selector extends WP_CSS_HTML_Tag_Processor_Matcher {
 	public function matches( WP_HTML_Tag_Processor $processor ): bool {
 		return (bool) $processor->has_class( $this->ident );
 	}
