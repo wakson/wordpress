@@ -1179,23 +1179,23 @@ function get_block_templates( $query = array(), $template_type = 'wp_template' )
 		unset( $template_files_query['post_type'] );
 		$template_files = _get_block_templates_files( $template_type, $template_files_query );
 		foreach ( $template_files as $template_file ) {
-			// The custom templates with no associated post types are available for all post types.
-			if ( isset( $query['post_type'] ) && ! isset( $template_file['postTypes'] ) ) {
-				$candidate              = _build_block_template_result_from_file( $template_file, $template_type );
-				$default_template_types = get_default_block_template_types();
-				if ( ! isset( $default_template_types[ $candidate->slug ] ) ) {
-					$query_result[] = $candidate;
-				}
-			} elseif (
-				// If the query doesn't specify a post type, or it does and the template has the post type, add it.
+			// If the query doesn't specify a post type, or it does and the template matches the post type, add it.
+			if (
 				! isset( $query['post_type'] ) ||
 				(
-					isset( $query['post_type'] ) &&
 					isset( $template_file['postTypes'] ) &&
 					in_array( $query['post_type'], $template_file['postTypes'], true )
 				)
 			) {
 				$query_result[] = _build_block_template_result_from_file( $template_file, $template_type );
+			} elseif ( ! isset( $template_file['postTypes'] ) ) {
+				// The custom templates with no associated post types are available for all post types as long
+				// as they are not default templates.
+				$candidate              = _build_block_template_result_from_file( $template_file, $template_type );
+				$default_template_types = get_default_block_template_types();
+				if ( ! isset( $default_template_types[ $candidate->slug ] ) ) {
+					$query_result[] = $candidate;
+				}
 			}
 		}
 
