@@ -1192,7 +1192,7 @@ function get_comment_time( $format = '', $gmt = false, $translate = true, $comme
 
 	$source   = ( $gmt ) ? 'gmt' : 'local';
 	$datetime = get_comment_datetime( $comment, $source );
-//var_dump($datetime);
+
 	if ( false === $datetime ) {
 		return false;
 	}
