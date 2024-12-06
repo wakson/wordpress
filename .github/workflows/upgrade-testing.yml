@@ -40,9 +40,10 @@ permissions: {}
 # - The last two releases of WordPress are tested against all PHP and MySQL LTS version combinations and the most recent
 #   innovation release.
 # - The next 6 oldest versions of WordPress are tested against both the oldest and newest releases of PHP currently
-#   supported for both PHP 7 & 8 along with the oldest and newest MySQL LTS versions currently supported.
-# - For the remaining versions of WordPress receiving security updates, they should only be included if the database
-#   version was changed from the one used in the previous major release.
+#   supported for both PHP 7 & 8 along with the oldest and newest MySQL LTS versions currently supported (no innovation
+#   releases).
+# - For the remaining versions of WordPress receiving security updates, they are only included if the database version
+#   was different that the previous major release.
 # - The oldest version of WordPress receiving security updates should always be tested.
 
 #  Notes about chosen MySQL versions:
@@ -76,9 +77,9 @@ jobs:
             db-version: '8.4'
           # MySQL 9.0+ will not work on PHP 7.2 & 7.3
           - php: '7.2'
-            db-version: '9.0'
+            db-version: '9.1'
           - php: '7.3'
-            db-version: '9.0'
+            db-version: '9.1'
     with:
       os: ${{ matrix.os }}
       php: ${{ matrix.php }}
