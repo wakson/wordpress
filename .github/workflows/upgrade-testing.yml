@@ -1,3 +1,6 @@
+# Confirms that updating WordPress using WP-CLI works successfully.
+#
+# This workflow is not meant to test wordpress-develop checkouts, but rather tagged versions officially available on WordPress.org.
 name: Upgrade Tests
 
 on:
@@ -31,6 +34,23 @@ concurrency:
 # Any needed permissions should be configured at the job level.
 permissions: {}
 
+# Because the number of jobs spawned can balloon out of control quickly, the following methodology is applied when
+# building ou the matrix below:
+#
+# - The last two releases of WordPress are tested against all PHP and MySQL LTS version combinations and the most recent
+#   innovation release.
+# - The next 6 oldest versions of WordPress are tested against both the oldest and newest releases of PHP currently
+#   supported for both PHP 7 & 8 along with the oldest and newest MySQL LTS versions currently supported.
+# - For the remaining versions of WordPress receiving security updates, they should only be included if the database
+#   version was changed from the one used in the previous major release.
+# - The oldest version of WordPress receiving security updates should always be tested.
+
+#  Notes about chosen MySQL versions:
+#    - Only the most recent innovation release should be included in testing.
+#    - Even though MySQL >= 5.5.5 is currently supported, there are no 5.5.x Docker containers available that work on
+#      modern architectures.
+#    - 5.6.x Docker containers are available and work, but 5.6 only accounts for ~2.3% of installs as of 12/6/2024.defaults:
+#    - 5.7.x accounts for ~2-% of installs, so this is used below instead.
 jobs:
   # Tests the full list of PHP/MySQL combinations for the last two versions of WordPress.
   upgrade-tests-last-two-releases:
@@ -45,7 +65,7 @@ jobs:
         os: [ 'ubuntu-latest' ]
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
         db-type: [ 'mysql' ]
-        db-version: [ '5.7', '8.0', '8.4' ]
+        db-version: [ '5.7', '8.0', '8.4', '9.1' ]
         wp: [ '6.6', '6.7' ]
         multisite: [ false, true ]
 
@@ -54,6 +74,11 @@ jobs:
             db-version: '8.4'
           - php: '7.3'
             db-version: '8.4'
+          # MySQL 9.0+ will not work on PHP 7.2 & 7.3
+          - php: '7.2'
+            db-version: '9.0'
+          - php: '7.3'
+            db-version: '9.0'
     with:
       os: ${{ matrix.os }}
       php: ${{ matrix.php }}
