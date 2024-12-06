@@ -161,14 +161,16 @@ function get_option( $option, $default_value = false ) {
 	$passed_default = func_num_args() > 1;
 
 	if ( ! wp_installing() ) {
-		$alloptions = wp_load_alloptions();
+		$value = wp_cache_get( $option, 'options' );
 
-		if ( isset( $alloptions[ $option ] ) ) {
-			$value = $alloptions[ $option ];
-		} else {
-			$value = wp_cache_get( $option, 'options' );
+		if ( false === $value ) {
 
-			if ( false === $value ) {
+			$alloptions = wp_load_alloptions();
+
+			if ( isset( $alloptions[ $option ] ) ) {
+				$value = $alloptions[ $option ];
+			} else {
+
 				// Prevent non-existent options from triggering multiple queries.
 				$notoptions = wp_cache_get( 'notoptions', 'options' );
 
@@ -186,27 +188,27 @@ function get_option( $option, $default_value = false ) {
 					 * @since 4.4.0 The `$option` parameter was added.
 					 * @since 4.7.0 The `$passed_default` parameter was added to distinguish between a `false` value and the default parameter value.
 					 *
-					 * @param mixed  $default_value  The default value to return if the option does not exist
+					 * @param mixed $default_value The default value to return if the option does not exist
 					 *                               in the database.
-					 * @param string $option         Option name.
-					 * @param bool   $passed_default Was `get_option()` passed a default value?
+					 * @param string $option Option name.
+					 * @param bool $passed_default Was `get_option()` passed a default value?
 					 */
 					return apply_filters( "default_option_{$option}", $default_value, $option, $passed_default );
 				}
+			}
 
-				$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option ) );
+			$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option ) );
 
-				// Has to be get_row() instead of get_var() because of funkiness with 0, false, null values.
-				if ( is_object( $row ) ) {
-					$value = $row->option_value;
-					wp_cache_add( $option, $value, 'options' );
-				} else { // Option does not exist, so we must cache its non-existence.
-					$notoptions[ $option ] = true;
-					wp_cache_set( 'notoptions', $notoptions, 'options' );
+			// Has to be get_row() instead of get_var() because of funkiness with 0, false, null values.
+			if ( is_object( $row ) ) {
+				$value = $row->option_value;
+				wp_cache_add( $option, $value, 'options' );
+			} else { // Option does not exist, so we must cache its non-existence.
+				$notoptions[ $option ] = true;
+				wp_cache_set( 'notoptions', $notoptions, 'options' );
 
-					/** This filter is documented in wp-includes/option.php */
-					return apply_filters( "default_option_{$option}", $default_value, $option, $passed_default );
-				}
+				/** This filter is documented in wp-includes/option.php */
+				return apply_filters( "default_option_{$option}", $default_value, $option, $passed_default );
 			}
 		}
 	} else {
