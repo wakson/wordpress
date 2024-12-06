@@ -1129,7 +1129,7 @@ function get_comment_datetime( $comment = null, $source = 'local' ) {
  *
  * @return int|false Unix timestamp on success, false on failure.
  */
-function get_comment_timestamp( $comment = null, $source = 'local'  ) {
+function get_comment_timestamp( $comment = null, $source = 'local' ) {
 
 	$datetime = get_comment_datetime( $comment, $source );
 
