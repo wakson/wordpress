@@ -1345,8 +1345,8 @@ function wp_dashboard_events_news() {
 		<?php
 		printf(
 			'<a href="%1$s" target="_blank">%2$s <span class="screen-reader-text"> %3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>',
-			'https://learn.wordpress.org/',
-			__( 'Learn' ),
+			'https://learn.wordpress.org/online-workshops',
+			__( 'Online Workshops' ),
 			/* translators: Hidden accessibility text. */
 			__( '(opens in a new tab)' )
 		);
