@@ -277,16 +277,16 @@ function wp_save_post_revision( $post_id ) {
  * @return WP_Post|false The autosaved data or false on failure or when no autosave exists.
  */
 function wp_get_post_autosave( $post_id, $user_id = 0 ) {
-	// Set up the query args for WP_Query
+	// Set up the query args for WP_Query.
 	$args = array(
 		'post_type'      => 'revision',
 		'post_status'    => 'inherit',
 		'post_parent'    => $post_id,
-		'post_name'      => $post_id . '-autosave-v1',  // Autosave name
-		'posts_per_page' => 1,  // Only need the latest autosave
-		'orderby'        => 'date', // Order by post date (latest first)
-		'order'          => 'DESC', // Descending order for latest
-		'fields'         => 'ids', // We only need the post ID to fetch the post object
+		'post_name'      => $post_id . '-autosave-v1',  // Autosave name.
+		'posts_per_page' => 1,  // Only need the latest autosave.
+		'orderby'        => 'date', // Order by post date (latest first).
+		'order'          => 'DESC', // Descending order for latest.
+		'fields'         => 'ids', // We only need the post ID to fetch the post object.
 	);
 
 	// If user_id is set, we add the author parameter to the query.
@@ -294,18 +294,18 @@ function wp_get_post_autosave( $post_id, $user_id = 0 ) {
 		$args['author'] = $user_id;
 	}
 
-	// Run the query to get autosave
+	// Run the query to get autosave.
 	$query = new WP_Query( $args );
 
-	// If no autosave found, return false
+	// If no autosave found, return false.
 	if ( ! $query->have_posts() ) {
 		return false;
 	}
 
-	// Get the first post (which is the latest autosave)
+	// Get the first post (which is the latest autosave).
 	$autosave_id = $query->posts[0];
 
-	// Return the post object
+	// Return the post object.
 	return get_post( $autosave_id );
 }
 
