@@ -290,7 +290,7 @@ function wp_get_post_autosave( $post_id, $user_id = 0 ) {
 	);
 
 	// If user_id is set, we add the author parameter to the query.
-	if ( $user_id !== 0 ) {
+	if ( 0 !== $user_id ) {
 		$args['author'] = $user_id;
 	}
 
