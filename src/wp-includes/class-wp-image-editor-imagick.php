@@ -518,7 +518,6 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 				$max_depth = apply_filters( 'imagick_resized_image_max_bit_depth', $this->image->getImageDepth(), $this->image->getImageDepth() );
 				$this->image->setImageDepth( $max_depth );
 			}
-
 		} catch ( Exception $e ) {
 			return new WP_Error( 'image_resize_error', $e->getMessage() );
 		}
