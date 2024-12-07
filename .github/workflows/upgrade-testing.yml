@@ -35,7 +35,7 @@ concurrency:
 permissions: {}
 
 # Because the number of jobs spawned can balloon out of control quickly, the following methodology is applied when
-# building ou the matrix below:
+# building out the matrix below:
 #
 # - The last two releases of WordPress are tested against all PHP and MySQL LTS version combinations and the most recent
 #   innovation release.
