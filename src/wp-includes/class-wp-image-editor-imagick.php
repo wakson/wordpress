@@ -512,13 +512,12 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 				 *
 				 * @since 6.8.0
 				 *
-				 * @param int $max_depth   The maximum bit depth. Default is 8.
+				 * @param int $max_depth   The maximum bit depth. Default is the input depth.
 				 * @param int $image_depth The bit depth of the original image.
 				 */
-				$max_depth = apply_filters( 'imagick_resized_image_max_bit_depth', 8, $this->image->getImageDepth() );
-				if ( $max_depth < $this->image->getImageDepth() ) {
-					$this->image->setImageDepth( $max_depth );
-				}
+				$max_depth = apply_filters( 'imagick_resized_image_max_bit_depth', $this->image->getImageDepth(), $this->image->getImageDepth() );
+				$this->image->setImageDepth( $max_depth );
+
 			}
 		} catch ( Exception $e ) {
 			return new WP_Error( 'image_resize_error', $e->getMessage() );
