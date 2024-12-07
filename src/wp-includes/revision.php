@@ -270,8 +270,6 @@ function wp_save_post_revision( $post_id ) {
  *
  * @since 2.6.0
  *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
  * @param int $post_id The post ID.
  * @param int $user_id Optional. The post author ID. Default 0.
  * @return WP_Post|false The autosaved data or false on failure or when no autosave exists.
@@ -299,9 +297,7 @@ function wp_get_post_autosave( $post_id, $user_id = 0 ) {
 		return false;
 	}
 
-	$autosave_id = $query->posts[0];
-
-	return get_post( $autosave_id );
+	return get_post( $query->posts[0] );
 }
 
 /**
