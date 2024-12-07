@@ -720,37 +720,32 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test1.avif';
 		$imagick_image_editor->save( $save_to_file );
 		$im = new Imagick( $save_to_file );
-		$this->assertSame( 8, $im->getImageDepth() );
+		$this->assertSame( 10, $im->getImageDepth() );
 		unlink( $save_to_file );
 
-		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
+		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		$imagick_image_editor->load();
 
-		// Log the Imagick version.
-		error_log( 'Imagick version: ' . $imagick->getVersion()['versionNumber'] );
 
 		// Test that the filter can be used to override the default.
-		$imagick_image_editor->resize( 200, 200 );
+		$imagick_image_editor->resize( 100, 50 );
 		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
 		$imagick_image_editor->save( $save_to_file );
 		$im = new Imagick( $save_to_file );
-		$this->assertSame( 10, $im->getImageDepth() );
+		$this->assertSame( 8, $im->getImageDepth() );
 
 		// Clean up - remove the temporary file and restore the filter.
 		unlink( $save_to_file );
-		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_10' ) );
-
-		// Log success.
-		error_log( 'Success' );
+		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
 	}
 
 	/**
-	 * Helper function to return 10 for the `imagick_resized_image_max_bit_depth` filter.
+	 * Helper function to return 8 for the `imagick_resized_image_max_bit_depth` filter.
 	 *
 	 * @return int
 	 */
-	public function __return_10() {
-		return 10;
+	public function __return_eight() {
+		return 8;
 	}
 }
