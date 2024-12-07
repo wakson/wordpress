@@ -727,7 +727,6 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		$imagick_image_editor->load();
 
-
 		// Test that the filter can be used to override the default.
 		$imagick_image_editor->resize( 100, 50 );
 		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
