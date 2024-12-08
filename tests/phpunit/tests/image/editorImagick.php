@@ -713,6 +713,18 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$imagick = new Imagick( $file );
 		$this->assertSame( 10, $imagick->getImageDepth() );
 
+
+		// Test that Imagick is able to save a 10 bit image.
+		$imagick->setImageDepth( 10 );
+		$imagick->writeImage( $file );
+		$im = new Imagick( $file );
+
+		if ( $im->getImageDepth() !== 10 ) {
+			$this->markTestSkipped( 'Imagick is unable to save a 10 bit image.' );
+		}
+
+		$im->destroy();
+
 		$imagick_image_editor->load();
 
 		// By default resized images are limited to 8 bits per channel.
