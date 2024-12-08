@@ -1439,7 +1439,7 @@ function newblog_notify_siteadmin( $blog_id, $deprecated = '' ) {
 
 	$email = get_site_option( 'admin_email' );
 
-	if ( is_email( $email ) === false ) {
+	if ( ! is_email( $email ) ) {
 		return false;
 	}
 
@@ -1500,7 +1500,7 @@ function newuser_notify_siteadmin( $user_id ) {
 
 	$email = get_site_option( 'admin_email' );
 
-	if ( is_email( $email ) === false ) {
+	if ( ! is_email( $email ) ) {
 		return false;
 	}
 
@@ -2279,7 +2279,7 @@ function add_new_user_to_blog( $user_id, $password, $meta ) {
  *
  * @since MU (3.0.0)
  *
- * @param PHPMailer $phpmailer The PHPMailer instance (passed by reference).
+ * @param PHPMailer\PHPMailer\PHPMailer $phpmailer The PHPMailer instance (passed by reference).
  */
 function fix_phpmailer_messageid( $phpmailer ) {
 	$phpmailer->Hostname = get_network()->domain;
