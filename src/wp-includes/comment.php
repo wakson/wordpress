@@ -1267,7 +1267,7 @@ function wp_check_comment_data( $comment_data ) {
 	}
 
 	if ( isset( $user )
-		&& ( (int) $commentdata['user_id'] === (int) $post_author || $user->has_cap( 'moderate_comments' ) ) ) {
+		&& ( (int) $comment_data['user_id'] === (int) $post_author || $user->has_cap( 'moderate_comments' ) ) ) {
 		// The author and the admins get respect.
 		$approved = 1;
 	} else {
