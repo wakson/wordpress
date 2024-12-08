@@ -518,7 +518,6 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 					$this->image->setImageAlphaChannel( Imagick::ALPHACHANNEL_OPAQUE );
 				}
 			}
-
 		} catch ( Exception $e ) {
 			return new WP_Error( 'image_resize_error', $e->getMessage() );
 		}
