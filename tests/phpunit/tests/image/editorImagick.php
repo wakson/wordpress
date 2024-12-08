@@ -715,8 +715,9 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 
 		// Test that Imagick is able to save a 10 bit image.
 		$imagick->setImageDepth( 10 );
-		$imagick->writeImage( $file );
-		$im = new Imagick( $file );
+		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test10.avif';
+		$imagick->writeImage( $save_to_file );
+		$im = new Imagick( $save_to_file );
 
 		if ( $im->getImageDepth() !== 10 ) {
 			$this->markTestSkipped( 'Imagick is unable to save a 10 bit image.' );
