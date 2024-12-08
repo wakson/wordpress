@@ -731,7 +731,7 @@ function meta_form( $post = null ) {
 		);
 	}
 
-	if ( !$keys ){
+	if ( ! $keys ) {
 		$registered_meta = get_registered_meta_keys( 'post', $post->post_type );
 		$keys = array_keys( $registered_meta );
 	}
