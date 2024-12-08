@@ -700,54 +700,51 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 	public function test_imagick_resized_image_max_bit_depth() {
 		$file                 = DIR_TESTDATA . '/images/colors_hdr_p3.avif';
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
-		// Skip this test if the image editor doesn't support the AVIF file type.
+
+		// Skip if AVIF not supported
 		if ( ! $imagick_image_editor->supports_mime_type( 'image/avif' ) ) {
 			$this->markTestSkipped( 'The image editor does not support the AVIF mime type.' );
 		}
 
+		// Skip if depth methods not available
 		if ( ! method_exists( 'Imagick', 'getImageDepth' ) || ! method_exists( 'Imagick', 'setImageDepth' ) ) {
 			$this->markTestSkipped( 'The image editor does not support get or setImageDepth.' );
 		}
 
-		// Confirm this images has a bit depth of 10.
+		// Verify source image has 10-bit depth
 		$imagick = new Imagick( $file );
 		$this->assertSame( 10, $imagick->getImageDepth() );
 
-		// Test that Imagick is able to save a 10 bit image.
+		// Test ability to save 10-bit image
 		$imagick->setImageDepth( 10 );
-		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test10.avif';
-		$imagick->writeImage( $save_to_file );
-		$im = new Imagick( $save_to_file );
+		$test_file = tempnam( get_temp_dir(), '' ) . 'test10.avif';
+		$imagick->writeImage( $test_file );
+		$im = new Imagick( $test_file );
 
 		if ( $im->getImageDepth() !== 10 ) {
 			$this->markTestSkipped( 'Imagick is unable to save a 10 bit image.' );
 		}
-
 		$im->destroy();
 
+		// Test default behavior preserves 10-bit depth
 		$imagick_image_editor->load();
-
-		// By default resized images are limited to 8 bits per channel.
 		$imagick_image_editor->resize( 100, 50 );
-		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test1.avif';
-		$imagick_image_editor->save( $save_to_file );
-		$im = new Imagick( $save_to_file );
+		$test_file = tempnam( get_temp_dir(), '' ) . 'test1.avif';
+		$imagick_image_editor->save( $test_file );
+		$im = new Imagick( $test_file );
 		$this->assertSame( 10, $im->getImageDepth() );
-		unlink( $save_to_file );
+		unlink( $test_file );
 
+		// Test filter can force 8-bit depth
 		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
 		$imagick_image_editor = new WP_Image_Editor_Imagick( $file );
 		$imagick_image_editor->load();
-
-		// Test that the filter can be used to override the default.
 		$imagick_image_editor->resize( 100, 50 );
-		$save_to_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
-		$imagick_image_editor->save( $save_to_file );
-		$im = new Imagick( $save_to_file );
+		$test_file = tempnam( get_temp_dir(), '' ) . 'test2.avif';
+		$imagick_image_editor->save( $test_file );
+		$im = new Imagick( $test_file );
 		$this->assertSame( 8, $im->getImageDepth() );
-
-		// Clean up - remove the temporary file and restore the filter.
-		unlink( $save_to_file );
+		unlink( $test_file );
 		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
 	}
 
