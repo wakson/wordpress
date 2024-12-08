@@ -725,6 +725,7 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 			$this->markTestSkipped( 'Imagick is unable to save a 10 bit image.' );
 		}
 		$im->destroy();
+		unlink( $test_file );
 
 		// Test default behavior preserves 10-bit depth.
 		$imagick_image_editor->load();
@@ -734,6 +735,7 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$im = new Imagick( $test_file );
 		$this->assertSame( 10, $im->getImageDepth() );
 		unlink( $test_file );
+		$im->destroy();
 
 		// Test filter can set 8-bit depth
 		add_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
@@ -745,6 +747,7 @@ class Tests_Image_Editor_Imagick extends WP_Image_UnitTestCase {
 		$im = new Imagick( $test_file );
 		$this->assertSame( 8, $im->getImageDepth() );
 		unlink( $test_file );
+		$im->destroy();
 		remove_filter( 'imagick_resized_image_max_bit_depth', array( $this, '__return_eight' ) );
 	}
 
