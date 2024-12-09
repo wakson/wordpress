@@ -10,10 +10,10 @@
 /**
  * CSS complex selector.
  *
- * This class implements a CSS complex selector and is used to test for matching HTML tags
- * in a {@see WP_HTML_Tag_Processor}.
+ * This class is used to test for matching HTML tags in a {@see WP_HTML_Processor}.
  *
- * A complex selector is a selector with zero or more combinator-selector pairs.
+ * A compound selector is at least a single compound selector. There may be additional selectors
+ * with combinators.
  *
  * @since TBD
  *
@@ -106,8 +106,10 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	public $context_selectors;
 
 	/**
-	 * @param WP_CSS_Compound_Selector $self_selector
-	 * @param array{WP_CSS_Type_Selector, string}[]|null $selectors
+	 * Constructor.
+	 *
+	 * @param WP_CSS_Compound_Selector $self_selector The selector in the final position.
+	 * @param array{WP_CSS_Type_Selector, string}[]|null $selectors The context selectors.
 	 */
 	public function __construct(
 		WP_CSS_Compound_Selector $self_selector,
@@ -133,16 +135,15 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 			return true;
 		}
 
-		/** @var string[] */
 		$breadcrumbs = array_slice( array_reverse( $processor->get_breadcrumbs() ), 1 );
 		return $this->explore_matches( $this->context_selectors, $breadcrumbs );
 	}
 
 	/**
-	 * Checks for matches recursively comparing context selectors with breadcrumbs.
+	 * Checks for matches by recursively comparing context selectors with breadcrumbs.
 	 *
-	 * @param array{WP_CSS_Type_Selector, string}[] $selectors
-	 * @param string[] $breadcrumbs
+	 * @param array{WP_CSS_Type_Selector, string}[] $selectors Selectors to match.
+	 * @param string[] $breadcrumbs Breadcrumbs.
 	 * @return bool True if a match is found, otherwise false.
 	 */
 	private function explore_matches( array $selectors, array $breadcrumbs ): bool {
@@ -176,7 +177,16 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 				return false;
 
 			default:
-				throw new Exception( "Unsupported combinator '{$combinator}' found." );
+				_doing_it_wrong(
+					__METHOD__,
+					sprintf(
+						// translators: %s: A CSS selector combinator like ">" or "+".
+						__( 'Unsupported combinator "%s" found.' ),
+						$combinator
+					),
+					'6.8.0'
+				);
+				return false;
 		}
 	}
 }
