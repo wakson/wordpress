@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage HTML-API
- * @since TBD
+ * @since 6.8.0
  */
 
 /**
@@ -28,7 +28,7 @@
  *   - Next sibling (`el + el`)
  *   - Subsequent sibling (`el ~ el`)
  *
- * @since TBD
+ * @since 6.8.0
  *
  * @access private
  */
@@ -37,7 +37,7 @@ class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List impleme
 	 * Takes a CSS selector string and returns an instance of itself or `null` if the selector
 	 * string is invalid or unsupported.
 	 *
-	 * @since TBD
+	 * @since 6.8.0
 	 *
 	 * @param string $input CSS selectors.
 	 * @return static|null

@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage HTML-API
- * @since TBD
+ * @since 6.8.0
  */
 
 /**
@@ -15,7 +15,7 @@
  * A compound selector is at least a single compound selector. There may be additional selectors
  * with combinators.
  *
- * @since TBD
+ * @since 6.8.0
  *
  * @access private
  */

@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage HTML-API
- * @since TBD
+ * @since 6.8.0
  */
 
 /**
@@ -17,7 +17,7 @@
  *   - Zero or more subclass selectors (ID, class, or attribute selectors).
  *   - At least one of the above.
  *
- * @since TBD
+ * @since 6.8.0
  *
  * @access private
  */

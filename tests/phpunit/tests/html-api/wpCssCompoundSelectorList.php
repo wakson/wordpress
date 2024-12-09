@@ -6,7 +6,7 @@
  *
  * @subpackage HTML-API
  *
- * @since TBD
+ * @since 6.8.0
  *
  * @group html-api
  */

@@ -877,7 +877,7 @@ class WP_HTML_Tag_Processor {
 	 *         );
 	 *     }
 	 *
-	 * @since TBD
+	 * @since 6.8.0
 	 *
 	 * @param string $selector_string Selector string.
 	 * @return Generator<void> A generator pausing on each tag matching the selector.
@@ -917,7 +917,7 @@ class WP_HTML_Tag_Processor {
 	 *         $processor->get_attribute( 'charset' ), // string(5) "utf-8"
 	 *     );
 	 *
-	 * @since TBD
+	 * @since 6.8.0
 	 *
 	 * @param string $selector_string
 	 * @return bool  True if a matching tag was found, otherwise false.

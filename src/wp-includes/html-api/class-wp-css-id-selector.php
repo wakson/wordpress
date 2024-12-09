@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage HTML-API
- * @since TBD
+ * @since 6.8.0
  */
 
 /**
@@ -12,7 +12,7 @@
  *
  * This class is used to test for matching HTML tags in a {@see WP_HTML_Tag_Processor}.
  *
- * @since TBD
+ * @since 6.8.0
  *
  * @access private
  */
