@@ -239,7 +239,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 		if ( null === $expected ) {
 			$this->assertNull( $result );
 		} else {
-			$this->assertSame( $expected, $result->ident );
+			$this->assertSame( $expected, $result->class_name );
 			$this->assertSame( $rest, substr( $input, $offset ) );
 		}
 	}
@@ -383,7 +383,7 @@ class Tests_HtmlApi_WpCssCompoundSelectorList extends WP_UnitTestCase {
 
 		$this->assertSame( 'el', $sel->type_selector->ident );
 		$this->assertSame( 3, count( $sel->subclass_selectors ) );
-		$this->assertSame( 'foo', $sel->subclass_selectors[0]->ident, 'foo' );
+		$this->assertSame( 'foo', $sel->subclass_selectors[0]->class_name, 'foo' );
 		$this->assertSame( 'bar', $sel->subclass_selectors[1]->ident, 'bar' );
 		$this->assertSame( 'baz', $sel->subclass_selectors[2]->name, 'baz' );
 		$this->assertSame( WP_CSS_Attribute_Selector::MATCH_EXACT, $sel->subclass_selectors[2]->matcher );

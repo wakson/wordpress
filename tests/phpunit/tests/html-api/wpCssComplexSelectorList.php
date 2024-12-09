@@ -47,7 +47,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 
 		$this->assertSame( 3, count( $sel->self_selector->subclass_selectors ) );
 		$this->assertNull( $sel->self_selector->type_selector );
-		$this->assertSame( 'child', $sel->self_selector->subclass_selectors[0]->ident );
+		$this->assertSame( 'child', $sel->self_selector->subclass_selectors[0]->class_name );
 
 		$this->assertSame( ', rest', substr( $input, $offset ) );
 	}
