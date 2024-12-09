@@ -1,11 +1,37 @@
 <?php
+/**
+ * HTML API: WP_CSS_ID_Selector class
+ *
+ * @package WordPress
+ * @subpackage HTML-API
+ * @since TBD
+ */
 
+/**
+ * CSS ID selector.
+ *
+ * This class implements a CSS ID selector and is used to test for matching HTML tags
+ * in a {@see WP_HTML_Tag_Processor}.
+ *
+ * @since TBD
+ *
+ * @access private
+ */
 final class WP_CSS_ID_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
-	/** @var string */
-	public $ident;
+	/**
+	 * The ID to match.
+	 *
+	 * @var string
+	 */
+	public $id;
 
-	public function __construct( string $ident ) {
-		$this->ident = $ident;
+	/**
+	 * Constructor.
+	 *
+	 * @param string $id The ID to match.
+	 */
+	public function __construct( string $id ) {
+		$this->id = $id;
 	}
 
 	/**
@@ -23,7 +49,7 @@ final class WP_CSS_ID_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
 		$case_insensitive = $processor->is_quirks_mode();
 
 		return $case_insensitive
-			? 0 === strcasecmp( $id, $this->ident )
-			: $processor->get_attribute( 'id' ) === $this->ident;
+			? 0 === strcasecmp( $id, $this->id )
+			: $processor->get_attribute( 'id' ) === $this->id;
 	}
 }
