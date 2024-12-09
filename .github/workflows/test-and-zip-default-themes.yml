@@ -94,7 +94,9 @@ jobs:
 
       - name: Check for zero-byte (empty) files
         run: |
-          [[ ! $(find src/wp-content/themes/${{ matrix.theme }} -empty) ]]
+          [[ ! $(find "src/wp-content/themes/${THEME}" -empty) ]]
+        env:
+          THEME: ${{ matrix.theme }}
 
   # Tests the build script for themes that have one.
   #

@@ -112,7 +112,9 @@ jobs:
         if: ${{ inputs.prepare-playground }}
         run: |
           mkdir -p ./pr-number
-          echo ${{ github.event.number }} > ./pr-number/NR
+          echo "${EVENT_NUMBER}" > ./pr-number/NR
+        env:
+          EVENT_NUMBER: ${{ github.event.number }}
 
       # Uploads the PR number as an artifact for the Pull Request Commenting workflow to download and then
       # leave a comment detailing how to test the PR within WordPress Playground.
