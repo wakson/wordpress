@@ -3,7 +3,7 @@
 /**
  * @group post
  */
-class Tests_Post_GetPostAutosave extends WP_UnitTestCase {
+class Tests_Post_wpGetPostAutosave extends WP_UnitTestCase {
 
 	/**
 	 * Admin user ID.
@@ -27,9 +27,9 @@ class Tests_Post_GetPostAutosave extends WP_UnitTestCase {
 	protected static $post_id;
 
 	/**
-	 * Ticket #62658
+	 * Set up before class.
 	 *
-	 * @see https://core.trac.wordpress.org/ticket/62658
+	 * @param WP_UnitTest_Factory $factory Factory.
 	 */
 	public static function wpSetUpBeforeClass( WP_UnitTest_Factory $factory ) {
 		self::$admin_id  = $factory->user->create( array( 'role' => 'administrator' ) );
@@ -41,6 +41,8 @@ class Tests_Post_GetPostAutosave extends WP_UnitTestCase {
 
 	/**
 	 * Test when no autosave exists for a post.
+	 *
+	 * @ticket 62658
 	 */
 	public function test_no_autosave_exists() {
 		$autosave = wp_get_post_autosave( self::$post_id );
@@ -49,6 +51,8 @@ class Tests_Post_GetPostAutosave extends WP_UnitTestCase {
 
 	/**
 	 * Test when an autosave exists for a post.
+	 *
+	 * @ticket 62658
 	 */
 	public function test_autosave_exists() {
 		$autosave_id = wp_insert_post(
@@ -71,6 +75,8 @@ class Tests_Post_GetPostAutosave extends WP_UnitTestCase {
 
 	/**
 	 * Test when an autosave exists for a specific user.
+	 *
+	 * @ticket 62658
 	 */
 	public function test_autosave_for_specific_user() {
 		$autosave_id = wp_insert_post(
