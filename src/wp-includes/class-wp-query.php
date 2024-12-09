@@ -1169,50 +1169,52 @@ class WP_Query {
 				continue; // Handled further down in the $q['tag'] block.
 			}
 
-			if ( $t->query_var && isset( $q[ $t->query_var ] ) ) {
-				$tax_query_defaults = array(
-					'taxonomy' => $taxonomy,
-					'field'    => 'slug',
-				);
+			if ( ! $t->query_var || ! isset( $q[ $t->query_var ] ) ) {
+				continue;
+			}
 
-				if ( ! empty( $t->rewrite['hierarchical'] ) ) {
-					$q[ $t->query_var ] = wp_basename( $q[ $t->query_var ] );
-				}
+			$tax_query_defaults = array(
+				'taxonomy' => $taxonomy,
+				'field'    => 'slug',
+			);
 
-				$term = $q[ $t->query_var ];
+			if ( ! empty( $t->rewrite['hierarchical'] ) ) {
+				$q[ $t->query_var ] = wp_basename( $q[ $t->query_var ] );
+			}
 
-				if ( is_array( $term ) ) {
-					$term = implode( ',', $term );
-				}
+			$term = $q[ $t->query_var ];
 
-				if ( str_contains( $term, '+' ) ) {
-					$terms = preg_split( '/[+]+/', $term );
-					foreach ( $terms as $term ) {
-						$tax_query[] = array_merge(
-							$tax_query_defaults,
-							array(
-								'terms' => array( $term ),
-							)
-						);
-					}
-				} elseif ( ! empty( $term ) ) {
+			if ( is_array( $term ) ) {
+				$term = implode( ',', $term );
+			}
+
+			if ( str_contains( $term, '+' ) ) {
+				$terms = preg_split( '/[+]+/', $term );
+				foreach ( $terms as $term ) {
 					$tax_query[] = array_merge(
 						$tax_query_defaults,
 						array(
-							'terms' => preg_split( '/[,]+/', $term ),
+							'terms' => array( $term ),
 						)
 					);
-				} else {
-					// FIXME: Figure out why 'category' is automatically
-					// added as a query arg and what to do about it.
-					if ( 'category' !== $taxonomy ) {
-						$tax_query[] = array_merge(
-							$tax_query_defaults,
-							array(
-								'operator' => 'EXISTS',
-							)
-						);
-					}
+				}
+			} elseif ( ! empty( $term ) ) {
+				$tax_query[] = array_merge(
+					$tax_query_defaults,
+					array(
+						'terms' => preg_split( '/[,]+/', $term ),
+					)
+				);
+			} else {
+				// FIXME: Figure out why 'category' is automatically
+				// added as a query arg and what to do about it.
+				if ( 'category' !== $taxonomy ) {
+					$tax_query[] = array_merge(
+						$tax_query_defaults,
+						array(
+							'operator' => 'EXISTS',
+						)
+					);
 				}
 			}
 		}
