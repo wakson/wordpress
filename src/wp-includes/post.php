@@ -8467,3 +8467,34 @@ function wp_create_initial_post_meta() {
 		)
 	);
 }
+
+/**
+ * Retrieves the ID or permalink of a page based on its template.
+ *
+ * This function performs a query to find pages using a specific template
+ * and returns the ID or permalink of the first matching page.
+ *
+ * @param string $template The name of the template to search for.
+ * @param string $field The field to return: 'ID' for the page ID, 'permalink' for the page permalink.
+ * @return string|int The ID or permalink of the page, or null if no page is found.
+ */
+function get_page_by_template( $template, $field = 'permalink' ){
+    $query = new WP_Query([
+        'post_type'     => 'page',
+        'meta_query'    => [
+            [
+                'key'       => '_wp_page_template',
+                'value'     => $template,
+                'compare'   => '=='
+            ]
+        ]
+    ]);
+    while($query->have_posts()){
+        $query->the_post();
+        if($field == 'ID') {
+            return get_the_ID();
+        } elseif($field == 'permalink') {
+            return get_permalink();
+        }
+    }
+}
