@@ -43,7 +43,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 
 		switch ( $combinator ) {
 			case self::COMBINATOR_CHILD:
-				if ( '*' === $selector->type_selector->ident || strcasecmp( $breadcrumbs[0], $selector->type_selector->ident ) === 0 ) {
+				if ( $selector->type_selector->matches_tag( $breadcrumbs[0] ) ) {
 					return $this->explore_matches( array_slice( $selectors, 2 ), array_slice( $breadcrumbs, 1 ) );
 				}
 				return false;
@@ -51,7 +51,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 			case self::COMBINATOR_DESCENDANT:
 				// Find _all_ the breadcrumbs that match and recurse from each of them.
 				for ( $i = 0; $i < count( $breadcrumbs ); $i++ ) {
-					if ( '*' === $selector->type_selector->ident || strcasecmp( $breadcrumbs[ $i ], $selector->type_selector->ident ) === 0 ) {
+					if ( $selector->type_selector->matches_tag( $breadcrumbs[ $i ] ) ) {
 						$next_crumbs = array_slice( $breadcrumbs, $i + 1 );
 						if ( $this->explore_matches( array_slice( $selectors, 2 ), $next_crumbs ) ) {
 							return true;

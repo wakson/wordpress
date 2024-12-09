@@ -6,6 +6,14 @@ final class WP_CSS_Type_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
 		if ( null === $tag_name ) {
 			return false;
 		}
+		return $this->matches_tag( $tag_name );
+	}
+
+	/**
+	 * @param string $tag_name
+	 * @return bool
+	 */
+	public function matches_tag( string $tag_name ): bool {
 		if ( '*' === $this->ident ) {
 			return true;
 		}
