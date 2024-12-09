@@ -6,26 +6,87 @@
  * > <complex-selector> = <compound-selector> [ <combinator>? <compound-selector> ] *
  */
 final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
+	const COMBINATOR_CHILD              = '>';
+	const COMBINATOR_DESCENDANT         = ' ';
+	const COMBINATOR_NEXT_SIBLING       = '+';
+	const COMBINATOR_SUBSEQUENT_SIBLING = '~';
+
+	/**
+	 * This is the selector in the final position of the complex selector. This corresponds to the
+	 * selected element.
+	 *
+	 * @example
+	 *
+	 *                   $self_selector
+	 *                   ┏━━━━┻━━━━┓
+	 *     .heading h1 > el.selected
+	 *
+	 * @readonly
+	 * @var WP_CSS_Compound_Selector
+	 */
+	public $self_selector;
+
+	/**
+	 * This is the selector in the final position of the complex selector. This corresponds to the
+	 * selected element.
+	 *
+	 * @example
+	 *
+	 *     $relative_selectors
+	 *     ┏━━━━━━┻━━━━┓
+	 *     .heading h1 > el.selected
+	 *
+	 * The example would have the following relative selectors (note that the order is reversed):
+	 *
+	 * @example
+	 *
+	 *     array (
+	 *       array(
+	 *         WP_CSS_Type_Selector( 'ident' => 'h1' ),
+	 *         '>', // WP_CSS_Complex_Selector::COMBINATOR_CHILD
+	 *       ),
+	 *       array(
+	 *         new WP_CSS_Type_Selector( 'header' ),
+	 *         ' ', // WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT
+	 *       ),
+	 *     )
+	 *
+	 * @readonly
+	 * @var array{WP_CSS_Type_Selector, string}[]
+	 */
+	public $relative_selectors;
+
+	/**
+	 * @param WP_CSS_Compound_Selector $self_selector
+	 * @param array{WP_CSS_Type_Selector, string}[] $selectors
+	 */
+	public function __construct(
+		WP_CSS_Compound_Selector $self_selector,
+		?array $relative_selectors
+	) {
+		$this->self_selector      = $self_selector;
+		$this->relative_selectors = $relative_selectors;
+	}
+
 	public function matches( WP_HTML_Processor $processor ): bool {
 		// First selector must match this location.
-		if ( ! $this->selectors[0]->matches( $processor ) ) {
+		if ( ! $this->self_selector->matches( $processor ) ) {
 			return false;
 		}
 
-		if ( count( $this->selectors ) === 1 ) {
+		if ( null === $this->relative_selectors || array() === $this->relative_selectors ) {
 			return true;
 		}
 
 		/** @var string[] */
 		$breadcrumbs = array_slice( array_reverse( $processor->get_breadcrumbs() ), 1 );
-		$selectors   = array_slice( $this->selectors, 1 );
-		return $this->explore_matches( $selectors, $breadcrumbs );
+		return $this->explore_matches( $this->relative_selectors, $breadcrumbs );
 	}
 
 	/**
 	 * This only looks at breadcrumbs and can therefore only support type selectors.
 	 *
-	 * @param array<WP_CSS_Compound_Selector|self::COMBINATOR_*> $selectors
+	 * @param array{WP_CSS_Type_Selector, string}[] $selectors
 	 * @param string[] $breadcrumbs
 	 */
 	private function explore_matches( array $selectors, array $breadcrumbs ): bool {
@@ -36,24 +97,22 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 			return false;
 		}
 
-		/** @var self::COMBINATOR_* */
-		$combinator = $selectors[0];
-		/** @var WP_CSS_Compound_Selector */
-		$selector = $selectors[1];
+		$selector   = $selectors[0][0];
+		$combinator = $selectors[0][1];
 
 		switch ( $combinator ) {
 			case self::COMBINATOR_CHILD:
-				if ( $selector->type_selector->matches_tag( $breadcrumbs[0] ) ) {
-					return $this->explore_matches( array_slice( $selectors, 2 ), array_slice( $breadcrumbs, 1 ) );
+				if ( $selector->matches_tag( $breadcrumbs[0] ) ) {
+					return $this->explore_matches( array_slice( $selectors, 1 ), array_slice( $breadcrumbs, 1 ) );
 				}
 				return false;
 
 			case self::COMBINATOR_DESCENDANT:
 				// Find _all_ the breadcrumbs that match and recurse from each of them.
 				for ( $i = 0; $i < count( $breadcrumbs ); $i++ ) {
-					if ( $selector->type_selector->matches_tag( $breadcrumbs[ $i ] ) ) {
-						$next_crumbs = array_slice( $breadcrumbs, $i + 1 );
-						if ( $this->explore_matches( array_slice( $selectors, 2 ), $next_crumbs ) ) {
+					if ( $selector->matches_tag( $breadcrumbs[ $i ] ) ) {
+						$next_breadcrumbs = array_slice( $breadcrumbs, $i + 1 );
+						if ( $this->explore_matches( array_slice( $selectors, 1 ), $next_breadcrumbs ) ) {
 							return true;
 						}
 					}
@@ -61,28 +120,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 				return false;
 
 			default:
-				throw new Exception( "Combinator '{$combinator}' is not supported yet." );
+				throw new Exception( "Unsupported combinator '{$combinator}' found." );
 		}
-	}
-
-	const COMBINATOR_CHILD              = '>';
-	const COMBINATOR_DESCENDANT         = ' ';
-	const COMBINATOR_NEXT_SIBLING       = '+';
-	const COMBINATOR_SUBSEQUENT_SIBLING = '~';
-
-	/**
-	 * even indexes are WP_CSS_Compound_Selector, odd indexes are string combinators.
-	 * In reverse order to match the current element and then work up the tree.
-	 * Any non-final selector is a type selector.
-	 *
-	 * @var array<WP_CSS_Compound_Selector|self::COMBINATOR_*>
-	 */
-	public $selectors = array();
-
-	/**
-	 * @param array<WP_CSS_Compound_Selector|self::COMBINATOR_*> $selectors
-	 */
-	public function __construct( array $selectors ) {
-		$this->selectors = array_reverse( $selectors );
 	}
 }

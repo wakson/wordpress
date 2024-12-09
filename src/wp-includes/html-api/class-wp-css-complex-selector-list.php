@@ -95,16 +95,18 @@ class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List impleme
 		}
 
 		$updated_offset = $offset;
-		$selector       = self::parse_compound_selector( $input, $updated_offset );
-		if ( null === $selector ) {
+		$self_selector  = self::parse_compound_selector( $input, $updated_offset );
+		if ( null === $self_selector ) {
 			return null;
 		}
-
-		$selectors                       = array( $selector );
-		$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
+		/** @var array{WP_CSS_Compound_Selector, string}[] */
+		$selectors = array();
 
 		$found_whitespace = self::parse_whitespace( $input, $updated_offset );
 		while ( $updated_offset < strlen( $input ) ) {
+			$combinator    = null;
+			$next_selector = null;
+
 			if (
 				WP_CSS_Complex_Selector::COMBINATOR_CHILD === $input[ $updated_offset ] ||
 				WP_CSS_Complex_Selector::COMBINATOR_NEXT_SIBLING === $input[ $updated_offset ] ||
@@ -114,42 +116,40 @@ class WP_CSS_Complex_Selector_List extends WP_CSS_Compound_Selector_List impleme
 				++$updated_offset;
 				self::parse_whitespace( $input, $updated_offset );
 
-				// Failure to find a selector here is a parse error
-				$selector = self::parse_compound_selector( $input, $updated_offset );
+				// A combinator has been found, failure to find a selector here is a parse error.
+				$next_selector = self::parse_compound_selector( $input, $updated_offset );
+				if ( null === $next_selector ) {
+					return null;
+				}
 			} elseif ( $found_whitespace ) {
 				/*
 				* Whitespace is ambiguous, it could be a descendant combinator or
 				* insignificant whitespace.
 				*/
-				$selector = self::parse_compound_selector( $input, $updated_offset );
-				if ( null === $selector ) {
-					break;
+				$next_selector = self::parse_compound_selector( $input, $updated_offset );
+				if ( null !== $next_selector ) {
+					$combinator = WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT;
 				}
-				$combinator = WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT;
-			} else {
+			}
+
+			if ( null === $next_selector ) {
 				break;
 			}
 
-			if ( null === $selector ) {
+			// $self_selector will pass to a relative selector where only the type selector is allowed.
+			if ( null !== $self_selector->subclass_selectors || null === $self_selector->type_selector ) {
 				return null;
 			}
 
-			/*
-			 * Subclass selectors in non-final position is not supported:
-			 *   - `div > .className` is valid
-			 *   - `.className > div` is not
-			 */
-			if ( $has_preceding_subclass_selector ) {
-				return null;
-			}
-			$has_preceding_subclass_selector = null !== $selector->subclass_selectors;
-
-			$selectors[] = $combinator;
-			$selectors[] = $selector;
+			/** @var array{WP_CSS_Compound_Selector, string} */
+			$selector_pair = array( $self_selector->type_selector, $combinator );
+			$selectors[]   = $selector_pair;
+			$self_selector = $next_selector;
 
 			$found_whitespace = self::parse_whitespace( $input, $updated_offset );
 		}
 		$offset = $updated_offset;
-		return new WP_CSS_Complex_Selector( $selectors );
+
+		return new WP_CSS_Complex_Selector( $self_selector, array_reverse( $selectors ) );
 	}
 }

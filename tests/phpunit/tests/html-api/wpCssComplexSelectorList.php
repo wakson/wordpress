@@ -20,7 +20,7 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 				parent::__construct( array() );
 			}
 
-			public static function test_parse_complex_selector( string $input, int &$offset ) {
+			public static function test_parse_complex_selector( string $input, int &$offset ): ?WP_CSS_Complex_Selector {
 				return self::parse_complex_selector( $input, $offset );
 			}
 		};
@@ -30,21 +30,24 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 	 * @ticket 62653
 	 */
 	public function test_parse_complex_selector() {
-		$input  = 'el1 > .child#bar[baz=quux] , rest';
+		$input  = 'el1 el2 > .child#bar[baz=quux] , rest';
 		$offset = 0;
-		$sel    = $this->test_class::test_parse_complex_selector( $input, $offset );
 
-		$this->assertSame( 3, count( $sel->selectors ) );
+		/** @var WP_CSS_Complex_Selector|null */
+		$sel = $this->test_class::test_parse_complex_selector( $input, $offset );
 
-		$this->assertSame( 'el1', $sel->selectors[2]->type_selector->ident );
-		$this->assertNull( $sel->selectors[2]->subclass_selectors );
+		$this->assertSame( 2, count( $sel->relative_selectors ) );
 
-		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_CHILD, $sel->selectors[1] );
+		// Relative selectors should be reverse ordered.
+		$this->assertSame( 'el2', $sel->relative_selectors[0][0]->ident );
+		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_CHILD, $sel->relative_selectors[0][1] );
 
-		$this->assertSame( 3, count( $sel->selectors[0]->subclass_selectors ) );
-		$this->assertNull( $sel->selectors[0]->type_selector );
-		$this->assertSame( 3, count( $sel->selectors[0]->subclass_selectors ) );
-		$this->assertSame( 'child', $sel->selectors[0]->subclass_selectors[0]->ident );
+		$this->assertSame( 'el1', $sel->relative_selectors[1][0]->ident );
+		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT, $sel->relative_selectors[1][1] );
+
+		$this->assertSame( 3, count( $sel->self_selector->subclass_selectors ) );
+		$this->assertNull( $sel->self_selector->type_selector );
+		$this->assertSame( 'child', $sel->self_selector->subclass_selectors[0]->ident );
 
 		$this->assertSame( ', rest', substr( $input, $offset ) );
 	}

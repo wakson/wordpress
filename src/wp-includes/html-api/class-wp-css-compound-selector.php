@@ -25,7 +25,7 @@ final class WP_CSS_Compound_Selector implements WP_CSS_HTML_Tag_Processor_Matche
 	/** @var WP_CSS_Type_Selector|null */
 	public $type_selector;
 
-	/** @var array<WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector>|null */
+	/** @var (WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector)[]|null */
 	public $subclass_selectors;
 
 	/**
