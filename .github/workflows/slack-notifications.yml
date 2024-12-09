@@ -68,7 +68,7 @@ jobs:
             const workflow_run = await github.rest.actions.getWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: ${{ github.run_id }},
+              run_id: context.runId,
             });
 
             if ( '${{ inputs.calling_status }}' == 'failure' && workflow_run.data.run_attempt == 1 ) {
@@ -82,7 +82,7 @@ jobs:
               const previous_run = await github.rest.actions.getWorkflowRunAttempt({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                run_id: ${{ github.run_id }},
+                run_id: context.runId,
                 attempt_number: workflow_run.data.run_attempt - 1
               });
 
@@ -94,7 +94,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: workflow_run.data.workflow_id,
-              branch: '${{ env.CURRENT_BRANCH }}',
+              branch: process.env.CURRENT_BRANCH,
               exclude_pull_requests: true,
             });
 
@@ -140,7 +140,7 @@ jobs:
             const commit_details = await github.rest.repos.getCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: '${{ github.sha }}'
+              ref: context.sha,
             });
             return commit_details.data.commit.message;
 
