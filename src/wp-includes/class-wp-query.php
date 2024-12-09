@@ -1173,6 +1173,12 @@ class WP_Query {
 				continue;
 			}
 
+			if ( 'category' === $taxonomy && empty( $q[ $t->query_var ] ) ) {
+				// Unlike custom taxonomies, the category field is automatically added to every query.
+				// Thus, we need to skip it if it is empty.
+				continue;
+			}
+
 			$tax_query_defaults = array(
 				'taxonomy' => $taxonomy,
 				'field'    => 'slug',
@@ -1206,16 +1212,12 @@ class WP_Query {
 					)
 				);
 			} else {
-				// FIXME: Figure out why 'category' is automatically
-				// added as a query arg and what to do about it.
-				if ( 'category' !== $taxonomy ) {
-					$tax_query[] = array_merge(
-						$tax_query_defaults,
-						array(
-							'operator' => 'EXISTS',
-						)
-					);
-				}
+				$tax_query[] = array_merge(
+					$tax_query_defaults,
+					array(
+						'operator' => 'EXISTS',
+					)
+				);
 			}
 		}
 
