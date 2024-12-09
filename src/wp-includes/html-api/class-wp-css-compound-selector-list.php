@@ -294,7 +294,7 @@ class WP_CSS_Compound_Selector_List implements WP_CSS_HTML_Tag_Processor_Matcher
 					$updated_offset += 2;
 					break;
 				case '|':
-					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_EXACT_OR_EXACT_WITH_HYPHEN;
+					$attr_matcher    = WP_CSS_Attribute_Selector::MATCH_EXACT_OR_HYPHEN_PREFIXED;
 					$updated_offset += 2;
 					break;
 				case '^':

@@ -19,98 +19,127 @@
  */
 final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
 	/**
-	 * [att=val]
-	 * Represents an element with the att attribute whose value is exactly "val".
+	 * The attribute value is matched exactly.
+	 *
+	 * @example
+	 *
+	 *     [att=val]
 	 */
-	const MATCH_EXACT = 'MATCH_EXACT';
+	const MATCH_EXACT = 'exact';
 
 	/**
-	 * [attr~=value]
-	 * Represents elements with an attribute name of attr whose value is a
-	 * whitespace-separated list of words, one of which is exactly value.
+	 * The attribute value matches any value in a whitespace separated list of words exactly.
+	 *
+	 * @example
+	 *
+	 *     [attr~=value]
 	 */
-	const MATCH_ONE_OF_EXACT = 'MATCH_ONE_OF_EXACT';
+	const MATCH_ONE_OF_EXACT = 'one-of';
 
 	/**
-	 * [attr|=value]
-	 * Represents elements with an attribute name of attr whose value can be exactly value or
-	 * can begin with value immediately followed by a hyphen, - (U+002D). It is often used for
-	 * language subcode matches.
+	 * The attribute value is matched exactly or matches the beginning of the attribute
+	 * immediately followed by a hyphen.
+	 *
+	 * @example
+	 *
+	 *     [attr|=value]
 	 */
-	const MATCH_EXACT_OR_EXACT_WITH_HYPHEN = 'MATCH_EXACT_OR_EXACT_WITH_HYPHEN';
+	const MATCH_EXACT_OR_HYPHEN_PREFIXED = 'exact-or-hyphen-prefixed';
 
 	/**
-	 * [attr^=value]
-	 * Represents elements with an attribute name of attr whose value is prefixed (preceded)
-	 * by value.
+	 * The attribute value matches the start of the attribute.
+	 *
+	 * @example
+	 *
+	 *     [attr^=value]
 	 */
-	const MATCH_PREFIXED_BY = 'MATCH_PREFIXED_BY';
+	const MATCH_PREFIXED_BY = 'prefixed';
 
 	/**
-	 * [attr$=value]
-	 * Represents elements with an attribute name of attr whose value is suffixed (followed)
-	 * by value.
+	 * The attribute value matches the end of the attribute.
+	 *
+	 * @example
+	 *
+	 *     [attr$=value]
 	 */
-	const MATCH_SUFFIXED_BY = 'MATCH_SUFFIXED_BY';
+	const MATCH_SUFFIXED_BY = 'suffixed';
 
 	/**
-	 * [attr*=value]
-	 * Represents elements with an attribute name of attr whose value contains at least one
-	 * occurrence of value within the string.
+	 * The attribute value is contained in the attribute.
+	 *
+	 * @example
+	 *
+	 *     [attr*=value]
 	 */
-	const MATCH_CONTAINS = 'MATCH_CONTAINS';
+	const MATCH_CONTAINS = 'contains';
 
 	/**
-	 * Modifier for case sensitive matching
-	 * [attr=value s]
+	 * Modifier for case sensitive matching.
+	 *
+	 * @example
+	 *
+	 *     [attr=value s]
 	 */
 	const MODIFIER_CASE_SENSITIVE = 'case-sensitive';
 
 	/**
-	 * Modifier for case insensitive matching
-	 * [attr=value i]
+	 * Modifier for case insensitive matching.
+	 *
+	 * @example
+	 *
+	 *     [attr=value i]
 	 */
 	const MODIFIER_CASE_INSENSITIVE = 'case-insensitive';
 
 	/**
-	 * The attribute name.
+	 * The name of the attribute to match.
 	 *
 	 * @var string
-	 * @readonly
 	 */
 	public $name;
 
 	/**
 	 * The attribute matcher.
 	 *
-	 * @var null|self::MATCH_*
-	 * @readonly
+	 * Allowed string values are the class constants:
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_EXACT}
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_ONE_OF_EXACT}
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_EXACT_OR_HYPHEN_PREFIXED}
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_PREFIXED_BY}
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_SUFFIXED_BY}
+	 *   - {@see WP_CSS_Attribute_Selector::MATCH_CONTAINS}
+	 *
+	 * @var string|null
 	 */
 	public $matcher;
 
 	/**
-	 * The attribute value.
+	 * The attribute value to match.
 	 *
 	 * @var string|null
-	 * @readonly
 	 */
 	public $value;
 
 	/**
 	 * The attribute modifier.
 	 *
-	 * @var null|self::MODIFIER_*
-	 * @readonly
+	 * Allowed string values are the class constants:
+	 *   - {@see WP_CSS_Attribute_Selector::MODIFIER_CASE_SENSITIVE}
+	 *   - {@see WP_CSS_Attribute_Selector::MODIFIER_CASE_INSENSITIVE}
+	 *
+	 * @var string|null
 	 */
 	public $modifier;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param string $name
-	 * @param null|self::MATCH_* $matcher
-	 * @param null|string $value
-	 * @param null|self::MODIFIER_* $modifier
+	 * @param string $name The attribute name.
+	 * @param string|null $matcher The attribute matcher.
+	 *        Must be one of the class MATCH_* constants or null.
+	 * @param string|null $value The attribute value to match.
+	 * @param string|null $modifier The attribute case modifier.
+	 *        Must be one of the class MODIFIER_* constants or null.
 	 */
 	public function __construct( string $name, ?string $matcher = null, ?string $value = null, ?string $modifier = null ) {
 		$this->name     = $name;
@@ -159,7 +188,7 @@ final class WP_CSS_Attribute_Selector implements WP_CSS_HTML_Tag_Processor_Match
 				}
 				return false;
 
-			case self::MATCH_EXACT_OR_EXACT_WITH_HYPHEN:
+			case self::MATCH_EXACT_OR_HYPHEN_PREFIXED:
 				// Attempt the full match first
 				if (
 					$case_insensitive

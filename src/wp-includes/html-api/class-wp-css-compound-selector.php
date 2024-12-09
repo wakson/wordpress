@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML API: WP_CSS_Class_Selector class
+ * HTML API: WP_CSS_Compound_Selector class
  *
  * @package WordPress
  * @subpackage HTML-API
