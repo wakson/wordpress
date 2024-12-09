@@ -1173,9 +1173,9 @@ class WP_Query {
 				continue;
 			}
 
-			if ( 'category' === $taxonomy && empty( $q[ $t->query_var ] ) ) {
-				// Unlike custom taxonomies, the category field is automatically added to every query.
-				// Thus, we need to skip it if it is empty.
+			if ( empty( $q[ $t->query_var ] ) && ! $t->root_taxonomy_archive ) {
+				// We only allow the term to be empty if the taxonomy is set up to
+				// show its root archive.
 				continue;
 			}
 

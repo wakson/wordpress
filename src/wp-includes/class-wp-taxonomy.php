@@ -246,6 +246,15 @@ final class WP_Taxonomy {
 	public $default_term;
 
 	/**
+	 * Whether to show a page for the root taxonomy route, displaying all
+	 * posts that have any term from the taxonomy assigned.
+	 *
+	 * @since 6.8.0
+	 * @var bool
+	 */
+	public $root_taxonomy_archive = false;
+
+	/**
 	 * Whether terms in this taxonomy should be sorted in the order they are provided to `wp_set_object_terms()`.
 	 *
 	 * Use this in combination with `'orderby' => 'term_order'` when fetching terms.
@@ -359,6 +368,7 @@ final class WP_Taxonomy {
 			'rest_namespace'        => false,
 			'rest_controller_class' => false,
 			'default_term'          => null,
+			'root_taxonomy_archive' => false,
 			'sort'                  => null,
 			'args'                  => null,
 			'_builtin'              => false,
