@@ -6,6 +6,12 @@
  * > <compound-selector> = [ <type-selector>? <subclass-selector>* ]!
  */
 final class WP_CSS_Compound_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+	/**
+	 * Determines if the processor's current position matches the selector.
+	 *
+	 * @param WP_HTML_Tag_Processor $processor The processor.
+	 * @return bool True if the processor's current position matches the selector.
+	 */
 	public function matches( WP_HTML_Tag_Processor $processor ): bool {
 		if ( $this->type_selector ) {
 			if ( ! $this->type_selector->matches( $processor ) ) {
