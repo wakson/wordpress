@@ -1,14 +1,47 @@
 <?php
+/**
+ * HTML API: WP_CSS_Complex_Selector class
+ *
+ * @package WordPress
+ * @subpackage HTML-API
+ * @since TBD
+ */
 
 /**
- * This corresponds to <complex-selector> in the grammar.
+ * CSS complex selector.
  *
- * > <complex-selector> = <compound-selector> [ <combinator>? <compound-selector> ] *
+ * This class implements a CSS complex selector and is used to test for matching HTML tags
+ * in a {@see WP_HTML_Tag_Processor}.
+ *
+ * A complex selector is a selector with zero or more combinator-selector pairs.
+ *
+ * @since TBD
+ *
+ * @access private
  */
 final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
-	const COMBINATOR_CHILD              = '>';
-	const COMBINATOR_DESCENDANT         = ' ';
-	const COMBINATOR_NEXT_SIBLING       = '+';
+	/**
+	 * Child combinator.
+	 */
+	const COMBINATOR_CHILD = '>';
+
+	/**
+	 * Descendant combinator.
+	 */
+	const COMBINATOR_DESCENDANT = ' ';
+
+	/**
+	 * Next sibling combinator.
+	 *
+	 * This combinator is not currently supported.
+	 */
+	const COMBINATOR_NEXT_SIBLING = '+';
+
+	/**
+	 * Subsequent sibling combinator.
+	 *
+	 * This combinator is not currently supported.
+	 */
 	const COMBINATOR_SUBSEQUENT_SIBLING = '~';
 
 	/**
@@ -84,6 +117,12 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 		$this->context_selectors = $context_selectors;
 	}
 
+	/**
+	 * Determines if the processor's current position matches the selector.
+	 *
+	 * @param WP_HTML_Processor $processor The processor.
+	 * @return bool True if the processor's current position matches the selector.
+	 */
 	public function matches( WP_HTML_Processor $processor ): bool {
 		// First selector must match this location.
 		if ( ! $this->self_selector->matches( $processor ) ) {
@@ -100,10 +139,11 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	}
 
 	/**
-	 * This only looks at breadcrumbs and can therefore only support type selectors.
+	 * Checks for matches recursively comparing context selectors with breadcrumbs.
 	 *
 	 * @param array{WP_CSS_Type_Selector, string}[] $selectors
 	 * @param string[] $breadcrumbs
+	 * @return bool True if a match is found, otherwise false.
 	 */
 	private function explore_matches( array $selectors, array $breadcrumbs ): bool {
 		if ( array() === $selectors ) {
