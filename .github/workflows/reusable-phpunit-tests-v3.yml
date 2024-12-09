@@ -182,7 +182,16 @@ jobs:
 
       - name: Run PHPUnit tests${{ inputs.phpunit-test-groups && format( ' ({0} groups)', inputs.phpunit-test-groups ) || '' }}${{ inputs.coverage-report && ' with coverage report' || '' }}
         continue-on-error: ${{ inputs.allow-errors }}
-        run: node ./tools/local-env/scripts/docker.js run php ./vendor/bin/phpunit --verbose -c ${{ env.PHPUNIT_CONFIG }}${{ inputs.phpunit-test-groups && format( ' --group {0}', inputs.phpunit-test-groups ) || '' }}${{ inputs.coverage-report && format( ' --coverage-clover wp-code-coverage-{0}-{1}.xml --coverage-html wp-code-coverage-{0}-{1}', ( inputs.multisite && 'multisite' || 'single' ), github.sha ) || '' }}
+        run: |
+          node ./tools/local-env/scripts/docker.js run \
+            php ./vendor/bin/phpunit \
+            --verbose \
+            -c "${PHPUNIT_CONFIG}" \
+            ${{ inputs.phpunit-test-groups && '--group "${TEST_GROUPS}"' || '' }} \
+            ${{ inputs.coverage-report && '--coverage-clover "wp-code-coverage-${MULTISITE_FLAG}-${GITHUB_SHA}.xml" --coverage-html "wp-code-coverage-${MULTISITE_FLAG}-${GITHUB_SHA}"' || '' }}
+        env:
+          TEST_GROUPS: ${{ inputs.phpunit-test-groups }}
+          MULTISITE_FLAG: ${{ inputs.multisite && 'multisite' || 'single' }}
 
       - name: Run AJAX tests
         if: ${{ ! inputs.phpunit-test-groups && ! inputs.coverage-report }}
