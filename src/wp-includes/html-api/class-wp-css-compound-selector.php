@@ -1,11 +1,55 @@
 <?php
+/**
+ * HTML API: WP_CSS_Class_Selector class
+ *
+ * @package WordPress
+ * @subpackage HTML-API
+ * @since TBD
+ */
 
 /**
- * This corresponds to <compound-selector> in the grammar.
+ * CSS compound selector.
  *
- * > <compound-selector> = [ <type-selector>? <subclass-selector>* ]!
+ * This class is used to test for matching HTML tags in a {@see WP_HTML_Tag_Processor}.
+ *
+ * A compound selector is a combination of:
+ *   - An optional type selector.
+ *   - Zero or more subclass selectors (ID, class, or attribute selectors).
+ *   - At least one of the above.
+ *
+ * @since TBD
+ *
+ * @access private
  */
 final class WP_CSS_Compound_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+	/**
+	 * The type selector.
+	 *
+	 * @var WP_CSS_Type_Selector|null
+	 */
+	public $type_selector;
+
+	/**
+	 * The subclass selectors.
+	 *
+	 * Subclass selectors are ID, class, or attribute selectors.
+	 *
+	 * @var (WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector)[]|null
+	 */
+	public $subclass_selectors;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param WP_CSS_Type_Selector|null $type_selector The type selector or null.
+	 * @param (WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector)[]|null $subclass_selectors
+	 *        The array of subclass selectors or null.
+	 */
+	public function __construct( ?WP_CSS_Type_Selector $type_selector, ?array $subclass_selectors ) {
+		$this->type_selector      = $type_selector;
+		$this->subclass_selectors = array() === $subclass_selectors ? null : $subclass_selectors;
+	}
+
 	/**
 	 * Determines if the processor's current position matches the selector.
 	 *
@@ -24,20 +68,5 @@ final class WP_CSS_Compound_Selector implements WP_CSS_HTML_Tag_Processor_Matche
 			}
 		}
 		return true;
-	}
-
-	/** @var WP_CSS_Type_Selector|null */
-	public $type_selector;
-
-	/** @var (WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector)[]|null */
-	public $subclass_selectors;
-
-	/**
-	 * @param WP_CSS_Type_Selector|null $type_selector
-	 * @param array<WP_CSS_ID_Selector|WP_CSS_Class_Selector|WP_CSS_Attribute_Selector> $subclass_selectors
-	 */
-	public function __construct( ?WP_CSS_Type_Selector $type_selector, array $subclass_selectors ) {
-		$this->type_selector      = $type_selector;
-		$this->subclass_selectors = array() === $subclass_selectors ? null : $subclass_selectors;
 	}
 }
