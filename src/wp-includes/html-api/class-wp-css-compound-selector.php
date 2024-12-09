@@ -13,10 +13,8 @@ final class WP_CSS_Compound_Selector implements WP_CSS_HTML_Tag_Processor_Matche
 	 * @return bool True if the processor's current position matches the selector.
 	 */
 	public function matches( WP_HTML_Tag_Processor $processor ): bool {
-		if ( $this->type_selector ) {
-			if ( ! $this->type_selector->matches( $processor ) ) {
-				return false;
-			}
+		if ( $this->type_selector && ! $this->type_selector->matches( $processor ) ) {
+			return false;
 		}
 		if ( null !== $this->subclass_selectors ) {
 			foreach ( $this->subclass_selectors as $subclass_selector ) {
