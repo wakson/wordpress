@@ -93,4 +93,6 @@ jobs:
 
       - name: Upgrade to WordPress ${{ inputs.new-version }}
         run: |
-          wp core update${{ 'latest' != inputs.new-version && format( ' --version={0}', inputs.new-version ) || '' }}
+          wp core update ${{ 'latest' != inputs.new-version && '--version="${WP_VERSION}"' || '' }}
+        env:
+          WP_VERSION: ${{ inputs.new-version }}

@@ -171,11 +171,13 @@ jobs:
 
       - name: WordPress Docker container debug information
         run: |
-          docker compose run --rm mysql ${{ env.LOCAL_DB_TYPE == 'mariadb' && contains( fromJSON('["5.5", "10.0", "10.1", "10.2", "10.3"]'), env.LOCAL_DB_VERSION ) && 'mysql' || env.LOCAL_DB_TYPE }} --version
+          docker compose run --rm mysql "${LOCAL_DB_CMD}" --version
           docker compose run --rm php php --version
           docker compose run --rm php php -m
           docker compose run --rm php php -i
           docker compose run --rm php locale -a
+        env:
+          LOCAL_DB_CMD: ${{ env.LOCAL_DB_TYPE == 'mariadb' && contains( fromJSON('["5.5", "10.0", "10.1", "10.2", "10.3"]'), env.LOCAL_DB_VERSION ) && 'mysql' || env.LOCAL_DB_TYPE }}
 
       - name: Install WordPress
         run: npm run env:install
