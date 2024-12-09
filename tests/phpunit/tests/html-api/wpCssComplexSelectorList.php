@@ -39,10 +39,10 @@ class Tests_HtmlApi_WpCssComplexSelectorList extends WP_UnitTestCase {
 		$this->assertSame( 2, count( $sel->context_selectors ) );
 
 		// Relative selectors should be reverse ordered.
-		$this->assertSame( 'el2', $sel->context_selectors[0][0]->ident );
+		$this->assertSame( 'el2', $sel->context_selectors[0][0]->type );
 		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_CHILD, $sel->context_selectors[0][1] );
 
-		$this->assertSame( 'el1', $sel->context_selectors[1][0]->ident );
+		$this->assertSame( 'el1', $sel->context_selectors[1][0]->type );
 		$this->assertSame( WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT, $sel->context_selectors[1][1] );
 
 		$this->assertSame( 3, count( $sel->self_selector->subclass_selectors ) );

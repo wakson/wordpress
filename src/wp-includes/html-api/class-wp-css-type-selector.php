@@ -1,6 +1,38 @@
 <?php
+/**
+ * HTML API: WP_CSS_Type_Selector class
+ *
+ * @package WordPress
+ * @subpackage HTML-API
+ * @since TBD
+ */
 
+/**
+ * CSS type selector.
+ *
+ * This class is used to test for matching HTML tags in a {@see WP_HTML_Tag_Processor}.
+ *
+ * @since TBD
+ *
+ * @access private
+ */
 final class WP_CSS_Type_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
+	/**
+	 * The element type (tag name) to match or '*' to match any element.
+	 *
+	 * @var string
+	 */
+	public $type;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param string $type The element type (tag name) to match or '*' to match any element.
+	 */
+	public function __construct( string $type ) {
+		$this->type = $type;
+	}
+
 	/**
 	 * Determines if the processor's current position matches the selector.
 	 *
@@ -16,24 +48,15 @@ final class WP_CSS_Type_Selector implements WP_CSS_HTML_Tag_Processor_Matcher {
 	}
 
 	/**
+	 * Checks whether the selector matches the provided tag name.
+	 *
 	 * @param string $tag_name
 	 * @return bool
 	 */
 	public function matches_tag( string $tag_name ): bool {
-		if ( '*' === $this->ident ) {
+		if ( '*' === $this->type ) {
 			return true;
 		}
-		return 0 === strcasecmp( $tag_name, $this->ident );
-	}
-
-	/**
-	 * @var string
-	 *
-	 * The type identifier string or '*'.
-	 */
-	public $ident;
-
-	public function __construct( string $ident ) {
-		$this->ident = $ident;
+		return 0 === strcasecmp( $tag_name, $this->type );
 	}
 }
