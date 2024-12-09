@@ -30,7 +30,11 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 * The "context selectors" are zero or more elements that provide additional constraints for
 	 * the "self selector."
 	 *
-	 * In this example selector, and element like `<el class="selected">` is selected iff:
+	 * These selectors are represented as 2-tuples where the element at index 0 is the selector and
+	 * the element at index 1 is the combinator string constant from this class,
+	 * e.g. `WP_CSS_Complex_Selector::COMBINATOR_CHILD`.
+	 *
+	 * In the example selector below, an element like `<el class="selected">` is selected iff:
 	 *   - it is a child of an `H1` element
 	 *   - *and* that `H1` element is a descendant of a `HEADING` element.
 	 *
@@ -44,7 +48,7 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 *     ┏━━━━━━┻━━━━┓
 	 *     .heading h1 > el.selected
 	 *
-	 * The example would have the following relative selectors (note that the order is reversed):
+	 * The example would have the following relative selectors:
 	 *
 	 * @example
 	 *
@@ -58,6 +62,10 @@ final class WP_CSS_Complex_Selector implements WP_CSS_HTML_Processor_Matcher {
 	 *         ' ', // WP_CSS_Complex_Selector::COMBINATOR_DESCENDANT
 	 *       ),
 	 *     )
+	 *
+	 * Note that the order of context selectors is reversed. This is to match the self selector
+	 * first and then match the context selectors beginning with the selector closest to the self
+	 * selector.
 	 *
 	 * @readonly
 	 * @var array{WP_CSS_Type_Selector, string}[]|null
