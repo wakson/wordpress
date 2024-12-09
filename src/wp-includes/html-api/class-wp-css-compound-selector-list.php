@@ -36,7 +36,7 @@
  *     <attribute-selector> = '[' <ident-token> ']' |
  *                            '[' <ident-token> <attr-matcher> [ <string-token> | <ident-token> ] <attr-modifier>? ']'
  *     <attr-matcher> = [ '~' | '|' | '^' | '$' | '*' ]? '='
- *     <attr-modifier> = i | I | s | S
+ *     <attr-modifier> = i | s
  *
  * @link https://www.w3.org/TR/selectors/#grammar Refer to the grammar for more details.
  *
