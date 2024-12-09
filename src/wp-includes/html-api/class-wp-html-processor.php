@@ -303,7 +303,9 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor {
 		}
 
 		while ( $context_processor->next_tag() ) {
-			$context_processor->set_bookmark( 'final_node' );
+			if ( ! $context_processor->is_virtual() ) {
+				$context_processor->set_bookmark( 'final_node' );
+			}
 		}
 
 		if (
