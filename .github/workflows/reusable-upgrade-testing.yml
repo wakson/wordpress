@@ -86,7 +86,7 @@ jobs:
           DB_PORT: ${{ job.services.database.ports['3306'] }}
 
       - name: Install WordPress
-        run: wp core ${{ inputs.multisite && 'multisite-' || '' }}install --url=http://localhost/ --title="Upgrade Test" --admin_user=admin --admin_password=password --admin_email=me@example.org --skip-email
+        run: wp core ${{ inputs.multisite && 'multisite-install' || 'install' }} --url=http://localhost/ --title="Upgrade Test" --admin_user=admin --admin_password=password --admin_email=me@example.org --skip-email
 
       - name: Update to the latest minor version
         run: wp core update --minor

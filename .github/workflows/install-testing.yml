@@ -124,7 +124,7 @@ jobs:
           DB_PORT: ${{ job.services.database.ports['3306'] }}
 
       - name: Install WordPress
-        run: wp core ${{ matrix.multisite && 'multisite-' || '' }}install --url=http://localhost/ --title="Upgrade Test" --admin_user=admin --admin_password=password --admin_email=me@example.org --skip-email
+        run: wp core ${{ matrix.multisite && 'multisite-install' || 'install' }}' --url=http://localhost/ --title="Upgrade Test" --admin_user=admin --admin_password=password --admin_email=me@example.org --skip-email
 
   slack-notifications:
     name: Slack Notifications

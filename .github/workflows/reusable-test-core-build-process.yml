@@ -85,7 +85,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build WordPress to run from ${{ inputs.directory }}
-        run: npm run build${{ inputs.directory == 'src' && ':dev' || '' }}
+        run: npm run ${{ inputs.directory == 'src' && 'build:dev' || 'build' }}
 
       - name: Ensure version-controlled files are not modified or deleted during building
         run: git diff --exit-code
@@ -95,7 +95,7 @@ jobs:
         run: zip -r wordpress.zip build/.
 
       - name: Clean after building to run from ${{ inputs.directory }}
-        run: npm run grunt clean${{ inputs.directory == 'src' && ' -- --dev' || '' }}
+        run: npm run grunt ${{ inputs.directory == 'src' && 'clean -- --dev' || 'clean' }}
 
       - name: Ensure version-controlled files are not modified or deleted during cleaning
         run: git diff --exit-code
