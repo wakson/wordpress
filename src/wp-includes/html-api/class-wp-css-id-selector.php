@@ -10,8 +10,7 @@
 /**
  * CSS ID selector.
  *
- * This class implements a CSS ID selector and is used to test for matching HTML tags
- * in a {@see WP_HTML_Tag_Processor}.
+ * This class is used to test for matching HTML tags in a {@see WP_HTML_Tag_Processor}.
  *
  * @since TBD
  *
