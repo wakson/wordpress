@@ -71,7 +71,7 @@ jobs:
               run_id: context.runId,
             });
 
-            if ( '${{ inputs.calling_status }}' == 'failure' && workflow_run.data.run_attempt == 1 ) {
+            if ( process.env.CALLING_STATUS == 'failure' && workflow_run.data.run_attempt == 1 ) {
               return 'first-failure';
             }
 
@@ -124,6 +124,8 @@ jobs:
 
             // Can't determine previous workflow conclusion.
             return 'unknown';
+        env:
+          CALLING_STATUS: ${{ inputs.calling_status }}
 
       - name: Get the commit message
         id: current-commit-message
