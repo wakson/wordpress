@@ -57,9 +57,10 @@ if ( ! empty( $registered_sources ) ) {
 	$filtered_sources = array();
 	foreach ( $registered_sources as $source ) {
 		$filtered_sources[] = array(
-			'name'        => $source->name,
-			'label'       => $source->label,
-			'usesContext' => $source->uses_context,
+			'name'          => $source->name,
+			'label'         => $source->label,
+			'usesContext'   => $source->uses_context,
+			'getFieldsList' => $source->get_fields_list,
 		);
 	}
 	$script = sprintf( 'for ( const source of %s ) { wp.blocks.registerBlockBindingsSource( source ); }', wp_json_encode( $filtered_sources ) );
