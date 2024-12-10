@@ -77,12 +77,6 @@ if ( ! function_exists( 'twentynineteen_entry_footer' ) ) :
 		// Hide author, post date, category and tag text for pages.
 		if ( 'post' === get_post_type() ) {
 
-			// Posted by.
-			twentynineteen_posted_by();
-
-			// Posted on.
-			twentynineteen_posted_on();
-
 			$categories_list = get_the_category_list( wp_get_list_item_separator() );
 			if ( $categories_list ) {
 				printf(
