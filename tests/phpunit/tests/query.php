@@ -755,9 +755,9 @@ class Tests_Query extends WP_UnitTestCase {
 			)
 		);
 
-		$child  = self::factory()->post->create(
+		$child = self::factory()->post->create(
 			array(
-				'post_type' => 'page',
+				'post_type'   => 'page',
 				'post_parent' => $parent,
 			)
 		);
