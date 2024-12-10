@@ -749,8 +749,18 @@ class Tests_Query extends WP_UnitTestCase {
 	 * @ticket 56992
 	 */
 	public function test_the_loop_when_querying_post_parents_only() {
-		$parent = self::factory()->post->create( array( 'post_type' => 'page' ) );
-		$child  = self::factory()->post->create( array( 'post_type' => 'page', 'post_parent' => $parent ) );
+		$parent = self::factory()->post->create(
+			array(
+				'post_type' => 'page'
+			)
+		);
+
+		$child  = self::factory()->post->create(
+			array(
+				'post_type' => 'page',
+				'post_parent' => $parent
+			)
+		);
 
 		$query = new WP_Query(
 			array(
