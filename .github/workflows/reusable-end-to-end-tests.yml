@@ -117,7 +117,12 @@ jobs:
 
       - name: Install Gutenberg
         if: ${{ inputs.install-gutenberg }}
-        run: npm run env:cli -- plugin install gutenberg ${{ inputs.gutenberg-version && format( '--version="{0}"', inputs.gutenberg-version ) || '' }} --path="/var/www/${LOCAL_DIR}"
+        run: |
+          npm run env:cli -- plugin install gutenberg \
+          ${{ inputs.gutenberg-version && '--version="${GUTENBERG_VERSION}"' || '' }} \
+          --path="/var/www/${LOCAL_DIR}"
+        env:
+          GUTENBERG_VERSION: ${{ inputs.gutenberg-version }}
 
       - name: Install additional languages
         run: |

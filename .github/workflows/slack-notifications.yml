@@ -145,11 +145,10 @@ jobs:
       - name: Prepare commit message.
         id: commit-message
         run: |
-          COMMIT_MESSAGE=$(cat <<'EOF' | awk 'NR==1' | sed 's/`/\\`/g' | sed 's/\"/\\\\\\"/g' | sed 's/\$/\\$/g'
-          ${{ ( github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' ) && fromJson( steps.current-commit-message.outputs.result ) || github.event.head_commit.message }}
-          EOF
-          )
+          COMMIT_MESSAGE="$(echo "${COMMIT_MSG_RAW}" | awk 'NR==1' | sed 's/`/\\`/g' | sed 's/\"/\\\\\\"/g' | sed 's/\$/\\$/g')"
           echo commit_message_escaped="${COMMIT_MESSAGE}" >> $GITHUB_OUTPUT
+        env:
+          COMMIT_MSG_RAW: ${{ ( github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' ) && fromJson( steps.current-commit-message.outputs.result ) || github.event.head_commit.message }}
 
       - name: Construct payload and store as an output
         id: create-payload
