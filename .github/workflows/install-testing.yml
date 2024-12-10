@@ -113,7 +113,7 @@ jobs:
         with:
           php-version: '${{ matrix.php }}'
           coverage: none
-          tools: wp-cli${{ contains( fromJSON('["5.4", "5.5"]'), matrix.php ) && ':2.4.0' || '' }}
+          tools: ${{ contains( fromJSON('["5.4", "5.5"]'), matrix.php ) && 'wp-cli:2.4.0' || 'wp-cli' }}
 
       - name: Download WordPress
         run: wp core download ${{ inputs.wp-version && format( '--version="{0}"', inputs.wp-version ) || '--version=nightly' }}
