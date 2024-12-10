@@ -751,14 +751,14 @@ class Tests_Query extends WP_UnitTestCase {
 	public function test_the_loop_when_querying_post_parents_only() {
 		$parent = self::factory()->post->create(
 			array(
-				'post_type' => 'page'
+				'post_type' => 'page',
 			)
 		);
 
 		$child  = self::factory()->post->create(
 			array(
 				'post_type' => 'page',
-				'post_parent' => $parent
+				'post_parent' => $parent,
 			)
 		);
 
