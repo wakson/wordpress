@@ -24,7 +24,9 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	 *
 	 * @ticket 23311
 	 */
-	public function test_phpmailer_error_messages_translation_missing_recipient() {
+	public function test_missing_recipient_error_message_should_be_translated() {
+		reset_phpmailer_instance();
+
 		$is_switched = switch_to_locale( 'de_DE' );
 
 		$phpmailer = tests_retrieve_phpmailer_instance();
@@ -53,7 +55,9 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	 *
 	 * @ticket 23311
 	 */
-	public function test_all_phpmailer_error_message_keys_should_be_translated() {
+	public function test_all_error_message_keys_should_be_translated() {
+		reset_phpmailer_instance();
+
 		$phpmailer    = new PHPMailer\PHPMailer\PHPMailer();
 		$wp_phpmailer = tests_retrieve_phpmailer_instance();
 
