@@ -589,12 +589,12 @@ function count_user_posts_for_post_type( $user_id, $post_type = 'post', $public_
 
 	// If cache is empty, query the database.
 	if ( false === $count ) {
-		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" );
+		$count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" ) );
 
 		wp_cache_add( $cache_key, $count, $cache_group );
 	}
 
-	return absint( $count );
+	return $count;
 }
 
 /**
