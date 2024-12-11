@@ -232,8 +232,8 @@ class Tests_Blocks_GetBlockTemplates extends WP_UnitTestCase {
 	/**
 	 * @dataProvider data_get_block_templates_should_not_leak_plugin_registered_templates_with_default_post_type_slugs
 	 * @ticket 62319
-	 
-	 @covers ::get_block_templates
+	 *
+	 * @covers ::get_block_templates
 	 *
 	 * @param string $template_slug Default slug for the post type.
 	 * @param string $post_type     Post type for query.
