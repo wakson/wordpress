@@ -3,7 +3,7 @@
  * Mock PHPMailer class for testing.
  *
  * @package WordPress
- * @subpackage PHPMailer
+ * @subpackage UnitTests
  * @since 4.5.0
  */
 
