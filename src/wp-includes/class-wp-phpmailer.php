@@ -43,7 +43,7 @@ class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer {
 					'Your version of PHP is affected by a bug that may result in corrupted messages. To fix it, switch to sending using SMTP, disable the %1$s option in your %2$s, or switch to MacOS or Linux, or upgrade your PHP version.'
 				),
 				'mail.add_x_header',
-				'php.ini',
+				'php.ini'
 			),
 			'connect_host'         => __( 'SMTP Error: Could not connect to SMTP host.' ),
 			'data_not_accepted'    => __( 'SMTP Error: data not accepted.' ),
