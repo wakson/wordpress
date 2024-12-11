@@ -35,10 +35,10 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 			$this->fail( 'Expected exception was not thrown' );
 		} catch ( PHPMailer\PHPMailer\Exception $e ) {
 			$error_message = $e->getMessage();
-		}
-
-		if ( $is_switched ) {
-			restore_previous_locale();
+		} finally {
+			if ( $is_switched ) {
+				restore_previous_locale();
+			}
 		}
 
 		$this->assertSame(
