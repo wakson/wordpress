@@ -636,27 +636,6 @@ function _clear_user_posts_count_cache_on_author_change( $post_id, $post_after, 
 }
 
 /**
- * When the post is created, clear the cache.
- *
- * @since 6.8.0
- * @access private
- *
- * @param int     $post_id Post ID.
- * @param WP_Post $post    Post object.
- */
-function _clear_user_posts_count_cache_on_update( $post_id, $post ) {
-	// Don't do anything if revision is being saved.
-	if ( wp_is_post_revision( $post_id ) ) {
-		return;
-	}
-
-	$post_type = $post->post_type;
-	$author_id = $post->post_author;
-
-	clear_user_posts_count_cache( $author_id, $post_type );
-}
-
-/**
  * Gets the number of posts a user has written.
  *
  * @since 3.0.0

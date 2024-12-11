@@ -3819,6 +3819,8 @@ function wp_delete_post( $post_id = 0, $force_delete = false ) {
 		}
 	}
 
+	clear_user_posts_count_cache( $post->post_author, $post->post_type );
+
 	wp_clear_scheduled_hook( 'publish_future_post', array( $post_id ) );
 
 	/**
@@ -5070,6 +5072,8 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 	 */
 	do_action( 'wp_insert_post', $post_id, $post, $update );
 
+	clear_user_posts_count_cache( $post->post_author, $post_type );
+
 	if ( $fire_after_hooks ) {
 		wp_after_insert_post( $post, $update, $post_before );
 	}
@@ -5235,6 +5239,8 @@ function wp_publish_post( $post ) {
 
 	/** This action is documented in wp-includes/post.php */
 	do_action( 'wp_insert_post', $post->ID, $post, true );
+
+	clear_user_posts_count_cache( $post->post_author, $post->post_type );
 
 	wp_after_insert_post( $post, true, $post_before );
 }
