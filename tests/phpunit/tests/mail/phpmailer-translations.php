@@ -17,43 +17,13 @@
  * @since 6.8.0
  */
 class Test_PHPMailer_Translations extends WP_UnitTestCase {
-
-	/**
-	 * Stores the original locale before switching for testing.
-	 *
-	 * @var string
-	 */
-	private $original_locale;
-
-	/**
-	 * Sets up the test fixture.
-	 *
-	 * Switches locale for PHPMailer translation tests and resets the PHPMailer instance.
-	 */
-	public function set_up() {
-		parent::set_up();
-
-		$this->original_locale = get_locale();
-		switch_to_locale( 'de_DE' );
-		reset_phpmailer_instance();
-	}
-
-	/**
-	 * Tears down the test fixture.
-	 *
-	 * Resets the PHPMailer instance.
-	 */
-	public function tear_down() {
-		reset_phpmailer_instance();
-		parent::tear_down();
-	}
-
 	/**
 	 * Test PHPMailer error messages translation for missing recipient.
 	 *
 	 * @link https://core.trac.wordpress.org/ticket/23311
 	 */
 	public function test_phpmailer_error_messages_translation_missing_recipient() {
+		$is_switched = switch_to_locale( 'de_DE' );
 
 		$phpmailer = tests_retrieve_phpmailer_instance();
 		$phpmailer->setFrom( 'invalid-email@example.com' );
@@ -65,19 +35,15 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 			$error_message = $e->getMessage();
 		}
 
-		$this->assertNotEquals(
-			'You must provide at least one recipient email address.',
-			$error_message,
-			'Error message should be translated'
-		);
+		if ( $is_switched ) {
+			restore_previous_locale();
+		}
 
-		$this->assertEquals(
-			'Sie müssen mindestens eine Empfänger-E-Mail-Adresse angeben.',
+		$this->assertSame(
+			'Du musst mindestens eine Empfänger-E-Mail-Adresse angeben.',
 			$error_message,
-			'Error message translation does not match expected French text'
+			'Error message is not translated as expected'
 		);
-
-		switch_to_locale( $this->original_locale );
 	}
 
 	/**
