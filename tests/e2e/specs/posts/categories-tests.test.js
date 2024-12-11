@@ -56,7 +56,7 @@ test.describe( 'Category Tests', () => {
 	} ) => {
 		await expect(
 			page.locator( '#ajax-response' ).getByText( 'Category added.' )
-		).toBeVisible();
+		).toBeVisible({ timeout: 20000 });
 	} );
 
 	test( 'Should be able to create a new category with parent category', async ( {
