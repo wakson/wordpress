@@ -344,7 +344,8 @@ function get_tag_template() {
  * @return string Full path to custom taxonomy term template file.
  */
 function get_root_taxonomy_template() {
-	$tax = get_queried_object();
+	$tax      = get_queried_object();
+	$taxonomy = $tax->name;
 
 	$templates = array();
 
