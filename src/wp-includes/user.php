@@ -580,8 +580,7 @@ function count_user_posts_for_post_type( $user_id, $post_type = 'post', $public_
 	global $wpdb;
 
 	$where       = get_posts_by_author_sql( $post_type, true, $user_id, $public_only );
-	$where_hash  = wp_hash( $where );
-	$cache_key   = "count_user_{$post_type}_{$user_id}_{$where_hash}";
+	$cache_key   = "count_user_{$post_type}_{$user_id}";
 	$cache_group = $public_only ? 'user_posts_count_public' : 'user_posts_count';
 
 	// Try to get count from cache.
