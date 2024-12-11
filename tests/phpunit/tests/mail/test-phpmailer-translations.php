@@ -1,11 +1,43 @@
 <?php
+/**
+ * Unit tests covering PHPMailer translations.
+ *
+ * @package WordPress
+ * @subpackage PHPMailer
+ * @since 6.8.0
+ */
 
+/**
+ * Class Test_PHPMailer_Translations.
+ *
+ * Provides tests for PHPMailer translations.
+ *
+ * @group phpmailer
+ *
+ * @since 6.8.0
+ */
 class Test_PHPMailer_Translations extends WP_UnitTestCase {
 
+	/**
+	 * Stores the original locale before switching for testing.
+	 *
+	 * @var string
+	 */
 	private $original_locale;
+
+	/**
+	 * Path to the German translation (.mo) file used for testing.
+	 *
+	 * @var string
+	 */
 	private $mo_file;
 
-	public function set_up(): void {
+	/**
+	 * Sets up the test fixture.
+	 *
+	 * Loads translation domain and switches locale for PHPMailer translation tests.
+	 */
+	public function set_up() {
 		parent::set_up();
 
 		$this->original_locale = get_locale();
@@ -15,7 +47,12 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 		switch_to_locale( 'de_DE' );
 	}
 
-	public function tear_down(): void {
+	/**
+	 * Tears down the test fixture.
+	 *
+	 * Restores the original locale and unloads the translation domain.
+	 */
+	public function tear_down() {
 		switch_to_locale( $this->original_locale );
 		unload_textdomain( 'default' );
 
@@ -23,7 +60,9 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket 23311
+	 * Test that PHPMailer error message keys are consistent across implementations.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/23311
 	 */
 	public function test_wp_phpmailer_error_message_keys_match() {
 
@@ -36,9 +75,11 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket 23311
+	 * Test PHPMailer error messages translation for missing recipient.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/23311
 	 */
-	public function test_phpmailer_error_messages_translation() {
+	public function test_phpmailer_error_messages_translation_missing_recipient() {
 		$phpmailer = new WP_PHPMailer( true );
 		$phpmailer->setFrom( 'invalid-email@example.com' );
 

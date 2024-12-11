@@ -14,6 +14,7 @@
  * @since 6.8.0
  */
 class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer {
+
 	/**
 	 * Constructor.
 	 *

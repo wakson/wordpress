@@ -303,6 +303,7 @@ require_once ABSPATH . 'wp-settings.php';
 
 // Override the PHPMailer.
 require_once __DIR__ . '/mock-mailer.php';
+
 $phpmailer = new MockPHPMailer( true );
 
 // Delete any default posts & related data.
