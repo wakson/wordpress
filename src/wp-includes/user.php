@@ -645,12 +645,12 @@ function _clear_user_posts_count_cache_on_author_change( $post_id, $post_after, 
  *
  * @global wpdb $wpdb WordPress database abstraction object.
  *
- * @param int          $userid      User ID.
+ * @param int          $user_id     User ID.
  * @param array|string $post_type   Optional. Single post type or array of post types to count the number of posts for. Default 'post'.
  * @param bool         $public_only Optional. Whether to only return counts for public posts. Default false.
  * @return int Number of posts the user has written in this post type.
  */
-function count_user_posts( $userid, $post_type = 'post', $public_only = false ) {
+function count_user_posts( $user_id, $post_type = 'post', $public_only = false ) {
 	if ( is_string( $post_type ) ) {
 		$post_type = array( $post_type );
 	}
@@ -658,7 +658,7 @@ function count_user_posts( $userid, $post_type = 'post', $public_only = false ) 
 	$count = 0;
 
 	foreach ( $post_type as $type ) {
-		$count += count_user_posts_for_post_type( $userid, $type, $public_only );
+		$count += count_user_posts_for_post_type( $user_id, $type, $public_only );
 	}
 
 	/**
@@ -668,12 +668,12 @@ function count_user_posts( $userid, $post_type = 'post', $public_only = false ) 
 	 * @since 4.1.0 Added `$post_type` argument.
 	 * @since 4.3.1 Added `$public_only` argument.
 	 *
-	 * @param int          $count       The user's post count.
-	 * @param int          $userid      User ID.
-	 * @param string|array $post_type   Single post type or array of post types to count the number of posts for.
-	 * @param bool         $public_only Whether to limit counted posts to public posts.
+	 * @param int   $count       The user's post count.
+	 * @param int   $user_id     User ID.
+	 * @param array $post_type   Array of post types to count the number of posts for.
+	 * @param bool  $public_only Whether to limit counted posts to public posts.
 	 */
-	return apply_filters( 'get_usernumposts', $count, $userid, $post_type, $public_only );
+	return apply_filters( 'get_usernumposts', $count, $user_id, $post_type, $public_only );
 }
 
 /**
