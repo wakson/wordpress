@@ -55,4 +55,5 @@ test.describe( 'Bulk Edit the wp-page', () => {
 		// Validate that the page is in draft status
 		await expect( posts.first() ).toHaveText( 'Draft' );
 	} );
+	
 } );
