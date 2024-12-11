@@ -445,7 +445,7 @@ function wp_delete_user( $id, $reassign = null ) {
 
 	clean_user_cache( $user );
 
-	foreach( get_post_types() as $post_type ) {
+	foreach ( get_post_types() as $post_type ) {
 		clear_user_posts_count_cache( $user->ID, $post_type );
 	}
 
