@@ -353,7 +353,7 @@ function get_root_taxonomy_template() {
 	$templates[] = 'root-taxonomy.php';
 	$templates[] = 'taxonomy.php';
 
-	return get_query_template( 'taxonomy', $templates );
+	return get_query_template( 'root-taxonomy', $templates );
 }
 
 /**
