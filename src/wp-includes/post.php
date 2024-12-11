@@ -4985,6 +4985,8 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 			do_action( 'add_attachment', $post_id );
 		}
 
+		clear_user_posts_count_cache( $post_author, $post_type );
+
 		return $post_id;
 	}
 
@@ -5072,7 +5074,7 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 	 */
 	do_action( 'wp_insert_post', $post_id, $post, $update );
 
-	clear_user_posts_count_cache( $post->post_author, $post_type );
+	clear_user_posts_count_cache( $post_author, $post_type );
 
 	if ( $fire_after_hooks ) {
 		wp_after_insert_post( $post, $update, $post_before );
