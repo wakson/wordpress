@@ -3933,7 +3933,7 @@ class WP_Query {
 				if ( $this->is_category && 'category' === $this->queried_object->taxonomy ) {
 					_make_cat_compat( $this->queried_object );
 				}
-			} else {
+			} elseif ( $this->is_tax_without_term ) {
 				// If no term is specified, return the queried taxonomy object instead.
 				return get_taxonomy( $matched_taxonomy );
 			}
