@@ -412,7 +412,7 @@ class WP_Script_Modules {
 			 *     add_filter(
 			 *         'script_module_data_MyScriptModuleID',
 			 *         function ( array $data ): array {
-			 *             $data['script-needs-this-data'] = 'ok';
+			 *             $data['dataForClient'] = 'ok';
 			 *             return $data;
 			 *         }
 			 *     );
@@ -433,6 +433,7 @@ class WP_Script_Modules {
 			 *             data = JSON.parse( dataContainer.textContent );
 			 *         } catch {}
 			 *     }
+			 *     // data.dataForClient === 'ok';
 			 *     initMyScriptModuleWithData( data );
 			 *
 			 * @since 6.7.0
