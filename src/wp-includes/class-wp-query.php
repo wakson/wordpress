@@ -962,7 +962,11 @@ class WP_Query {
 							$this->is_tag = true;
 							break;
 						default:
-							$this->is_tax = true;
+							if ( ! empty( $tax_query['terms'] ) ) {
+								$this->is_tax = true;
+							} else {
+								$this->is_tax_without_term = true;
+							}
 					}
 				}
 			}
@@ -4248,6 +4252,44 @@ class WP_Query {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Determines whether the query is for an existing custom taxonomy root archive page.
+	 *
+	 * If the $taxonomy parameter is specified, this function will additionally
+	 * check if the query is for that specific $taxonomy.
+	 *
+	 * @since 6.8.0
+	 *
+	 * @global WP_Taxonomy[] $wp_taxonomies Registered taxonomies.
+	 *
+	 * @param string|string[] $taxonomy Optional. Taxonomy slug or slugs to check against.
+	 *                                  Default empty.
+	 * @return bool Whether the query is for an existing custom taxonomy root archive page.
+	 *              True for custom taxonomy root archive pages, false for built-in taxonomies
+	 *              (category and tag archives).
+	 */
+	public function is_tax_without_term( $taxonomy = '' ) {
+		global $wp_taxonomies;
+
+		if ( ! $this->is_tax_without_term ) {
+			return false;
+		}
+
+		if ( empty( $taxonomy ) ) {
+			return true;
+		}
+
+		$queried_object = $this->get_queried_object();
+		$tax_array      = array_intersect( array_keys( $wp_taxonomies ), (array) $taxonomy );
+
+		// Check that the taxonomy matches.
+		if ( ! ( isset( $queried_object->name ) && count( $tax_array ) && in_array( $queried_object->name, $tax_array, true ) ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

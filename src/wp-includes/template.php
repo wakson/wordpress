@@ -318,6 +318,45 @@ function get_tag_template() {
 }
 
 /**
+ * Retrieves path of custom taxonomy root template in current or parent template.
+ *
+ * The hierarchy for this template looks like:
+ *
+ * 1. root-taxonomy-{taxonomy_slug}.php
+ * 2. taxonomy-{taxonomy_slug}.php
+ * 3. root-taxonomy.php
+ * 4. taxonomy.php
+ *
+ * An example of this is:
+ *
+ * 1. root-taxonomy-location.php
+ * 2. taxonomy-location.php
+ * 3. root-taxonomy.php
+ * 4. taxonomy.php
+ *
+ * The template hierarchy and template path are filterable via the {@see '$type_template_hierarchy'}
+ * and {@see '$type_template'} dynamic hooks, where `$type` is 'taxonomy'.
+ *
+ * @since 6.8.0
+ *
+ * @see get_query_template()
+ *
+ * @return string Full path to custom taxonomy term template file.
+ */
+function get_root_taxonomy_template() {
+	$tax = get_queried_object();
+
+	$templates = array();
+
+	$templates[] = "root-taxonomy-$taxonomy.php";
+	$templates[] = "taxonomy-$taxonomy.php";
+	$templates[] = 'root-taxonomy.php';
+	$templates[] = 'taxonomy.php';
+
+	return get_query_template( 'taxonomy', $templates );
+}
+
+/**
  * Retrieves path of custom taxonomy term template in current or parent template.
  *
  * The hierarchy for this template looks like:
@@ -344,12 +383,11 @@ function get_tag_template() {
  * @return string Full path to custom taxonomy term template file.
  */
 function get_taxonomy_template() {
-	$term_or_tax = get_queried_object();
+	$term = get_queried_object();
 
 	$templates = array();
 
-	if ( $term_or_tax instanceof WP_Term && ! empty( $term_or_tax->slug ) ) {
-		$term     = $term_or_tax;
+	if ( ! empty( $term->slug ) ) {
 		$taxonomy = $term->taxonomy;
 
 		$slug_decoded = urldecode( $term->slug );
@@ -358,9 +396,6 @@ function get_taxonomy_template() {
 		}
 
 		$templates[] = "taxonomy-$taxonomy-{$term->slug}.php";
-		$templates[] = "taxonomy-$taxonomy.php";
-	} elseif ( $term_or_tax instanceof WP_Taxonomy ) {
-		$taxonomy    = $term_or_tax->name;
 		$templates[] = "taxonomy-$taxonomy.php";
 	}
 	$templates[] = 'taxonomy.php';
