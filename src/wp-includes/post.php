@@ -8476,25 +8476,32 @@ function wp_create_initial_post_meta() {
  *
  * @param string $template The name of the template to search for.
  * @param string $field The field to return: 'ID' for the page ID, 'permalink' for the page permalink.
- * @return string|int The ID or permalink of the page, or null if no page is found.
+ * @return string|int|null The ID or permalink of the page, or null if no page is found.
  */
-function get_page_by_template( $template, $field = 'permalink' ){
-    $query = new WP_Query([
-        'post_type'     => 'page',
-        'meta_query'    => [
-            [
-                'key'       => '_wp_page_template',
-                'value'     => $template,
-                'compare'   => '=='
-            ]
-        ]
-    ]);
-    while($query->have_posts()){
-        $query->the_post();
-        if($field == 'ID') {
-            return get_the_ID();
-        } elseif($field == 'permalink') {
-            return get_permalink();
-        }
-    }
+function get_page_by_template( $template, $field = 'permalink' ) {
+	global $post;
+
+	$query = new WP_Query(
+		array(
+			'post_type'  => 'page',
+			'meta_query' => array(
+				array(
+					'key'     => '_wp_page_template',
+					'value'   => $template,
+					'compare' => '==',
+				),
+			),
+		)
+	);
+
+	if ( $query->have_posts() ) {
+		$query->the_post();
+		if ( 'ID' === $field ) {
+			return get_the_ID();
+		} elseif ( 'permalink' === $field ) {
+			return get_permalink();
+		}
+	}
+
+	return null;
 }
