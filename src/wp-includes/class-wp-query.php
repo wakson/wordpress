@@ -962,9 +962,8 @@ class WP_Query {
 							$this->is_tag = true;
 							break;
 						default:
-							if ( ! empty( $tax_query['terms'] ) ) {
-								$this->is_tax = true;
-							} else {
+							$this->is_tax = true;
+							if ( empty( $tax_query['terms'] ) ) {
 								$this->is_tax_without_term = true;
 							}
 					}
