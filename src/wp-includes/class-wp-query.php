@@ -989,7 +989,7 @@ class WP_Query {
 				}
 			}
 
-			if ( $this->is_post_type_archive || $this->is_date || $this->is_author || $this->is_category || $this->is_tag || $this->is_tax ) {
+			if ( $this->is_post_type_archive || $this->is_date || $this->is_author || $this->is_category || $this->is_tag || $this->is_tax_without_term || $this->is_tax ) {
 				$this->is_archive = true;
 			}
 		}
