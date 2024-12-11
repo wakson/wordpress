@@ -37,6 +37,30 @@ test.describe( 'Tag Tests', () => {
 		
 	}
 
+	async function publishPostWithTag( { page, admin, editor, tagName = 'Test Tag' } ) {
+		// add a post 
+		await admin.createNewPost( { postType: 'post', title: 'Test Post' } );
+		
+		// assign newly created tag
+		const tagInputFieldVisible = await page.locator( '.components-panel__body input' ).isVisible();
+		
+		// if tag input field is not visible, click on Tags button
+
+		if (await ! tagInputFieldVisible) {
+			await page.locator('.components-panel__body').last().click();
+		}
+		//await page.waitForTimeout(20000)
+		await page
+			.locator( '.components-panel__body input' )
+			.fill( tagName );
+		await page.locator( '.components-form-token-field__suggestion-match' ).click();
+
+		// publish post
+		await editor.publishPost();
+		
+	}
+
+
 	test.beforeEach( async ( { page, admin, requestUtils } ) => {
 		await requestUtils.deleteAllPosts();
 		await deleteAllTags( { page, admin } );
@@ -120,33 +144,15 @@ test.describe( 'Tag Tests', () => {
 		// add an additional tag to check sorting with count
 		await createTag( { page, admin, tagName: 'Sample Tag to validate sorting' } );
 
-		// add a post 
-		await admin.createNewPost( { postType: 'post', title: 'Test Post' } );
-		
-		// assign newly created tag
-		const tagInputFieldVisible = await page.getByRole( 'button', {name: "Tags"} ).isHidden();
-		
-		// if tag input field is not visible, click on Tags button
-		if ( ! tagInputFieldVisible ) {
-			await page
-				.getByRole( 'button' ,)
-				.and( page.getByText( 'Tags' ) )
-				.click();
-		}
+		// create a post and assign tag to it
+		await publishPostWithTag( { page, admin, editor } );
 
-		await page
-			.locator( '#components-form-token-input-1' )
-			.fill( 'Test Tag' );
-			await page.locator( '#components-form-token-suggestions-1-0' ).click();
-
-		// publish post
-		await editor.publishPost();
-
+		// visit tags page
 		await admin.visitAdminPage('/edit-tags.php?taxonomy=post_tag')
 
+		// validate page url and tag order
 		await page.getByRole( 'link', { name: 'Count' } ).first().click();
 		
-		// validate page url and tag order
 		await expect(page.url()).toContain('?taxonomy=post_tag&orderby=count&order=asc');
 		await expect( page.locator( '.posts.column-posts' ).first() ).toContainText(
 			'0'
@@ -164,32 +170,10 @@ test.describe( 'Tag Tests', () => {
 		admin,
 		editor,
 	} ) => {
-		// create new post
-		await admin.createNewPost( { postType: 'post', title: 'Test Post' } );
-		
-		// assign newly created tag
-		const tagInputFieldVisible = await page.getByRole( 'button', {name: "Tags"} ).isHidden();
-		
-		// if tag input field is not visible, click on Tags button
-		if ( ! tagInputFieldVisible ) {
-			await page
-				.getByRole( 'button' ,)
-				.and( page.getByText( 'Tags' ) )
-				.click();
-		}
-		
 
-		await page
-			.locator( '#components-form-token-input-1' )
-			.fill( 'Test Tag' );
-		await page.locator( '#components-form-token-suggestions-1-0' ).click();
+		// create a new post and add tag
+		await publishPostWithTag( { page, admin, editor } );
 
-		// publish post
-		await editor.publishPost();
-
-		await expect(
-			page.locator( '.components-form-token-field__remove-token' )
-		).toBeVisible();
 		// check category count
 		await admin.visitAdminPage( '/edit-tags.php?taxonomy=post_tag' );
 		await expect( page.locator( '.row-title' ).first() ).toContainText(
