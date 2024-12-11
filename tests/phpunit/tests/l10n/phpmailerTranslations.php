@@ -53,8 +53,7 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	 *
 	 * @ticket 23311
 	 */
-	public function test_wp_phpmailer_error_message_keys_match() {
-
+	public function test_all_phpmailer_error_message_keys_should_be_translated() {
 		$phpmailer    = new PHPMailer\PHPMailer\PHPMailer();
 		$wp_phpmailer = tests_retrieve_phpmailer_instance();
 
