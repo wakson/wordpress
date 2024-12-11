@@ -26,52 +26,26 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	private $original_locale;
 
 	/**
-	 * Path to the German translation (.mo) file used for testing.
-	 *
-	 * @var string
-	 */
-	private $mo_file;
-
-	/**
 	 * Sets up the test fixture.
 	 *
-	 * Loads translation domain and switches locale for PHPMailer translation tests.
+	 * Switches locale for PHPMailer translation tests and resets the PHPMailer instance.
 	 */
 	public function set_up() {
 		parent::set_up();
 
 		$this->original_locale = get_locale();
-		$this->mo_file         = DIR_TESTDATA . '/languages/de_DE.mo';
-
-		load_textdomain( 'default', $this->mo_file );
 		switch_to_locale( 'de_DE' );
+		reset_phpmailer_instance();
 	}
 
 	/**
 	 * Tears down the test fixture.
 	 *
-	 * Restores the original locale and unloads the translation domain.
+	 * Resets the PHPMailer instance.
 	 */
 	public function tear_down() {
-		switch_to_locale( $this->original_locale );
-		unload_textdomain( 'default' );
-
+		reset_phpmailer_instance();
 		parent::tear_down();
-	}
-
-	/**
-	 * Test that PHPMailer error message keys are consistent across implementations.
-	 *
-	 * @link https://core.trac.wordpress.org/ticket/23311
-	 */
-	public function test_wp_phpmailer_error_message_keys_match() {
-
-		$phpmailer = new PHPMailer\PHPMailer\PHPMailer();
-		$phpmailer->SetLanguage();
-
-		$wp_phpmailer = new MockPHPMailer();
-
-		$this->assertEqualSets( array_keys( $phpmailer->GetTranslations() ), array_keys( $wp_phpmailer->GetTranslations() ) );
 	}
 
 	/**
@@ -80,7 +54,8 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	 * @link https://core.trac.wordpress.org/ticket/23311
 	 */
 	public function test_phpmailer_error_messages_translation_missing_recipient() {
-		$phpmailer = new WP_PHPMailer( true );
+
+		$phpmailer = tests_retrieve_phpmailer_instance();
 		$phpmailer->setFrom( 'invalid-email@example.com' );
 
 		try {
@@ -101,5 +76,20 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 			$error_message,
 			'Error message translation does not match expected French text'
 		);
+
+		switch_to_locale( $this->original_locale );
+	}
+
+	/**
+	 * Test that PHPMailer error message keys are consistent across implementations.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/23311
+	 */
+	public function test_wp_phpmailer_error_message_keys_match() {
+
+		$phpmailer    = new PHPMailer\PHPMailer\PHPMailer();
+		$wp_phpmailer = tests_retrieve_phpmailer_instance();
+
+		$this->assertEqualSets( array_keys( $phpmailer->GetTranslations() ), array_keys( $wp_phpmailer->GetTranslations() ) );
 	}
 }
