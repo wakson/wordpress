@@ -12,15 +12,17 @@
  *
  * Provides tests for PHPMailer translations.
  *
- * @group phpmailer
+ * @group mail
+ * @group i18n
+ * @group l10n
  *
  * @since 6.8.0
  */
 class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	/**
-	 * Test PHPMailer error messages translation for missing recipient.
+	 * Tests that PHPMailer error message translation works as expected.
 	 *
-	 * @link https://core.trac.wordpress.org/ticket/23311
+	 * @ticket 23311
 	 */
 	public function test_phpmailer_error_messages_translation_missing_recipient() {
 		$is_switched = switch_to_locale( 'de_DE' );
@@ -49,7 +51,7 @@ class Test_PHPMailer_Translations extends WP_UnitTestCase {
 	/**
 	 * Test that PHPMailer error message keys are consistent across implementations.
 	 *
-	 * @link https://core.trac.wordpress.org/ticket/23311
+	 * @ticket 23311
 	 */
 	public function test_wp_phpmailer_error_message_keys_match() {
 
