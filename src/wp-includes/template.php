@@ -323,16 +323,12 @@ function get_tag_template() {
  * The hierarchy for this template looks like:
  *
  * 1. root-taxonomy-{taxonomy_slug}.php
- * 2. taxonomy-{taxonomy_slug}.php
- * 3. root-taxonomy.php
- * 4. taxonomy.php
+ * 2. root-taxonomy.php
  *
  * An example of this is:
  *
  * 1. root-taxonomy-location.php
- * 2. taxonomy-location.php
- * 3. root-taxonomy.php
- * 4. taxonomy.php
+ * 2. root-taxonomy.php
  *
  * The template hierarchy and template path are filterable via the {@see '$type_template_hierarchy'}
  * and {@see '$type_template'} dynamic hooks, where `$type` is 'taxonomy'.
@@ -350,9 +346,7 @@ function get_root_taxonomy_template() {
 	$templates = array();
 
 	$templates[] = "root-taxonomy-$taxonomy.php";
-	$templates[] = "taxonomy-$taxonomy.php";
 	$templates[] = 'root-taxonomy.php';
-	$templates[] = 'taxonomy.php';
 
 	return get_query_template( 'root-taxonomy', $templates );
 }
