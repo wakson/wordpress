@@ -59,4 +59,5 @@ test.describe( 'Undo trashed & delete posts permanantly from Trash', () => {
 			/\d+ posts? permanently deleted\./
 		);
 	} );
+    
 } );
