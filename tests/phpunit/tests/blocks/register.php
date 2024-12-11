@@ -1200,7 +1200,7 @@ class Tests_Blocks_Register extends WP_UnitTestCase {
 			),
 			'arguments' => array(
 				'',
-				$args
+				$args,
 			),
 
 		);
