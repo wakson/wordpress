@@ -567,36 +567,6 @@ function wp_validate_logged_in_cookie( $user_id ) {
 }
 
 /**
- * Counts the number of posts for a particular post type.
- *
- * @since 6.8.0
- *
- * @param  int    $user_id     User ID.
- * @param  string $post_type   Optional. Post type to count the number of posts for. Default 'post'.
- * @param  bool   $public_only Optional. Whether to only return counts for public posts. Default false.
- * @return int Number of posts the user has written in this post type.
- */
-function count_user_posts_for_post_type( $user_id, $post_type = 'post', $public_only = false ) {
-	global $wpdb;
-
-	$where       = get_posts_by_author_sql( $post_type, true, $user_id, $public_only );
-	$cache_key   = "count_user_{$post_type}_{$user_id}";
-	$cache_group = $public_only ? 'user_posts_count_public' : 'user_posts_count';
-
-	// Try to get count from cache.
-	$count = wp_cache_get( $cache_key, $cache_group );
-
-	// If cache is empty, query the database.
-	if ( false === $count ) {
-		$count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" ) );
-
-		wp_cache_add( $cache_key, $count, $cache_group );
-	}
-
-	return $count;
-}
-
-/**
  * Clears the cached posts count for user for given post type.
  *
  * @since 6.8.0
@@ -646,19 +616,36 @@ function _clear_user_posts_count_cache_on_author_change( $post_id, $post_after, 
  * @global wpdb $wpdb WordPress database abstraction object.
  *
  * @param int          $user_id     User ID.
- * @param array|string $post_type   Optional. Single post type or array of post types to count the number of posts for. Default 'post'.
+ * @param array|string $post_types  Optional. Single post type or array of post types to count the number of posts for. Default 'post'.
  * @param bool         $public_only Optional. Whether to only return counts for public posts. Default false.
  * @return int Number of posts the user has written in this post type.
  */
-function count_user_posts( $user_id, $post_type = 'post', $public_only = false ) {
-	if ( is_string( $post_type ) ) {
-		$post_type = array( $post_type );
+function count_user_posts( $user_id, $post_types = 'post', $public_only = false ) {
+	global $wpdb;
+
+	if ( is_string( $post_types ) ) {
+		$post_types = array( $post_types );
 	}
+
+	$cache_group = $public_only ? 'user_posts_count_public' : 'user_posts_count';
 
 	$count = 0;
 
-	foreach ( $post_type as $type ) {
-		$count += count_user_posts_for_post_type( $user_id, $type, $public_only );
+	foreach ( $post_types as $post_type ) {
+		$where     = get_posts_by_author_sql( $post_type, true, $user_id, $public_only );
+		$cache_key = "count_user_{$post_type}_{$user_id}";
+
+		// Try to get count from cache.
+		$post_type_count = wp_cache_get( $cache_key, $cache_group );
+
+		// If cache is empty, query the database.
+		if ( false === $post_type_count ) {
+			$post_type_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" ) );
+
+			wp_cache_add( $cache_key, $post_type_count, $cache_group );
+		}
+
+		$count += $post_type_count;
 	}
 
 	/**
