@@ -963,7 +963,7 @@ class WP_Query {
 							break;
 						default:
 							$this->is_tax = true;
-							if ( empty( $tax_query['terms'] ) ) {
+							if ( empty( $tax_query['terms'] ) && 'EXISTS' === $tax_query['operator'] ) {
 								$this->is_tax_without_term = true;
 							}
 					}
