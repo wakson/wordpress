@@ -2633,8 +2633,8 @@ if ( ! function_exists( 'wp_hash_password' ) ) :
 		 */
 		$options = apply_filters( 'wp_hash_password_options', array() );
 
-		// Use sha384 to retain entropy from a password that's longer than 72 bytes, and a wp-sha384- prefix for domain separation.
-		$password_to_hash = base64_encode( hash( 'sha384', 'wp-sha384-' . trim( $password ), true ) );
+		// Use sha384 to retain entropy from a password that's longer than 72 bytes, and a wp-sha384 key for domain separation.
+		$password_to_hash = base64_encode( hash_hmac( 'sha384', trim( $password ), 'wp-sha384', true ) );
 
 		// Add a `wp-` prefix to facilitate distinguishing vanilla bcrypt hashes.
 		return 'wp-' . password_hash( $password_to_hash, PASSWORD_BCRYPT, $options );
@@ -2696,7 +2696,7 @@ if ( ! function_exists( 'wp_check_password' ) ) :
 			$check = false;
 		} elseif ( str_starts_with( $hash, 'wp-' ) ) {
 			// Check the password using the current `wp-` prefixed hash.
-			$password_to_verify = base64_encode( hash( 'sha384', 'wp-sha384-' . $password, true ) );
+			$password_to_verify = base64_encode( hash_hmac( 'sha384', $password, 'wp-sha384', true ) );
 			$check              = password_verify( $password_to_verify, substr( $hash, 3 ) );
 		} elseif ( str_starts_with( $hash, '$P$' ) ) {
 			// Check the password using phpass.
