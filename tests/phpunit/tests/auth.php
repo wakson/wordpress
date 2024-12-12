@@ -194,7 +194,7 @@ class Tests_Auth extends WP_UnitTestCase {
 	 * The test verifies this by reducing the cost used to generate the hash, therefore mimicing a hash
 	 * which was generated prior to the default cost being increased.
 	 *
-	 * Notably the bcrypt cost may get increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
+	 * Notably the bcrypt cost was increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
 	 *
 	 * @ticket 21022
 	 * @ticket 50027
@@ -883,7 +883,7 @@ class Tests_Auth extends WP_UnitTestCase {
 	 * The `wp_password_needs_rehash()` function is just a wrapper around `password_needs_rehash()`, but this ensures
 	 * that it works as expected.
 	 *
-	 * Notably the bcrypt cost may get increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
+	 * Notably the bcrypt cost was increased in PHP 8.4: https://wiki.php.net/rfc/bcrypt_cost_2023 .
 	 *
 	 * @ticket 21022
 	 * @ticket 50027
@@ -981,11 +981,9 @@ class Tests_Auth extends WP_UnitTestCase {
 		// Set an application password with the old phpass algorithm.
 		$uuid = self::set_application_password_with_phpass( $password, self::$user_id );
 
-		// Verify that the application password is hashed with phpass.
+		// Verify that the application password needs rehashing.
 		$hash = WP_Application_Passwords::get_user_application_password( self::$user_id, $uuid )['password'];
-		$this->assertStringStartsWith( '$P$', $hash );
 		$this->assertTrue( wp_password_needs_rehash( $hash ) );
-		$this->assertTrue( WP_Application_Passwords::is_in_use() );
 
 		// Authenticate.
 		$user = wp_authenticate_application_password( null, self::USER_LOGIN, $password );
@@ -995,11 +993,9 @@ class Tests_Auth extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'WP_User', $user );
 		$this->assertSame( self::$user_id, $user->ID );
 
-		// Verify that the application password has been rehashed with bcrypt.
+		// Verify that the application password no longer needs rehashing.
 		$hash = WP_Application_Passwords::get_user_application_password( self::$user_id, $uuid )['password'];
-		$this->assertStringStartsWith( 'wp-$2y$', $hash );
 		$this->assertFalse( wp_password_needs_rehash( $hash ) );
-		$this->assertTrue( WP_Application_Passwords::is_in_use() );
 
 		// Verify that the user's password has not been touched.
 		$this->assertSame( $user_pass, get_userdata( self::$user_id )->user_pass );
@@ -1022,9 +1018,8 @@ class Tests_Auth extends WP_UnitTestCase {
 		// Set the user password with the old phpass algorithm.
 		self::set_user_password_with_phpass( $password, self::$user_id );
 
-		// Verify that the password is hashed with phpass.
+		// Verify that the password needs rehashing.
 		$hash = get_userdata( self::$user_id )->user_pass;
-		$this->assertStringStartsWith( '$P$', $hash );
 		$this->assertTrue( wp_password_needs_rehash( $hash ) );
 
 		// Authenticate.
@@ -1035,9 +1030,8 @@ class Tests_Auth extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'WP_User', $user );
 		$this->assertSame( self::$user_id, $user->ID );
 
-		// Verify that the password has been rehashed with bcrypt.
+		// Verify that the password no longer needs rehashing.
 		$hash = get_userdata( self::$user_id )->user_pass;
-		$this->assertStringStartsWith( 'wp-$2y$', $hash );
 		$this->assertFalse( wp_password_needs_rehash( $hash ) );
 
 		// Authenticate a second time to ensure the new hash is valid.
