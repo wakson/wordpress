@@ -34,16 +34,16 @@ concurrency:
 # Any needed permissions should be configured at the job level.
 permissions: {}
 
-# Because the number of jobs spawned can balloon out of control quickly, the following methodology is applied when
+# Because the number of jobs spawned can quickly balloon out of control, the following methodology is applied when
 # building out the matrix below:
 #
-# - The last two releases of WordPress are tested against all PHP and MySQL LTS version combinations and the most recent
+# - The last two releases of WordPress are tested against all PHP/MySQL LTS version combinations and the most recent
 #   innovation release.
 # - The next 6 oldest versions of WordPress are tested against both the oldest and newest releases of PHP currently
 #   supported for both PHP 7 & 8 along with the oldest and newest MySQL LTS versions currently supported (no innovation
-#   releases).
-# - For the remaining versions of WordPress receiving security updates, they are only included if the database version
-#   was different that the previous major release.
+#   releases). At the current 3 releases per year pace, this accounts for 2 additional years worth of releases.
+# - Of the remaining versions of WordPress still receiving security updates, only test the ones where the database
+#   version was updated since the previous major release.
 # - The oldest version of WordPress receiving security updates should always be tested.
 
 #  Notes about chosen MySQL versions:
