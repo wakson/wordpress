@@ -44,7 +44,8 @@ permissions: {}
 #   releases). At the current 3 releases per year pace, this accounts for 2 additional years worth of releases.
 # - Of the remaining versions of WordPress still receiving security updates, only test the ones where the database
 #   version was updated since the previous major release.
-# - The oldest version of WordPress receiving security updates should always be tested.
+# - The oldest version of WordPress receiving security updates should always be tested against the same combinations as
+#   detailed for the last two releases.
 
 #  Notes about chosen MySQL versions:
 #    - Only the most recent innovation release should be included in testing.
@@ -236,13 +237,48 @@ jobs:
       new-version: ${{ inputs.new-version && inputs.new-version || 'latest' }}
       multisite: ${{ matrix.multisite }}
 
+  # The oldest version of WordPress receiving security updates should always be tested against the full list of
+  # PHP/MySQL combinations.
+  upgrade-tests-oldest-wp-mysql:
+    name: ${{ matrix.wp }} to ${{ inputs.new-version && inputs.new-version || 'latest' }}
+    uses: WordPress/wordpress-develop/.github/workflows/reusable-upgrade-testing.yml@trunk
+    if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
+        db-type: [ 'mysql' ]
+        db-version: [ '5.7', '8.0', '8.4', '9.1' ]
+        wp: [ '4.1' ]
+        multisite: [ false, true ]
+
+        exclude:
+          - php: '7.2'
+            db-version: '8.4'
+          - php: '7.3'
+            db-version: '8.4'
+          # MySQL 9.0+ will not work on PHP 7.2 & 7.3
+          - php: '7.2'
+            db-version: '9.1'
+          - php: '7.3'
+            db-version: '9.1'
+    with:
+      os: ${{ matrix.os }}
+      php: ${{ matrix.php }}
+      db-type: ${{ matrix.db-type }}
+      db-version: ${{ matrix.db-version }}
+      wp: ${{ matrix.wp }}
+      new-version: ${{ inputs.new-version && inputs.new-version || 'latest' }}
+      multisite: ${{ matrix.multisite }}
+
   slack-notifications:
     name: Slack Notifications
     uses: WordPress/wordpress-develop/.github/workflows/slack-notifications.yml@trunk
     permissions:
       actions: read
       contents: read
-    needs: [ upgrade-tests-last-two-releases, upgrade-tests-wp-6x-mysql, upgrade-tests-wp-5x-php-7x-mysql, upgrade-tests-wp-5x-php-8x-mysql, upgrade-tests-wp-4x-php-7x-mysql, upgrade-tests-wp-4x-php-8x-mysql ]
+    needs: [ upgrade-tests-last-two-releases, upgrade-tests-wp-6x-mysql, upgrade-tests-wp-5x-php-7x-mysql, upgrade-tests-wp-5x-php-8x-mysql, upgrade-tests-wp-4x-php-7x-mysql, upgrade-tests-wp-4x-php-8x-mysql, upgrade-tests-oldest-wp-mysql ]
     if: ${{ github.repository == 'WordPress/wordpress-develop' && github.event_name != 'pull_request' && always() }}
     with:
       calling_status: ${{ contains( needs.*.result, 'cancelled' ) && 'cancelled' || contains( needs.*.result, 'failure' ) && 'failure' || 'success' }}
