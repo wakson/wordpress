@@ -10,6 +10,10 @@
 		"TwentyTwenty"
 	],
 	"homepage": "https://wordpress.org/themes/twentytwenty/",
+	"repository": {
+		"type": "svn",
+		"url": "https://develop.svn.wordpress.org/trunk"
+	},
 	"bugs": {
 		"url": "https://core.trac.wordpress.org/"
 	},
