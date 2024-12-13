@@ -19,7 +19,7 @@
     "postcss": "^8.4.38",
     "postcss-cli": "^11.0.0",
     "postcss-focus-within": "^8.0.1",
-    "rtlcss": "^4.1.1"
+    "rtlcss": "^4.3.0"
   },
   "rtlcssConfig": {
     "options": {
