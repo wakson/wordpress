@@ -64,7 +64,7 @@
 		"matchdep": "~2.0.0",
 		"postcss": "8.4.49",
 		"prettier": "npm:wp-prettier@2.6.2",
-		"qunit": "~2.22.0",
+		"qunit": "~2.23.1",
 		"react-refresh": "0.14.0",
 		"sass": "1.83.0",
 		"sinon": "16.1.3",
