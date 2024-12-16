@@ -31,16 +31,20 @@ class WP_Script_Modules {
 	private $enqueued_before_registered = array();
 
 	/**
-	 * Holds script module identifiers that have been requested for exposure.
+	 * Holds script module identifiers that have been marked for inclusion in the import map.
 	 *
-	 * "Exposed" indicates that the script module should be exposed in the
-	 * import map regardless of whether it is a dependency of another script
-	 * module.
+	 * A script module that appears here should be include in the import map regardless of
+	 * whether it is a dependency of another script module.
+	 *
+	 * The values in this array are always `null`. The presence of a Module IDs
+	 * as an array key marks the script module for inclusion in the import map.
+	 * Different values are reserved for possible future use.
 	 *
 	 * @since 6.8.0
-	 * @var array<string, true>
+	 *
+	 * @var array<string, null>
 	 */
-	private $exposed = array();
+	private $marked_for_inclusion = array();
 
 	/**
 	 * Tracks whether the @wordpress/a11y script module is available.
@@ -161,14 +165,18 @@ class WP_Script_Modules {
 	}
 
 	/**
-	 * Marks the script module so it will be exposed in the import map.
+	 * Marks the script module for inclusion in the import map.
+	 *
+	 * Script Modules can rely on the script module dependency graph to include script modules
+	 * in the import map. This method makes it possible to mark a script module for inclusion
+	 * in the import map without relying on the script module dependency graph.
 	 *
 	 * @since 6.8.0
 	 *
 	 * @param string $id The identifier of the script module.
 	 */
-	public function expose( string $id ) {
-		$this->exposed[ $id ] = true;
+	public function include_in_import_map( string $id ) {
+		$this->marked_for_inclusion[ $id ] = null;
 	}
 
 	/**
@@ -301,7 +309,8 @@ class WP_Script_Modules {
 	 */
 	private function get_import_map(): array {
 		$imports           = array();
-		$script_module_ids = array_unique( array_keys( $this->exposed ) + array_keys( $this->get_marked_for_enqueue() ) );
+		$script_module_ids = array_unique( array_keys( $this->marked_for_inclusion ) + array_keys( $this->get_marked_for_enqueue() ) );
+
 		foreach ( $this->get_dependencies( $script_module_ids ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
@@ -309,6 +318,14 @@ class WP_Script_Modules {
 			}
 			$imports[ $id ] = $src;
 		}
+		foreach ( $this->marked_for_inclusion as $id => $_ ) {
+			$src = $this->get_src( $id );
+			if ( null === $src ) {
+				continue;
+			}
+			$imports[ $id ] = $src;
+		}
+
 		return array( 'imports' => $imports );
 	}
 
