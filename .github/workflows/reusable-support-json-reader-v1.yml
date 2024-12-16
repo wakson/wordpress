@@ -54,6 +54,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
+          persist-credentials: false
 
       - name: Determine the major WordPress version
         id: major-wp-version
@@ -91,6 +92,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
+          persist-credentials: false
 
       # Look up the major version's specific PHP support policy when a version is provided.
       # Otherwise, use the current PHP support policy.
@@ -128,6 +130,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
+          persist-credentials: false
 
       # Look up the major version's specific MySQL support policy when a version is provided.
       # Otherwise, use the current MySQL support policy.

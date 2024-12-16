@@ -119,6 +119,7 @@ jobs:
         with:
           show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
           fetch-depth: ${{ github.event_name == 'workflow_dispatch' && '2' || '1' }}
+          persist-credentials: false
 
       # The `workflow_dispatch` event is the only one missing the needed SHA to target.
       - name: Retrieve previous commit SHA (if necessary)
