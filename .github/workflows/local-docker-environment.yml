@@ -90,11 +90,9 @@ jobs:
         exclude:
           # The MySQL 5.5 containers will not start.
           - db-version: '5.5'
+          # Only test the latest innovation release.
+          - db-version: '9.0'
           # MySQL 9.0+ will not work on PHP 7.2 & 7.3
-          - php: '7.2'
-            db-version: '9.0'
-          - php: '7.3'
-            db-version: '9.0'
           - php: '7.2'
             db-version: '9.1'
           - php: '7.3'
