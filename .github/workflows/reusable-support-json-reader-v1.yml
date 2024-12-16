@@ -26,6 +26,10 @@ on:
         description: "The MySQL versions to test for the given wp-version"
         value: ${{ jobs.mysql-versions.outputs.versions }}
 
+# Disable permissions for all available scopes by default.
+# Any needed permissions should be configured at the job level.
+permissions: {}
+
 jobs:
   # Determines the major version of WordPress being tested.
   #
@@ -36,6 +40,8 @@ jobs:
   # - Returns the major WordPress version as an output based on the value passed to the wp-version input.
   major-wp-version:
     name: Determine major WordPress version
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
     timeout-minutes: 5
@@ -70,6 +76,8 @@ jobs:
   #   .version-support-php.json file and returning the values in that version's index.
   php-versions:
     name: Determine PHP versions
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
     needs: [ major-wp-version ]
@@ -105,6 +113,8 @@ jobs:
   #   .version-support-mysql.json file and returning the values in that version's index.
   mysql-versions:
     name: Determine MySQL versions
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
     needs: [ major-wp-version ]
