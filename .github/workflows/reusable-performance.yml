@@ -344,7 +344,7 @@ jobs:
           HOST_NAME: "www.codevitals.run"
         run: |
           if [ -z "$CODEVITALS_PROJECT_TOKEN" ]; then
-            echo "Performance results could not be published. 'CODEVITALS_PROJECT_TOKEN' is not set" >> $GITHUB_OUTPUT
+            echo "Performance results could not be published. 'CODEVITALS_PROJECT_TOKEN' is not set"
             exit 1
           fi
           node ./tests/performance/log-results.js "$CODEVITALS_PROJECT_TOKEN" trunk "$GITHUB_SHA" "$BASE_SHA" "$COMMITTED_AT" "$HOST_NAME"
