@@ -34,7 +34,7 @@ class Tests_Script_Modules_WpScriptModules extends WP_UnitTestCase {
 	 *
 	 * @return array Enqueued script module URLs, keyed by script module identifier.
 	 */
-	public function get_enqueued_script_modules() {
+	private function get_enqueued_script_modules() {
 		$script_modules_markup   = get_echo( array( $this->script_modules, 'print_enqueued_script_modules' ) );
 		$p                       = new WP_HTML_Tag_Processor( $script_modules_markup );
 		$enqueued_script_modules = array();
@@ -54,10 +54,12 @@ class Tests_Script_Modules_WpScriptModules extends WP_UnitTestCase {
 	 *
 	 * @return array Import map entry URLs, keyed by script module identifier.
 	 */
-	public function get_import_map() {
+	private function get_import_map() {
 		$import_map_markup = get_echo( array( $this->script_modules, 'print_import_map' ) );
 		preg_match( '/<script type="importmap" id="wp-importmap">.*?(\{.*\}).*?<\/script>/s', $import_map_markup, $import_map_string );
-		return json_decode( $import_map_string[1], true )['imports'];
+		return isset( $import_map_string[1] )
+			? json_decode( $import_map_string[1], true )['imports']
+			: array();
 	}
 
 	/**
@@ -65,7 +67,7 @@ class Tests_Script_Modules_WpScriptModules extends WP_UnitTestCase {
 	 *
 	 * @return array Preloaded script module URLs, keyed by script module identifier.
 	 */
-	public function get_preloaded_script_modules() {
+	private function get_preloaded_script_modules() {
 		$preloaded_markup         = get_echo( array( $this->script_modules, 'print_script_module_preloads' ) );
 		$p                        = new WP_HTML_Tag_Processor( $preloaded_markup );
 		$preloaded_script_modules = array();
@@ -905,5 +907,27 @@ HTML;
 			'number 1' => array( 1 ),
 			'string'   => array( 'string' ),
 		);
+	}
+
+	/**
+	 * @ticket 61500
+	 */
+	public function test_added_module_appears_in_importmap() {
+		$this->script_modules->register( 'dependency', '/dep.js' );
+		$this->script_modules->register( 'example', '/example.js', array( 'dependency' ) );
+
+		// Nothing printed now.
+		$this->assertSame( array(), $this->get_enqueued_script_modules() );
+		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+		$this->assertSame( array(), $this->get_import_map() );
+
+		// After including, the importmap should be populated.
+		$this->script_modules->include_in_import_map( 'example' );
+		$this->assertSame( array(), $this->get_enqueued_script_modules() );
+		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+
+		$import_map = $this->get_import_map();
+		$this->assertArrayHasKey( 'example', $import_map );
+		$this->assertArrayHasKey( 'dependency', $import_map );
 	}
 }
