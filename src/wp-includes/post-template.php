@@ -837,7 +837,7 @@ function get_body_class( $css_class = '' ) {
 	}
 
 	// Add the active theme's name as a CSS class to the body classes array.
-	$classes[] = 'wp-theme-' . sanitize_html_class( get_option( 'template' ) );
+	$classes[] = 'wp-theme-' . sanitize_html_class( get_template() );
 
 	// If a child theme is active, add the child theme's name as an additional CSS class to the body classes array.
 	if ( is_child_theme() ) {

@@ -210,7 +210,7 @@ if ( $current_screen->is_block_editor() ) {
 }
 
 // Append the active theme's name as a CSS class to the body class.
-$admin_body_class .= ' wp-theme-' . sanitize_html_class( get_option( 'template' ) );
+$admin_body_class .= ' wp-theme-' . sanitize_html_class( get_template() );
 
 // If a child theme is active, append the child theme's name as an additional CSS class.
 if ( is_child_theme() ) {
