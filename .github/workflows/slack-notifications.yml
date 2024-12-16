@@ -170,9 +170,9 @@ jobs:
       - name: Post failure notifications to Slack
         uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
+          webhook-type: webhook-trigger
+          webhook: ${{ secrets.SLACK_GHA_FAILURE_WEBHOOK }}
           payload: ${{ needs.prepare.outputs.payload }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GHA_FAILURE_WEBHOOK }}
 
   # Posts notifications the first time a workflow run succeeds after previously failing.
   fixed:
@@ -187,9 +187,9 @@ jobs:
       - name: Post failure notifications to Slack
         uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
+          webhook-type: webhook-trigger
+          webhook: ${{ secrets.SLACK_GHA_FIXED_WEBHOOK }}
           payload: ${{ needs.prepare.outputs.payload }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GHA_FIXED_WEBHOOK }}
 
   # Posts notifications when a workflow is successful.
   success:
@@ -204,9 +204,9 @@ jobs:
       - name: Post success notifications to Slack
         uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
+          webhook-type: webhook-trigger
+          webhook: ${{ secrets.SLACK_GHA_SUCCESS_WEBHOOK }}
           payload: ${{ needs.prepare.outputs.payload }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GHA_SUCCESS_WEBHOOK }}
 
   # Posts notifications when a workflow is cancelled.
   cancelled:
@@ -221,6 +221,6 @@ jobs:
       - name: Post cancelled notifications to Slack
         uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
+          webhook-type: webhook-trigger
+          webhook: ${{ secrets.SLACK_GHA_CANCELLED_WEBHOOK }}
           payload: ${{ needs.prepare.outputs.payload }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GHA_CANCELLED_WEBHOOK }}
