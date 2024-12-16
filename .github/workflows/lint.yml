@@ -45,7 +45,7 @@ jobs:
       - name: Run actionlint
         uses: docker://rhysd/actionlint:1.7.4
         with:
-          args: "-color -verbose="
+          args: "-color -verbose"
 
   octoscan:
     name: Octoscan
