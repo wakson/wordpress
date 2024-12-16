@@ -214,7 +214,7 @@ $admin_body_class .= ' wp-theme-' . sanitize_html_class( get_template() );
 
 // If a child theme is active, append the child theme's name as an additional CSS class.
 if ( is_child_theme() ) {
-	$admin_body_class .= ' wp-child-theme-' . sanitize_html_class( get_option( 'stylesheet' ) );
+	$admin_body_class .= ' wp-child-theme-' . sanitize_html_class( get_stylesheet() );
 }
 
 $error_get_last = error_get_last();

@@ -841,7 +841,7 @@ function get_body_class( $css_class = '' ) {
 
 	// If a child theme is active, add the child theme's name as an additional CSS class to the body classes array.
 	if ( is_child_theme() ) {
-		$classes[] = 'wp-child-theme-' . sanitize_html_class( get_option( 'stylesheet' ) );
+		$classes[] = 'wp-child-theme-' . sanitize_html_class( get_stylesheet() );
 	}
 
 	if ( ! empty( $css_class ) ) {
