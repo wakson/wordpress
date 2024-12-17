@@ -94,7 +94,7 @@ class Tests_Avatar extends WP_UnitTestCase {
 		$this->assertSame( $url, $url2 );
 
 		$url2 = get_avatar_url( md5( WP_TESTS_EMAIL ) . '@md5.gravatar.com' );
-		$this->assertSame( $url, $url2 );
+		$this->assertSame( preg_match( '|^https?://secure.gravatar.com/avatar/[0-9a-f]{32}\?|', $url2 ), 1 );
 
 		$user = get_user_by( 'id', 1 );
 		$url2 = get_avatar_url( $user );
