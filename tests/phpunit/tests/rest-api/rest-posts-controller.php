@@ -161,6 +161,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertCount( 2, $routes['/wp/v2/posts'] );
 		$this->assertArrayHasKey( '/wp/v2/posts/(?P<id>[\d]+)', $routes );
 		$this->assertCount( 3, $routes['/wp/v2/posts/(?P<id>[\d]+)'] );
+		$this->assertArrayHasKey( '/wp/v2/pages/count', $routes );
 	}
 
 	public function test_context_param() {
