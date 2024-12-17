@@ -912,7 +912,7 @@ HTML;
 	/**
 	 * @ticket 61500
 	 */
-	public function test_added_module_appears_in_importmap() {
+	public function test_included_module_appears_in_importmap() {
 		$this->script_modules->register( 'dependency', '/dep.js' );
 		$this->script_modules->register( 'example', '/example.js', array( 'dependency' ) );
 
@@ -927,7 +927,53 @@ HTML;
 		$this->assertSame( array(), $this->get_preloaded_script_modules() );
 
 		$import_map = $this->get_import_map();
+		$this->assertCount( 2, $import_map );
 		$this->assertArrayHasKey( 'example', $import_map );
 		$this->assertArrayHasKey( 'dependency', $import_map );
+	}
+
+	/**
+	 * @ticket 61500
+	 */
+	public function test_included_modules_concat_With_enqueued_dependencies() {
+		$this->script_modules->register( 'dependency-enqueued', '/dep.js' );
+		$this->script_modules->register(
+			'enqueued',
+			'/example.js',
+			array(
+				array(
+					'id'     => 'dependency-enqueued',
+					'import' => 'dynamic',
+				),
+			)
+		);
+		$this->script_modules->enqueue( 'enqueued' );
+
+		$this->script_modules->register( 'dependency', '/dep.js' );
+		$this->script_modules->register( 'example', '/example.js', array( 'dependency' ) );
+
+		// Only dependency-enqueued should be printed.
+		$enqueued = $this->get_enqueued_script_modules();
+		$this->assertCount( 1, $enqueued );
+		$this->assertArrayHasKey( 'enqueued', $enqueued );
+		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+
+		$import_map = $this->get_import_map();
+		$this->assertCount( 1, $import_map );
+		$this->assertArrayHasKey( 'dependency-enqueued', $import_map );
+
+		// After including, the importmap should be populated.
+		$this->script_modules->include_in_import_map( 'example' );
+
+		$enqueued = $this->get_enqueued_script_modules();
+		$this->assertCount( 1, $enqueued );
+		$this->assertArrayHasKey( 'enqueued', $enqueued );
+		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+
+		$import_map = $this->get_import_map();
+		$this->assertCount( 3, $import_map );
+		$this->assertArrayHasKey( 'dependency-enqueued', $import_map );
+		$this->assertArrayHasKey( 'dependency', $import_map );
+		$this->assertArrayHasKey( 'example', $import_map );
 	}
 }
