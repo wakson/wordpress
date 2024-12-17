@@ -155,7 +155,7 @@ jobs:
       report: ${{ matrix.report || false }}
 
   #
-  # Runs specific test groups.
+  # Runs specific individual test groups.
   #
   specific-test-groups:
     name: ${{ matrix.phpunit-test-groups }}
@@ -168,10 +168,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        php: [ '8.3', '8.4' ]
+        php: [ '8.4' ]
         db-type: [ 'mysql' ]
-        db-version: [ '8.0', '8.4' ]
-        multisite: [ false, true ]
+        db-version: [ '8.4' ]
+        multisite: [ false ]
         memcached: [ false ]
         phpunit-test-groups: [ 'html-api-html5lib-tests' ]
 
