@@ -91,7 +91,6 @@ jobs:
             multisite: false
             memcached: false
             report: true
-
     with:
       os: ${{ matrix.os }}
       php: ${{ matrix.php }}
@@ -182,7 +181,6 @@ jobs:
             db-version: '9.1'
           - db-type: 'mysql'
             db-version: '11.6'
-
     with:
       os: ${{ matrix.os }}
       php: ${{ matrix.php }}
@@ -194,13 +192,36 @@ jobs:
       phpunit-config: ${{ matrix.multisite && 'tests/phpunit/multisite.xml' || 'phpunit.xml.dist' }}
       report: ${{ matrix.report || false }}
 
+  #
+  # Runs specific individual test groups.
+  #
+  specific-test-groups:
+    name: ${{ matrix.phpunit-test-groups }}
+    uses: ./.github/workflows/reusable-phpunit-tests-v3.yml
+    permissions:
+      contents: read
+    secrets: inherit
+    if: ${{ github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.2', '7.4', '8.0', '8.4' ]
+        db-type: [ 'mysql' ]
+        db-version: [ '8.4' ]
+        phpunit-test-groups: [ 'html-api-html5lib-tests' ]
+    with:
+      php: ${{ matrix.php }}
+      db-type: ${{ matrix.db-type }}
+      db-version: ${{ matrix.db-version }}
+      phpunit-test-groups: ${{ matrix.phpunit-test-groups }}
+
   slack-notifications:
     name: Slack Notifications
     uses: WordPress/wordpress-develop/.github/workflows/slack-notifications.yml@trunk
     permissions:
       actions: read
       contents: read
-    needs: [ test-with-mysql, test-with-mariadb, test-innovation-releases ]
+    needs: [ test-with-mysql, test-with-mariadb, test-innovation-releases, specific-test-groups ]
     if: ${{ github.repository == 'WordPress/wordpress-develop' && github.event_name != 'pull_request' && always() }}
     with:
       calling_status: ${{ contains( needs.*.result, 'cancelled' ) && 'cancelled' || contains( needs.*.result, 'failure' ) && 'failure' || 'success' }}
