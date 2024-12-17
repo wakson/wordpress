@@ -1219,6 +1219,8 @@ function update_ignored_hooked_blocks_postmeta( $post ) {
 
 	if ( 'wp_navigation' === $post->post_type ) {
 		$wrapper_block_type = 'core/navigation';
+	} elseif ( 'wp_block' === $post->post_type ) {
+		$wrapper_block_type = 'core/block';
 	} else {
 		$wrapper_block_type = 'core/post-content';
 	}
