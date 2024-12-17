@@ -18,7 +18,7 @@ const themes = [ 'twentytwentyone', 'twentytwentythree', 'twentytwentyfour', 'tw
 
 const locales = [ 'en_US', 'de_DE' ];
 
-test.describe( 'Homepage', () => {
+test.describe( 'Single Post', () => {
 	test.use( {
 		storageState: {}, // User will be logged out.
 	} );
@@ -55,7 +55,7 @@ test.describe( 'Homepage', () => {
 						metrics,
 					} ) => {
 						await page.goto( '/?clear_cache' );
-						await page.goto( '/' );
+						await page.goto( '/2018/11/03/block-image/' );
 
 						const serverTiming = await metrics.getServerTiming();
 
