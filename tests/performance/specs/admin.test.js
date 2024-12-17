@@ -47,6 +47,7 @@ test.describe( 'Admin', () => {
 			const iterations = Number( process.env.TEST_RUNS );
 			for ( let i = 1; i <= iterations; i++ ) {
 				test( `Measure load time metrics (${ i } of ${ iterations })`, async ( {
+					page,
 					admin,
 					metrics,
 				} ) => {
