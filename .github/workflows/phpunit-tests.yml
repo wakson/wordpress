@@ -168,10 +168,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        php: [ '8.3' ]
+        php: [ '8.3', '8.4' ]
         db-type: [ 'mysql' ]
-        db-version: [ '8.4' ]
-        multisite: [ false ]
+        db-version: [ '8.0', '8.4' ]
+        multisite: [ false, true ]
         memcached: [ false ]
         phpunit-test-groups: [ 'html-api-html5lib-tests' ]
 
