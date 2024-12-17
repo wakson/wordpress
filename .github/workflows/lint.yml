@@ -1,0 +1,105 @@
+name: Lint GitHub Actions
+
+on:
+  push:
+    branches:
+      - trunk
+      - '[0-9].[0-9]'
+    tags:
+      - '[0-9]+.[0-9]'
+      - '[0-9]+.[0-9].[0-9]+'
+    paths:
+      # Only run when changes are made to workflow files.
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - trunk
+      - '[0-9].[0-9]'
+    paths:
+      # Only run when changes are made to workflow files.
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+# Disable permissions for all available scopes by default.
+# Any needed permissions should be configured at the job level.
+permissions: {}
+
+jobs:
+  actionlint:
+    name: Actionlint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Run actionlint
+        uses: docker://rhysd/actionlint:1.7.4
+        with:
+          args: "-color -verbose -shellcheck="
+
+  octoscan:
+    name: Octoscan
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Checkout Octoscan
+        uses: actions/checkout@v4
+        with:
+          repository: synacktiv/octoscan
+          path: octoscan
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install and build Octoscan
+        run: | #shell
+          cd octoscan
+          go mod tidy
+          go build
+
+      - name: Run Octoscan
+        run: | #shell
+          ./octoscan/octoscan scan .
+
+  zizmor:
+    name: Zizmor
+    runs-on: ubuntu-24.04
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Run zizmor
+        run: uvx zizmor .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
