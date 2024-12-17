@@ -11,7 +11,7 @@ class Tests_Avatar extends WP_UnitTestCase {
 	 */
 	public function test_get_avatar_url_gravatar_url() {
 		$url = get_avatar_url( 1 );
-		$this->assertSame( preg_match( '|^https?://secure.gravatar.com/avatar/[0-9a-f]{32}\?|', $url ), 1 );
+		$this->assertSame( preg_match( '|^https?://secure.gravatar.com/avatar/[0-9a-f]{64}\?|', $url ), 1 );
 	}
 
 	/**
@@ -88,6 +88,9 @@ class Tests_Avatar extends WP_UnitTestCase {
 		$url = get_avatar_url( 1 );
 
 		$url2 = get_avatar_url( WP_TESTS_EMAIL );
+		$this->assertSame( $url, $url2 );
+
+		$url2 = get_avatar_url( hash( 'sha256', WP_TESTS_EMAIL ) . '@sha256.gravatar.com' );
 		$this->assertSame( $url, $url2 );
 
 		$url2 = get_avatar_url( md5( WP_TESTS_EMAIL ) . '@md5.gravatar.com' );
@@ -267,7 +270,7 @@ class Tests_Avatar extends WP_UnitTestCase {
 		$actual_data = get_avatar_data( $comment );
 
 		$this->assertTrue( is_avatar_comment_type( $comment_type ) );
-		$this->assertMatchesRegularExpression( '|^https?://secure.gravatar.com/avatar/[0-9a-f]{32}\?|', $actual_data['url'] );
+		$this->assertMatchesRegularExpression( '|^https?://secure.gravatar.com/avatar/[0-9a-f]{64}\?|', $actual_data['url'] );
 	}
 
 	/**
