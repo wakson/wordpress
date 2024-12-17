@@ -163,9 +163,9 @@ class WP_Script_Modules {
 	/**
 	 * Marks the script module for inclusion in the import map.
 	 *
-	 * Script Modules can rely on the script module dependency graph to include script modules
-	 * in the import map. This method makes it possible to mark a script module for inclusion
-	 * in the import map without relying on the script module dependency graph.
+	 * This method is intended for use outside of the script module dependency system.
+	 * It's recommended that script modules rely on the script module dependency system
+	 * to manage the import map.
 	 *
 	 * @since 6.8.0
 	 *
