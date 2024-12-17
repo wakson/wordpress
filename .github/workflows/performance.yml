@@ -33,7 +33,7 @@ jobs:
   # Runs the performance test suite.
   performance:
     name: Performance tests${{ matrix.multisite && ' (Multisite)' || '' }}${{ matrix.memcached && ' (with memcached)' || '' }}
-    uses: WordPress/wordpress-develop/.github/workflows/reusable-performance.yml@trunk
+    uses: swissspidy/wordpress-develop/.github/workflows/reusable-performance.yml@try/performance-tests-expand
     permissions:
       contents: read
     if: ${{ ( github.repository == 'WordPress/wordpress-develop' || github.event_name == 'pull_request' ) }}
