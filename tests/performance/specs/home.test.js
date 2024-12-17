@@ -54,6 +54,7 @@ test.describe( 'Front End', () => {
 						page,
 						metrics,
 					} ) => {
+						await page.goto( '/?clear_cache' );
 						await page.goto( '/' );
 
 						const serverTiming = await metrics.getServerTiming();

@@ -50,6 +50,7 @@ test.describe( 'Admin', () => {
 					admin,
 					metrics,
 				} ) => {
+					await page.goto( '/?clear_cache' );
 					await admin.visitAdminPage( '/' );
 
 					const serverTiming = await metrics.getServerTiming();
