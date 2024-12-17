@@ -175,7 +175,7 @@ jobs:
         run: npm run env:install
 
       - name: Enable themes on Multisite
-        if: ${{ matrix.multisite }}
+        if: ${{ inputs.multisite }}
         run: |
           npm run env:cli -- theme enable twentytwentyone --network --path=/var/www/${{ env.LOCAL_DIR }}
           npm run env:cli -- theme enable twentytwentythree --network --path=/var/www/${{ env.LOCAL_DIR }}
