@@ -512,7 +512,7 @@ figcaption,
 	}
 
 	&:not(.is-style-solid-color) .wp-block-pullquote__citation {
-		color: $color__text-light;
+		color: inherit;
 	}
 
 	&.is-style-solid-color {
