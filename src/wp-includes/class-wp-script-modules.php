@@ -34,15 +34,11 @@ class WP_Script_Modules {
 	 * Holds script module identifiers that have been marked for inclusion in the import map.
 	 *
 	 * A script module that appears here should be include in the import map regardless of
-	 * whether it is a dependency of another script module.
-	 *
-	 * The values in this array are always `null`. The presence of a Module IDs
-	 * as an array key marks the script module for inclusion in the import map.
-	 * Different values are reserved for possible future use.
+	 * whether it is in the dependency graph of enqueued script modules.
 	 *
 	 * @since 6.8.0
 	 *
-	 * @var array<string, null>
+	 * @var string[]
 	 */
 	private $marked_for_inclusion = array();
 
@@ -176,7 +172,7 @@ class WP_Script_Modules {
 	 * @param string $id The identifier of the script module.
 	 */
 	public function include_in_import_map( string $id ) {
-		$this->marked_for_inclusion[ $id ] = null;
+		$this->marked_for_inclusion[] = $id;
 	}
 
 	/**
@@ -309,7 +305,7 @@ class WP_Script_Modules {
 	 */
 	private function get_import_map(): array {
 		$imports           = array();
-		$script_module_ids = array_unique( array_keys( $this->marked_for_inclusion ) + array_keys( $this->get_marked_for_enqueue() ) );
+		$script_module_ids = $this->marked_for_inclusion + array_keys( $this->get_marked_for_enqueue() );
 
 		foreach ( $this->get_dependencies( $script_module_ids ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
@@ -318,7 +314,7 @@ class WP_Script_Modules {
 			}
 			$imports[ $id ] = $src;
 		}
-		foreach ( $this->marked_for_inclusion as $id => $_ ) {
+		foreach ( $this->marked_for_inclusion as $id ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
