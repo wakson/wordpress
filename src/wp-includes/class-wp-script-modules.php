@@ -305,7 +305,7 @@ class WP_Script_Modules {
 	 */
 	private function get_import_map(): array {
 		$imports           = array();
-		$script_module_ids = $this->marked_for_inclusion + array_keys( $this->get_marked_for_enqueue() );
+		$script_module_ids = array_merge( $this->marked_for_inclusion, array_keys( $this->get_marked_for_enqueue() ) );
 
 		foreach ( $this->get_dependencies( $script_module_ids ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
