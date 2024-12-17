@@ -158,7 +158,7 @@ jobs:
   # Runs specific test groups.
   #
   specific-test-groups:
-    name: ${{ matrix.phpunit-test-groups }} / PHP ${{ matrix.php }}
+    name: ${{ matrix.phpunit-test-groups }}
     uses: WordPress/wordpress-develop/.github/workflows/reusable-phpunit-tests-v3.yml@trunk
     permissions:
       contents: read
