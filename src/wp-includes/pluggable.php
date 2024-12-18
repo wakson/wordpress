@@ -2776,6 +2776,9 @@ if ( ! function_exists( 'wp_password_needs_rehash' ) ) :
 
 		if ( str_starts_with( $hash, 'wp-' ) ) {
 			$hash = substr( $hash, 3 );
+		} else if ( PASSWORD_BCRYPT === $algorithm ) {
+			// Vanilla bcrypt hashes should be rehashed to use pre-hashing.
+			return true;
 		}
 
 		return password_needs_rehash( $hash, $algorithm, $options );
