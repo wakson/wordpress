@@ -2661,7 +2661,7 @@ if ( ! function_exists( 'wp_hash_password' ) ) :
 		$options = apply_filters( 'wp_hash_password_options', array(), $algorithm );
 
 		// Algorithms other than bcrypt don't need to use pre-hashing.
-		if ( $algorithm !== PASSWORD_BCRYPT ) {
+		if ( PASSWORD_BCRYPT !== $algorithm ) {
 			return password_hash( $password, $algorithm, $options );
 		}
 
