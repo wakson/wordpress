@@ -2623,21 +2623,53 @@ if ( ! function_exists( 'wp_hash_password' ) ) :
 		}
 
 		/**
-		 * Filters the options passed to the password_hash() and password_needs_rehash() functions.
+		 * Filters the hashing algorithm to use in the password_hash() and password_needs_rehash() functions.
+		 *
+		 * The default is the value of the `PASSWORD_BCRYPT` constant which means bcrypt is used.
+		 *
+		 * **Important:** The only password hashing algorithm that is guaranteed to be available across PHP
+		 * installations is bcrypt. If you use any other algorithm you must make sure that it is available on
+		 * the server. The `password_algos()` function can be used to check which hashing algorithms are available.
+		 *
+		 * The hashing options can be controlled via the {@see 'wp_hash_password_options'} filter.
+		 *
+		 * Other available constants include:
+		 *
+		 * - `PASSWORD_ARGON2I`
+		 * - `PASSWORD_ARGON2ID`
+		 * - `PASSWORD_DEFAULT`
 		 *
 		 * @since x.y.z
 		 *
-		 * @param array $options Array of options to pass to the password hashing functions.
-		 *                       By default this is an empty array which means the default
-		 *                       options will be used.
+		 * @param string $algorithm The hashing algorithm. Default is the value of the `PASSWORD_BCRYPT` constant.
 		 */
-		$options = apply_filters( 'wp_hash_password_options', array() );
+		$algorithm = apply_filters( 'wp_hash_password_algorithm', PASSWORD_BCRYPT );
+
+		/**
+		 * Filters the options passed to the password_hash() and password_needs_rehash() functions.
+		 *
+		 * The default hashing algorithm is bcrypt, but this can be changed via the {@see 'wp_hash_password_algorithm'}
+		 * filter. You must ensure that the options are appropriate for the algorithm in use.
+		 *
+		 * @since x.y.z
+		 *
+		 * @param array $options    Array of options to pass to the password hashing functions.
+		 *                          By default this is an empty array which means the default
+		 *                          options will be used.
+		 * @param string $algorithm The hashing algorithm in use.
+		 */
+		$options = apply_filters( 'wp_hash_password_options', array(), $algorithm );
+
+		// Algorithms other than bcrypt don't need to use pre-hashing.
+		if ( $algorithm !== PASSWORD_BCRYPT ) {
+			return password_hash( $password, $algorithm, $options );
+		}
 
 		// Use sha384 to retain entropy from a password that's longer than 72 bytes, and a wp-sha384 key for domain separation.
 		$password_to_hash = base64_encode( hash_hmac( 'sha384', trim( $password ), 'wp-sha384', true ) );
 
 		// Add a `wp-` prefix to facilitate distinguishing vanilla bcrypt hashes.
-		return 'wp-' . password_hash( $password_to_hash, PASSWORD_BCRYPT, $options );
+		return 'wp-' . password_hash( $password_to_hash, $algorithm, $options );
 	}
 endif;
 
@@ -2736,14 +2768,17 @@ if ( ! function_exists( 'wp_password_needs_rehash' ) ) :
 			return false;
 		}
 
-		if ( ! str_starts_with( $hash, 'wp-' ) ) {
-			return true;
-		}
+		/** This filter is documented in wp-includes/pluggable.php */
+		$algorithm = apply_filters( 'wp_hash_password_algorithm', PASSWORD_BCRYPT );
 
 		/** This filter is documented in wp-includes/pluggable.php */
-		$options = apply_filters( 'wp_hash_password_options', array() );
+		$options = apply_filters( 'wp_hash_password_options', array(), $algorithm );
 
-		return password_needs_rehash( substr( $hash, 3 ), PASSWORD_BCRYPT, $options );
+		if ( str_starts_with( $hash, 'wp-' ) ) {
+			$hash = substr( $hash, 3 );
+		}
+
+		return password_needs_rehash( $hash, $algorithm, $options );
 	}
 endif;
 

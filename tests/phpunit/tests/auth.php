@@ -1105,6 +1105,20 @@ class Tests_Auth extends WP_UnitTestCase {
 	 * @ticket 21022
 	 * @ticket 50027
 	 */
+	public function test_password_hashing_algorithm_can_be_filtered() {
+		$password = 'password';
+
+		$filter_count_before = did_filter( 'wp_hash_password_algorithm' );
+
+		wp_check_password( $password, wp_hash_password( $password ) );
+
+		$this->assertSame( $filter_count_before + 2, did_filter( 'wp_hash_password_algorithm' ) );
+	}
+
+	/**
+	 * @ticket 21022
+	 * @ticket 50027
+	 */
 	public function test_password_hashing_options_can_be_filtered() {
 		$password = 'password';
 
