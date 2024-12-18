@@ -882,4 +882,19 @@ class Tests_HtmlApi_WpHtmlProcessor extends WP_UnitTestCase {
 		$this->assertSame( 'FORM', $processor->get_tag() );
 		$this->assertTrue( $processor->is_tag_closer() );
 	}
+
+	/**
+	 * Ensure that lowercased tag_name query matches tags case-insensitively.
+	 *
+	 * @group 62427
+	 */
+	public function test_next_tag_lowercase_tag_name() {
+		// The upper case <DIV> is irrelevant but illustrates the case-insentivity.
+		$processor = WP_HTML_Processor::create_fragment( '<section><DIV>' );
+		$this->assertTrue( $processor->next_tag( array( 'tag_name' => 'div' ) ) );
+
+		// The upper case <RECT> is irrelevant but illustrates the case-insentivity.
+		$processor = WP_HTML_Processor::create_fragment( '<svg><RECT>' );
+		$this->assertTrue( $processor->next_tag( array( 'tag_name' => 'rect' ) ) );
+	}
 }
