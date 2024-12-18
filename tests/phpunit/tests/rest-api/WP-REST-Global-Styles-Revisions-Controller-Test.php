@@ -826,6 +826,47 @@ class WP_REST_Global_Styles_Revisions_Controller_Test extends WP_Test_REST_Contr
 		$this->assertCount( $expected_count, $response->get_data() );
 	}
 
+
+	/**
+	 * tests for the pagination
+	 */
+	public function test_get_items_pagination() {
+
+		// Create multiple revisions
+		for ( $i = 0; $i < 15; $i ++ ) {
+			wp_save_post_revision( self::$global_styles_id );
+		}
+
+		// Test offset
+		$request = new WP_REST_Request( 'GET', '/wp/v2/global-styles/' . self::$global_styles_id . '/revisions' );
+		$request->set_param( 'offset', 5 );
+		$request->set_param( 'per_page', 5 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertCount( 5, $data );
+		$this->assertEquals( 15, $response->get_headers()['X-WP-Total'] );
+		$this->assertEquals( 3, $response->get_headers()['X-WP-TotalPages'] );
+
+		// Test paged
+		$request = new WP_REST_Request( 'GET', '/wp/v2/global-styles/' . self::$global_styles_id . '/revisions' );
+		$request->set_param( 'page', 2 );
+		$request->set_param( 'per_page', 6 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertCount( 6, $data );
+		$this->assertEquals( 15, $response->get_headers()['X-WP-Total'] );
+		$this->assertEquals( 3, $response->get_headers()['X-WP-TotalPages'] );
+
+		// Test out of bounds
+		$request = new WP_REST_Request( 'GET', '/wp/v2/global-styles/' . self::$global_styles_id . '/revisions' );
+		$request->set_param( 'page', 4 );
+		$request->set_param( 'per_page', 6 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertErrorResponse( 'rest_revision_invalid_page_number', $response, 400 );
+	}
+
 	/**
 	 * @doesNotPerformAssertions
 	 */
