@@ -51,7 +51,10 @@ test.describe( 'Admin', () => {
 					admin,
 					metrics,
 				} ) => {
+					// Clear caches using the clear-cache.php mu-plugin. Not actually loading the page.
 					await page.goto( '/?clear_cache' );
+
+					// This is the actual page to test.
 					await admin.visitAdminPage( '/' );
 
 					const serverTiming = await metrics.getServerTiming();

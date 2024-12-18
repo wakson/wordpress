@@ -54,7 +54,10 @@ test.describe( 'Single Post', () => {
 						page,
 						metrics,
 					} ) => {
+						// Clear caches using the clear-cache.php mu-plugin. Not actually loading the page.
 						await page.goto( '/?clear_cache' );
+
+						// This is the actual page to test.
 						await page.goto( '/2018/11/03/block-image/' );
 
 						const serverTiming = await metrics.getServerTiming();
