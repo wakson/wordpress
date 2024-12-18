@@ -49,7 +49,7 @@ final class WP_Block_Bindings_Source {
 	 * @since 6.8.0
 	 * @var array
 	 */
-	public $fields;
+	public $args;
 
 	/**
 	 * The context added to the blocks needed by the source.

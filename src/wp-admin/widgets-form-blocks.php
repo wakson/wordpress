@@ -60,7 +60,7 @@ if ( ! empty( $registered_sources ) ) {
 			'name'        => $source->name,
 			'label'       => $source->label,
 			'usesContext' => $source->uses_context,
-			'fields'      => $source->fields,
+			'args'        => $source->args,
 		);
 	}
 	$script = sprintf( 'for ( const source of %s ) { wp.blocks.registerBlockBindingsSource( source ); }', wp_json_encode( $filtered_sources ) );
