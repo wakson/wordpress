@@ -1,7 +1,7 @@
 ##
 # A reusable workflow that runs the performance test suite.
 ##
-name: Performance Tests
+name: Run performance Tests
 
 on:
   workflow_call:
