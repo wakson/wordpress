@@ -3417,7 +3417,16 @@ HTML
 
 		$this->assertNotFalse( $script_query, "The script '{$handle}' should be registered." );
 		$this->assertArrayHasKey( $script, $package_json, "The dependency '{$script}' should be included in package.json." );
-		$this->assertSame( $package_json[ $script ], $wp_scripts->query( $handle, 'registered' )->ver, "The script '{$handle}' should be registered with version {$package_json[ $script ]}." );
+
+		/*
+		 * Get the script version from $wp_scripts.
+		 *
+		 * These version numbers are generally in the form `1.2.3` but they
+		 * may include a suffix in the form `1.2.3-xxx`. The version number
+		 * is checked without the suffix.
+		 */
+		$wp_scripts_version = preg_replace( '/-.*$/', '', $wp_scripts->query( $handle, 'registered' )->ver );
+		$this->assertSame( $package_json[ $script ], $wp_scripts_version, "The script '{$handle}' should be registered with version {$package_json[ $script ]}." );
 	}
 
 	/**
