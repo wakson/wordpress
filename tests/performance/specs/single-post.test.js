@@ -6,17 +6,13 @@ import { test } from '@wordpress/e2e-test-utils-playwright';
 /**
  * Internal dependencies
  */
-import { camelCaseDashes } from '../utils';
+import { camelCaseDashes, themes, locales } from '../utils';
 
 const results = {
 	timeToFirstByte: [],
 	largestContentfulPaint: [],
 	lcpMinusTtfb: [],
 };
-
-const themes = [ 'twentytwentyone', 'twentytwentythree', 'twentytwentyfour', 'twentytwentyfive' ];
-
-const locales = [ 'en_US', 'de_DE' ];
 
 test.describe( 'Single Post', () => {
 	test.use( {

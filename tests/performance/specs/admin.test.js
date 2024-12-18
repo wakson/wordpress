@@ -6,13 +6,11 @@ import { test } from '@wordpress/e2e-test-utils-playwright';
 /**
  * Internal dependencies
  */
-import { camelCaseDashes } from '../utils';
+import { camelCaseDashes, locales } from '../utils';
 
 const results = {
 	timeToFirstByte: [],
 };
-
-const locales = [ 'en_US', 'de_DE' ];
 
 test.describe( 'Admin', () => {
 	for ( const locale of locales ) {
