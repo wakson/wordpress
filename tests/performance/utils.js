@@ -6,9 +6,9 @@ const { join } = require( 'node:path' );
 
 process.env.WP_ARTIFACTS_PATH ??= join( process.cwd(), 'artifacts' );
 
-export const locales = [ 'en_US', 'de_DE' ];
+const locales = [ 'en_US', 'de_DE' ];
 
-export const themes = [ 'twentytwentyone', 'twentytwentythree', 'twentytwentyfour', 'twentytwentyfive' ];
+const themes = [ 'twentytwentyone', 'twentytwentythree', 'twentytwentyfour', 'twentytwentyfive' ];
 
 /**
  * Parse test files into JSON objects.
@@ -193,4 +193,6 @@ module.exports = {
 	standardDeviation,
 	medianAbsoluteDeviation,
 	accumulateValues,
+	themes,
+	locales,
 };
