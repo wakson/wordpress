@@ -145,7 +145,7 @@ for ( const { title, results } of afterStats ) {
 		console.log( '(no results)' );
 	}
 
-	summaryMarkdown += `**${ title }**\n\n`;
+	summaryMarkdown += `<b>${ title }</b>\n\n`;
 	summaryMarkdown += `${ formatAsMarkdownTable( rows ) }\n`;
 }
 
