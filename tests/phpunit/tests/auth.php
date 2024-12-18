@@ -1110,7 +1110,10 @@ class Tests_Auth extends WP_UnitTestCase {
 
 		$filter_count_before = did_filter( 'wp_hash_password_algorithm' );
 
-		wp_check_password( $password, wp_hash_password( $password ) );
+		$wp_hash = wp_hash_password( $password );
+
+		wp_check_password( $password, $wp_hash );
+		wp_password_needs_rehash( $wp_hash );
 
 		$this->assertSame( $filter_count_before + 2, did_filter( 'wp_hash_password_algorithm' ) );
 	}
