@@ -883,11 +883,7 @@ function post_password_required( $post = null ) {
 	}
 
 	$hash = wp_unslash( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
-	if ( ! str_starts_with( $hash, '$' ) ) {
-		$required = true;
-	} else {
-		$required = ! wp_check_password( $post->post_password, $hash );
-	}
+	$required = ! wp_check_password( $post->post_password, $hash );
 
 	/**
 	 * Filters whether a post requires the user to supply a password.
