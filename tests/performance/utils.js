@@ -116,7 +116,7 @@ function formatValue( metric, value ) {
 		return 1 === value ? 'yes' : 'no';
 	}
 
-	if ( ['wpDbQueries', 'wpObjCacheHits', 'wpObjCacheMisses', 'wpObjCacheRatio' ].includes( metric ) ) {
+	if ( 'wpDbQueries' === metric ) {
 		return value;
 	}
 
