@@ -6140,7 +6140,7 @@ class Tests_Theme_wpThemeJson extends WP_UnitTestCase {
 
 		// get_custom_css() should return both CSS.
 		$this->assertSame( $custom_css . $block_custom_css, $theme_json->get_custom_css() );
-		// Per #6750, The get_stylesheet() returns only $custom_css. 
+		// Per #6750, The get_stylesheet() returns only $custom_css.
 		$this->assertSame( $custom_css . $block_custom_css, $theme_json->get_stylesheet( array( 'custom-css' ) ) );
 	}
 }
