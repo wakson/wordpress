@@ -27,7 +27,37 @@ class Tests_Script_Modules_WpScriptModules extends WP_UnitTestCase {
 		parent::set_up();
 		// Set up the WP_Script_Modules instance.
 		$this->script_modules = new WP_Script_Modules();
+		unset( $GLOBALS['wp_scripts'] );
 	}
+
+	private static $wp_scripts;
+	private static $wp_scripts_was_set = false;
+
+	public static function set_up_before_class() {
+		parent::set_up_before_class();
+
+		// If the global is set, store it for restoring when done testing.
+		static::$wp_scripts_was_set = array_key_exists( 'wp_scripts', $GLOBALS );
+		if ( static::$wp_scripts_was_set ) {
+			static::$wp_scripts = $GLOBALS['wp_scripts'];
+			unset( $GLOBALS['wp_scripts'] );
+		}
+	}
+
+	public static function tear_down_after_class() {
+		// Restore the global if it was set before running this set of tests.
+		if ( static::$wp_scripts_was_set ) {
+			$GLOBALS['wp_scripts'] = static::$wp_scripts;
+		}
+
+		parent::tear_down_after_class();
+	}
+
+	public function clean_up_global_scope() {
+		unset( $GLOBALS['wp_scripts'] );
+		parent::clean_up_global_scope();
+	}
+
 
 	/**
 	 * Gets a list of the enqueued script modules.
@@ -917,63 +947,97 @@ HTML;
 		$this->script_modules->register( 'example', '/example.js', array( 'dependency' ) );
 
 		// Nothing printed now.
-		$this->assertSame( array(), $this->get_enqueued_script_modules() );
-		$this->assertSame( array(), $this->get_preloaded_script_modules() );
-		$this->assertSame( array(), $this->get_import_map() );
+		$this->assertSame( array(), $this->get_enqueued_script_modules(), 'Initial enqueued script modules was wrong.' );
+		$this->assertSame( array(), $this->get_preloaded_script_modules(), 'Initial module preloads was wrong.' );
+		$this->assertSame( array(), $this->get_import_map(), 'Initial import map was wrong.' );
 
-		// After including, the importmap should be populated.
-		$this->script_modules->include_in_import_map( 'example' );
-		$this->assertSame( array(), $this->get_enqueued_script_modules() );
-		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+		// Enqueuing a script with a module dependency should add it to the import map.
+		wp_enqueue_script(
+			'classic',
+			'/classic.js',
+			array(
+				'classic-dependency',
+				array(
+					'type' => 'module',
+					'id'   => 'example',
+				),
+			)
+		);
+
+		$this->assertSame( array(), $this->get_enqueued_script_modules(), 'Final enqueued script modules was wrong.' );
+		$this->assertSame( array(), $this->get_preloaded_script_modules(), 'Final module preloads was wrong.' );
 
 		$import_map = $this->get_import_map();
-		$this->assertCount( 2, $import_map );
-		$this->assertArrayHasKey( 'example', $import_map );
-		$this->assertArrayHasKey( 'dependency', $import_map );
+		$this->assertCount( 2, $import_map, 'Final import map count was wrong.' );
+		$this->assertArrayHasKey( 'example', $import_map, 'Final missing "example" script module in import map.' );
+		$this->assertArrayHasKey( 'dependency', $import_map, 'Final missing "dependency" script module in import map.' );
 	}
 
 	/**
 	 * @ticket 61500
 	 */
 	public function test_included_modules_concat_With_enqueued_dependencies() {
-		$this->script_modules->register( 'dependency-enqueued', '/dep.js' );
-		$this->script_modules->register(
+		$this->script_modules->register( 'dependency-of-enqueued', '/dependency-of-enqueued.js' );
+		$this->script_modules->enqueue(
 			'enqueued',
-			'/example.js',
+			'/enqueued.js',
 			array(
 				array(
-					'id'     => 'dependency-enqueued',
+					'id'     => 'dependency-of-enqueued',
 					'import' => 'dynamic',
 				),
 			)
 		);
-		$this->script_modules->enqueue( 'enqueued' );
 
-		$this->script_modules->register( 'dependency', '/dep.js' );
-		$this->script_modules->register( 'example', '/example.js', array( 'dependency' ) );
+		$this->script_modules->register( 'classic-transitive-dependency', '/classic-transitive-dependency.js' );
+
+		$this->script_modules->register( 'dependency-of-not-enqueued', '/dependency-of-not-enqueued.js' );
+		$this->script_modules->register( 'not-enqueued', '/not-enqueued.js', array( 'dependency-of-not-enqueued' ) );
 
 		// Only dependency-enqueued should be printed.
 		$enqueued = $this->get_enqueued_script_modules();
-		$this->assertCount( 1, $enqueued );
-		$this->assertArrayHasKey( 'enqueued', $enqueued );
-		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+		$this->assertCount( 1, $enqueued, 'Initial enqueue count was wrong.' );
+		$this->assertArrayHasKey( 'enqueued', $enqueued, 'Initial missing "enqueued" script module enqueue.' );
+		$this->assertCount( 0, $this->get_preloaded_script_modules(), 'Initial module preload count was wrong.' );
 
 		$import_map = $this->get_import_map();
-		$this->assertCount( 1, $import_map );
-		$this->assertArrayHasKey( 'dependency-enqueued', $import_map );
+		$this->assertCount( 1, $import_map, 'Initial import map count was wrong.' );
+		$this->assertArrayHasKey( 'dependency-of-enqueued', $import_map, 'Initial missing "dependency-of-enqueued" script module in import map.' );
 
-		// After including, the importmap should be populated.
-		$this->script_modules->include_in_import_map( 'example' );
+		// Enqueuing a script with a module dependency should add it to the import map.
+		wp_register_script(
+			'_test_classic-dependency_',
+			'/classic-transitive-dep.js',
+			array(
+				array(
+					'type' => 'module',
+					'id'   => 'classic-transitive-dependency',
+				),
+			)
+		);
+		wp_enqueue_script(
+			'_test_classic_',
+			'/classic.js',
+			array(
+				'_test_classic-dependency_',
+				array(
+					'type' => 'module',
+					'id'   => 'not-enqueued',
+				),
+			)
+		);
 
 		$enqueued = $this->get_enqueued_script_modules();
-		$this->assertCount( 1, $enqueued );
-		$this->assertArrayHasKey( 'enqueued', $enqueued );
-		$this->assertSame( array(), $this->get_preloaded_script_modules() );
+		$this->assertCount( 1, $enqueued, 'Final enqueue count was wrong.' );
+		$this->assertArrayHasKey( 'enqueued', $enqueued, 'Final missing "enqueued" script module enqueue.' );
+
+		$this->assertCount( 0, $this->get_preloaded_script_modules(), 'Final module preload count was wrong.' );
 
 		$import_map = $this->get_import_map();
-		$this->assertCount( 3, $import_map );
-		$this->assertArrayHasKey( 'dependency-enqueued', $import_map );
-		$this->assertArrayHasKey( 'dependency', $import_map );
-		$this->assertArrayHasKey( 'example', $import_map );
+		$this->assertCount( 4, $import_map, 'Final import map count was wrong.' );
+		$this->assertArrayHasKey( 'dependency-of-enqueued', $import_map, 'Final missing "dependency-of-enqueued" script module in import map.' );
+		$this->assertArrayHasKey( 'classic-transitive-dependency', $import_map, 'Final missing "classic-transitive-dependency" script module in import map.' );
+		$this->assertArrayHasKey( 'not-enqueued', $import_map, 'Final missing "not-enqueued" script module in import map.' );
+		$this->assertArrayHasKey( 'dependency-of-not-enqueued', $import_map, 'Final missing "dependency-of-not-enqueued" script module in import map.' );
 	}
 }
