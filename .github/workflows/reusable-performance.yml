@@ -71,9 +71,9 @@ jobs:
   # - Install Playwright browsers.
   # - Build WordPress.
   # - Start Docker environment.
+  # - Install object cache drop-in.
   # - Log running Docker containers.
   # - Docker debug information.
-  # - Install object cache drop-in.
   # - Install WordPress.
   # - Enable themes on Multisite.
   # - Install WordPress Importer plugin.
@@ -155,6 +155,10 @@ jobs:
       - name: Start Docker environment
         run: npm run env:start
 
+      - name: Install object cache drop-in
+        if: ${{ inputs.memcached }}
+        run: cp src/wp-content/object-cache.php build/wp-content/object-cache.php
+
       - name: Log running Docker containers
         run: docker ps -a
 
@@ -166,10 +170,6 @@ jobs:
           docker compose run --rm php php -m
           docker compose run --rm php php -i
           docker compose run --rm php locale -a
-
-      - name: Install object cache drop-in
-        if: ${{ inputs.memcached }}
-        run: cp src/wp-content/object-cache.php build/wp-content/object-cache.php
 
       - name: Install WordPress
         run: npm run env:install
