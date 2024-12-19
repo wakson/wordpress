@@ -284,20 +284,6 @@ class WP_Scripts extends WP_Dependencies {
 	}
 
 	/**
-	 * @todo not sure I like this…
-	 */
-	public function add_script_module_dependencies_to_import_map( $handle ) {
-		$module_deps = $this->get_data( $handle, 'module_deps' );
-		if ( ! $module_deps ) {
-			return;
-		}
-
-		foreach ( $module_deps as $module_dep ) {
-			wp_script_modules()->include_in_import_map( $module_dep );
-		}
-	}
-
-	/**
 	 * Checks whether all dependents of a given handle are in the footer.
 	 *
 	 * If there are no dependents, this is considered the same as if all dependents were in the footer.
@@ -431,7 +417,6 @@ class WP_Scripts extends WP_Dependencies {
 				_print_scripts();
 				$this->reset();
 			} elseif ( $this->in_default_dir( $filtered_src ) && ! $conditional ) {
-				$this->add_script_module_dependencies_to_import_map( $handle );
 				$this->print_code     .= $this->print_extra_script( $handle, false );
 				$this->concat         .= "$handle,";
 				$this->concat_version .= "$handle$ver";
@@ -441,8 +426,6 @@ class WP_Scripts extends WP_Dependencies {
 				$this->ext_version .= "$handle$ver";
 			}
 		}
-
-		$this->add_script_module_dependencies_to_import_map( $handle );
 
 		$has_conditional_data = $conditional && $this->get_data( $handle, 'data' );
 
