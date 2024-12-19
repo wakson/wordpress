@@ -3421,6 +3421,8 @@ HTML
 		 * caches of some CDNs.
 		 *
 		 * This can be removed in the next update to the packages.
+		 *
+		 * See https://core.trac.wordpress.org/ticket/59329#comment:8
 		 */
 		if ( in_array( $handle, array( 'react', 'react-dom' ), true ) ) {
 			$package_json[ $script ] .= '.1';
