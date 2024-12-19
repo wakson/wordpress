@@ -31,18 +31,6 @@ class WP_Script_Modules {
 	private $enqueued_before_registered = array();
 
 	/**
-	 * Holds script module identifiers that have been marked for inclusion in the import map.
-	 *
-	 * A script module that appears here should be include in the import map regardless of
-	 * whether it is in the dependency graph of enqueued script modules.
-	 *
-	 * @since 6.8.0
-	 *
-	 * @var string[]
-	 */
-	private $marked_for_inclusion = array();
-
-	/**
 	 * Tracks whether the @wordpress/a11y script module is available.
 	 *
 	 * Some additional HTML is required on the page for the module to work. Track
@@ -158,21 +146,6 @@ class WP_Script_Modules {
 		} else {
 			$this->enqueued_before_registered[ $id ] = true;
 		}
-	}
-
-	/**
-	 * Marks the script module for inclusion in the import map.
-	 *
-	 * This method is intended for use outside of the script module dependency system.
-	 * It's recommended that script modules rely on the script module dependency system
-	 * to manage the import map.
-	 *
-	 * @since 6.8.0
-	 *
-	 * @param string $id The identifier of the script module.
-	 */
-	public function include_in_import_map( string $id ) {
-		$this->marked_for_inclusion[] = $id;
 	}
 
 	/**
@@ -299,13 +272,39 @@ class WP_Script_Modules {
 	 *
 	 * @since 6.5.0
 	 *
+	 * @global WP_Dependencies $wp_scripts
+	 *
 	 * @return array Array with an `imports` key mapping to an array of script
 	 *               module identifiers and their respective URLs, including
 	 *               the version query.
 	 */
 	private function get_import_map(): array {
-		$imports           = array();
-		$script_module_ids = array_merge( $this->marked_for_inclusion, array_keys( $this->get_marked_for_enqueue() ) );
+		global $wp_scripts;
+		$script_module_ids = array();
+		if ( $wp_scripts instanceof WP_Dependencies ) {
+			foreach ( $wp_scripts->registered as $dependency ) {
+				$handle = $dependency->handle;
+
+				if (
+					! $wp_scripts->query( $handle, 'done' ) &&
+					! $wp_scripts->query( $handle, 'to_do' ) &&
+					! $wp_scripts->query( $handle, 'enqueued' )
+				) {
+					continue;
+				}
+
+				$module_deps = $wp_scripts->get_data( $handle, 'module_deps' );
+				if ( ! is_array( $module_deps ) ) {
+					continue;
+				}
+
+				foreach ( $module_deps as $id ) {
+					$script_module_ids[] = $id;
+				}
+			}
+		}
+
+		$script_module_ids = array_merge( $script_module_ids, array_keys( $this->get_marked_for_enqueue() ) );
 
 		foreach ( $this->get_dependencies( $script_module_ids ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
@@ -314,7 +313,7 @@ class WP_Script_Modules {
 			}
 			$imports[ $id ] = $src;
 		}
-		foreach ( $this->marked_for_inclusion as $id ) {
+		foreach ( $script_module_ids as $id ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
