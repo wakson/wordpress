@@ -212,18 +212,18 @@ class WP_Script_Modules {
 	 * @since 6.5.0
 	 */
 	public function add_hooks() {
-		$position = wp_is_block_theme() ? 'wp_head' : 'wp_footer';
-		add_action( $position, array( $this, 'print_import_map' ) );
-		add_action( $position, array( $this, 'print_enqueued_script_modules' ) );
+		$position = wp_is_block_theme() ? 'wp_head' : 'wp_print_footer_scripts';
 		add_action( $position, array( $this, 'print_script_module_preloads' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_import_map' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_enqueued_script_modules' ) );
 
-		add_action( 'admin_print_footer_scripts', array( $this, 'print_import_map' ) );
-		add_action( 'admin_print_footer_scripts', array( $this, 'print_enqueued_script_modules' ) );
-		add_action( 'admin_print_footer_scripts', array( $this, 'print_script_module_preloads' ) );
+		add_action( 'admin_print_footer_scripts', array( $this, 'print_import_map' ), 20 );
+		add_action( 'admin_print_footer_scripts', array( $this, 'print_enqueued_script_modules' ), 20 );
+		add_action( 'admin_print_footer_scripts', array( $this, 'print_script_module_preloads' ), 20 );
 
-		add_action( 'wp_footer', array( $this, 'print_script_module_data' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_script_module_data' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'print_script_module_data' ) );
-		add_action( 'wp_footer', array( $this, 'print_a11y_script_module_html' ), 20 );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_a11y_script_module_html' ), 20 );
 		add_action( 'admin_print_footer_scripts', array( $this, 'print_a11y_script_module_html' ), 20 );
 	}
 
@@ -259,20 +259,21 @@ class WP_Script_Modules {
 	 * @since 6.5.0
 	 */
 	public function print_script_module_preloads() {
-		foreach ( $this->get_dependencies( array_keys( $this->get_marked_for_enqueue() ), array( 'static' ) ) as $id => $script_module ) {
+		$enqueued    = array_keys( $this->get_marked_for_enqueue() );
+		$static_deps = array_keys( $this->get_dependencies( $enqueued, array( 'static' ) ) );
+		$preloads    = array_unique( array_merge( $enqueued, $static_deps ) );
+
+		foreach ( $preloads as $id ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
 			}
 
-			// Don't preload if it's marked for enqueue.
-			if ( true !== $script_module['enqueue'] ) {
-				echo sprintf(
-					'<link rel="modulepreload" href="%s" id="%s">',
-					esc_url( $src ),
-					esc_attr( $id . '-js-modulepreload' )
-				);
-			}
+			echo sprintf(
+				'<link rel="modulepreload" href="%s" id="%s">',
+				esc_url( $src ),
+				esc_attr( $id . '-js-modulepreload' )
+			);
 		}
 	}
 

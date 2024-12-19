@@ -151,6 +151,58 @@ class WP_Scripts extends WP_Dependencies {
 	}
 
 	/**
+	 * Register an item.
+	 *
+	 * Registers the item if no item of that name already exists.
+	 *
+	 * This method is subclassed here in order to add special handling for script module
+	 * dependencies.
+	 *
+	 * @since 6.8.0
+	 *
+	 * @see WP_Dependencies::add()
+	 *
+	 * @param string           $handle Name of the item. Should be unique.
+	 * @param string|false     $src    Full URL of the item, or path of the item relative
+	 *                                 to the WordPress root directory. If source is set to false,
+	 *                                 the item is an alias of other items it depends on.
+	 * @param (string|array{type: string, id: string})[]         $deps   Optional. An array of registered item handles this item depends on.
+	 *                                 Default empty array.
+	 * @param string|bool|null $ver    Optional. String specifying item version number, if it has one,
+	 *                                 which is added to the URL as a query string for cache busting purposes.
+	 *                                 If version is set to false, a version number is automatically added
+	 *                                 equal to current installed WordPress version.
+	 *                                 If set to null, no version is added.
+	 * @param mixed            $args   Optional. Custom property of the item. NOT the class property $args.
+	 *                                 Examples: $media, $in_footer.
+	 * @return bool Whether the item has been registered. True on success, false on failure.
+	 */
+	public function add( $handle, $src, $deps = array(), $ver = false, $args = null ) {
+		$module_deps = array();
+		$script_deps = array();
+		if ( array() !== $deps ) {
+			foreach ( $deps as $dep ) {
+				if ( is_string( $dep ) ) {
+					$script_deps[] = $dep;
+				} elseif (
+					isset( $dep['type'], $dep['id'] ) &&
+					$dep['type'] === 'module' &&
+					is_string( $dep['id'] )
+				) {
+					$module_deps[] = $dep['id'];
+				}
+			}
+		}
+		if ( ! parent::add( $handle, $src, $script_deps, $ver, $args ) ) {
+			return false;
+		}
+		if ( array() !== $module_deps ) {
+			$this->add_data( $handle, 'module_deps', $module_deps );
+		}
+		return true;
+	}
+
+	/**
 	 * Initialize the class.
 	 *
 	 * @since 3.4.0
@@ -229,6 +281,20 @@ class WP_Scripts extends WP_Dependencies {
 		wp_print_inline_script_tag( $output, array( 'id' => "{$handle}-js-extra" ) );
 
 		return true;
+	}
+
+	/**
+	 * @todo not sure I like this…
+	 */
+	public function add_script_module_dependencies_to_import_map( $handle ) {
+		$module_deps = $this->get_data( $handle, 'module_deps' );
+		if ( ! $module_deps ) {
+			return;
+		}
+
+		foreach ( $module_deps as $module_dep ) {
+			wp_script_modules()->include_in_import_map( $module_dep );
+		}
 	}
 
 	/**
@@ -365,6 +431,7 @@ class WP_Scripts extends WP_Dependencies {
 				_print_scripts();
 				$this->reset();
 			} elseif ( $this->in_default_dir( $filtered_src ) && ! $conditional ) {
+				$this->add_script_module_dependencies_to_import_map( $handle );
 				$this->print_code     .= $this->print_extra_script( $handle, false );
 				$this->concat         .= "$handle,";
 				$this->concat_version .= "$handle$ver";
@@ -374,6 +441,8 @@ class WP_Scripts extends WP_Dependencies {
 				$this->ext_version .= "$handle$ver";
 			}
 		}
+
+		$this->add_script_module_dependencies_to_import_map( $handle );
 
 		$has_conditional_data = $conditional && $this->get_data( $handle, 'data' );
 
