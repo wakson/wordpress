@@ -186,7 +186,7 @@ class WP_Scripts extends WP_Dependencies {
 					$script_deps[] = $dep;
 				} elseif (
 					isset( $dep['type'], $dep['id'] ) &&
-					$dep['type'] === 'module' &&
+					'module' === $dep['type'] &&
 					is_string( $dep['id'] )
 				) {
 					$module_deps[] = $dep['id'];
