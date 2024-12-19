@@ -249,4 +249,14 @@
 		$body.addClass( 'has-header-video' );
 	});
 
+	
+    $(document).ready(function() {
+        $('a').each(function() {
+            if (this.href && this.href !== window.location.href) {
+                $(this).attr('view-transition', 'page-transition');
+            }
+        });
+    });
+
+
 })( jQuery );
