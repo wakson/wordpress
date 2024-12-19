@@ -32,7 +32,7 @@ permissions: {}
 jobs:
   # Runs the performance test suite.
   performance:
-    name: ${{ matrix.multisite && 'Multisite' || 'Single' }}${{ matrix.memcached && ' (memcached)' || '' }}
+    name: Performance tests / ${{ matrix.multisite && 'Multisite' || 'Single' }}${{ matrix.memcached && ' (memcached)' || '' }}
     uses: swissspidy/wordpress-develop/.github/workflows/reusable-performance.yml@try/performance-tests-expand
     permissions:
       contents: read
