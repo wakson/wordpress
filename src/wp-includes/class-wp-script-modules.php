@@ -304,9 +304,8 @@ class WP_Script_Modules {
 			}
 		}
 
-		$script_module_ids = array_merge( $script_module_ids, array_keys( $this->get_marked_for_enqueue() ) );
-
-		foreach ( $this->get_dependencies( $script_module_ids ) as $id => $script_module ) {
+		$imports = array();
+		foreach ( $this->get_dependencies( array_merge( $script_module_ids, array_keys( $this->get_marked_for_enqueue() ) ) ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
