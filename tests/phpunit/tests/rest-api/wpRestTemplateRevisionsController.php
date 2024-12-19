@@ -299,6 +299,46 @@ class Tests_REST_wpRestTemplateRevisionsController extends WP_Test_REST_Controll
 		);
 	}
 
+	/**
+	 * tests for the pagination
+	 *
+	 * @ticket 62292
+	 *
+	 * @covers WP_REST_Template_Revisions_Controller::get_items
+	 */
+	public function test_get_template_revisions_pagination() {
+		wp_set_current_user( self::$admin_id );
+
+		// Test offset
+		$request = new WP_REST_Request( 'GET', '/wp/v2/templates/' . self::TEST_THEME . '/' . self::TEMPLATE_NAME . '/revisions' );
+		$request->set_param( 'offset', 1 );
+		$request->set_param( 'per_page', 1 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertCount( 1, $data );
+		$this->assertEquals( 4, $response->get_headers()['X-WP-Total'] );
+		$this->assertEquals( 4, $response->get_headers()['X-WP-TotalPages'] );
+
+		// Test paged
+		$request = new WP_REST_Request( 'GET', '/wp/v2/templates/' . self::TEST_THEME . '/' . self::TEMPLATE_NAME . '/revisions' );
+		$request->set_param( 'page', 2 );
+		$request->set_param( 'per_page', 2 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertCount( 2, $data );
+		$this->assertEquals( 4, $response->get_headers()['X-WP-Total'] );
+		$this->assertEquals( 2, $response->get_headers()['X-WP-TotalPages'] );
+
+		// Test out of bounds
+		$request = new WP_REST_Request( 'GET', '/wp/v2/templates/' . self::TEST_THEME . '/' . self::TEMPLATE_NAME . '/revisions' );
+		$request->set_param( 'page', 4 );
+		$request->set_param( 'per_page', 6 );
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertErrorResponse( 'rest_revision_invalid_page_number', $response, 400 );
+	}
+
 
 	/**
 	 * @covers WP_REST_Template_Revisions_Controller::get_items_permissions_check
