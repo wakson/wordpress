@@ -281,7 +281,7 @@ class WP_Script_Modules {
 	private function get_import_map(): array {
 		global $wp_scripts;
 		$script_module_ids = array();
-		if ( $wp_scripts instanceof WP_Dependencies ) {
+		if ( $wp_scripts instanceof WP_Scripts ) {
 			foreach ( $wp_scripts->registered as $dependency ) {
 				$handle = $dependency->handle;
 
