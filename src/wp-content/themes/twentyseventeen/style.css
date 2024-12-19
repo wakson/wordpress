@@ -61,17 +61,8 @@ html {
 	-webkit-text-size-adjust: 100%;
 }
 
-@keyframes page-transition {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.site-content {
-    view-transition-name: page-transition;
+@view-transition {
+	navigation: auto;
 }
 
 body {
