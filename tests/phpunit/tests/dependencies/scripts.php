@@ -3413,20 +3413,24 @@ HTML
 			$handle = $script;
 		}
 
+		/*
+		 * Append '.1' to the version number for React and ReactDOM.
+		 *
+		 * This is due to a change in the build to use the UMD version of the
+		 * scripts, requiring a different version number in order to break the
+		 * caches of some CDNs.
+		 *
+		 * This can be removed in the next update to the packages.
+		 */
+		if ( in_array( $handle, array( 'react', 'react-dom' ), true ) ) {
+			$package_json[ $script ] .= '.1';
+		}
+
 		$script_query = $wp_scripts->query( $handle, 'registered' );
 
 		$this->assertNotFalse( $script_query, "The script '{$handle}' should be registered." );
 		$this->assertArrayHasKey( $script, $package_json, "The dependency '{$script}' should be included in package.json." );
-
-		/*
-		 * Get the script version from $wp_scripts.
-		 *
-		 * These version numbers are generally in the form `1.2.3` but they
-		 * may include a suffix in the form `1.2.3-xxx`. The version number
-		 * is checked without the suffix.
-		 */
-		$wp_scripts_version = preg_replace( '/-.*$/', '', $wp_scripts->query( $handle, 'registered' )->ver );
-		$this->assertSame( $package_json[ $script ], $wp_scripts_version, "The script '{$handle}' should be registered with version {$package_json[ $script ]}." );
+		$this->assertSame( $package_json[ $script ], $wp_scripts->query( $handle, 'registered' )->ver, "The script '{$handle}' should be registered with version {$package_json[ $script ]}." );
 	}
 
 	/**
