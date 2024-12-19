@@ -359,6 +359,9 @@ class WP_Script_Modules {
 		return array_reduce(
 			$ids,
 			function ( $dependency_script_modules, $id ) use ( $import_types ) {
+				if ( ! isset( $this->registered[ $id ]['dependencies'] ) ) {
+					return $dependency_script_modules;
+				}
 				$dependencies = array();
 				foreach ( $this->registered[ $id ]['dependencies'] as $dependency ) {
 					if (
