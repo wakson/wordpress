@@ -106,7 +106,7 @@ jobs:
   # - Publish performance results.
   # - Ensure version-controlled files are not modified or deleted.
   performance:
-    name: Performance tests / ${{ inputs.multisite && 'Multisite' || 'Single' }}${{ inputs.memcached && ' (memcached)' || '' }}
+    name: ${{ inputs.multisite && 'Multisite' || 'Single site' }}${{ inputs.memcached && 'Memcached' || 'Default' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
