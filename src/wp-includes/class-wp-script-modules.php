@@ -280,7 +280,10 @@ class WP_Script_Modules {
 	 */
 	private function get_import_map(): array {
 		global $wp_scripts;
-		$classic_script_module_dependencies = array();
+
+		$imports = array();
+
+		$classic_script_dependencies = array();
 		if ( $wp_scripts instanceof WP_Scripts ) {
 			foreach ( $wp_scripts->registered as $dependency ) {
 				$handle = $dependency->handle;
@@ -297,19 +300,18 @@ class WP_Script_Modules {
 				if ( ! $module_deps ) {
 					continue;
 				}
-				array_push( $classic_script_module_dependencies, ...$module_deps );
+				foreach ( $module_deps as $id ) {
+					$src = $this->get_src( $id );
+					if ( null === $src ) {
+						continue;
+					}
+					$imports[ $id ]                = $src;
+					$classic_script_dependencies[] = $id;
+				}
 			}
 		}
 
-		$imports = array();
-		foreach ( $this->get_dependencies( array_merge( $classic_script_module_dependencies, array_keys( $this->get_marked_for_enqueue() ) ) ) as $id => $script_module ) {
-			$src = $this->get_src( $id );
-			if ( null === $src ) {
-				continue;
-			}
-			$imports[ $id ] = $src;
-		}
-		foreach ( $classic_script_module_dependencies as $id ) {
+		foreach ( $this->get_dependencies( array_merge( $classic_script_dependencies, array_keys( $this->get_marked_for_enqueue() ) ) ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
@@ -356,9 +358,6 @@ class WP_Script_Modules {
 		return array_reduce(
 			$ids,
 			function ( $dependency_script_modules, $id ) use ( $import_types ) {
-				if ( ! isset( $this->registered[ $id ]['dependencies'] ) ) {
-					return $dependency_script_modules;
-				}
 				$dependencies = array();
 				foreach ( $this->registered[ $id ]['dependencies'] as $dependency ) {
 					if (
