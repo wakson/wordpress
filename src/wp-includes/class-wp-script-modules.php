@@ -280,7 +280,7 @@ class WP_Script_Modules {
 	 */
 	private function get_import_map(): array {
 		global $wp_scripts;
-		$script_module_ids = array();
+		$classic_script_module_dependencies = array();
 		if ( $wp_scripts instanceof WP_Scripts ) {
 			foreach ( $wp_scripts->registered as $dependency ) {
 				$handle = $dependency->handle;
@@ -294,25 +294,22 @@ class WP_Script_Modules {
 				}
 
 				$module_deps = $wp_scripts->get_data( $handle, 'module_deps' );
-				if ( ! is_array( $module_deps ) ) {
+				if ( ! $module_deps ) {
 					continue;
 				}
-
-				foreach ( $module_deps as $id ) {
-					$script_module_ids[] = $id;
-				}
+				array_push( $classic_script_module_dependencies, ...$module_deps );
 			}
 		}
 
 		$imports = array();
-		foreach ( $this->get_dependencies( array_merge( $script_module_ids, array_keys( $this->get_marked_for_enqueue() ) ) ) as $id => $script_module ) {
+		foreach ( $this->get_dependencies( array_merge( $classic_script_module_dependencies, array_keys( $this->get_marked_for_enqueue() ) ) ) as $id => $script_module ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
 			}
 			$imports[ $id ] = $src;
 		}
-		foreach ( $script_module_ids as $id ) {
+		foreach ( $classic_script_module_dependencies as $id ) {
 			$src = $this->get_src( $id );
 			if ( null === $src ) {
 				continue;
