@@ -69,7 +69,21 @@
 							"name": "Space size name"
 						}
 					]
-				}
+				},
+				"dimensions": {
+					"aspectRatios": [
+						{
+							"name": "Aspect ratio name"
+						}
+					]
+				},
+				"shadow": {
+					"presets": [
+						{
+							"name": "Shadow preset name"
+						}
+					]
+				},
 			}
 		}
 	},
