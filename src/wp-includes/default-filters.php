@@ -116,6 +116,10 @@ foreach ( array( 'user_register', 'deleted_user' ) as $action ) {
 	add_action( $action, 'wp_maybe_update_user_counts', 10, 0 );
 }
 
+// User post counts.
+add_action( 'attachment_updated', '_clear_user_posts_count_cache_on_author_change', 10, 3 );
+add_action( 'post_updated', '_clear_user_posts_count_cache_on_author_change', 10, 3 );
+
 // Post meta.
 add_action( 'added_post_meta', 'wp_cache_set_posts_last_changed' );
 add_action( 'updated_post_meta', 'wp_cache_set_posts_last_changed' );

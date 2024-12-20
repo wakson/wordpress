@@ -567,6 +567,45 @@ function wp_validate_logged_in_cookie( $user_id ) {
 }
 
 /**
+ * Clears the cached posts count for user for given post type.
+ *
+ * @since 6.8.0
+ *
+ * @param int    $user_id   User ID.
+ * @param string $post_type Post type.
+ */
+function clear_user_posts_count_cache( $user_id, $post_type ) {
+	$cache_key    = "count_user_{$post_type}_{$user_id}";
+	$cache_groups = array(
+		'user_posts_count_public',
+		'user_posts_count',
+	);
+
+	foreach ( $cache_groups as $cache_group ) {
+		wp_cache_delete( $cache_key, $cache_group );
+	}
+}
+
+/**
+ * Clears the cached posts count for both users if a post's author changes.
+ *
+ * @since 6.8.0
+ * @access private
+ *
+ * @param int     $post_id      Post ID.
+ * @param WP_Post $post_after   Post object following the update.
+ * @param WP_Post $post_before  Post object before the update.
+ */
+function _clear_user_posts_count_cache_on_author_change( $post_id, $post_after, $post_before ) {
+	if ( $post_after->post_author !== $post_before->post_author ) {
+		$post_type = get_post_type( $post_id );
+
+		clear_user_posts_count_cache( $post_after->post_author, $post_type );
+		clear_user_posts_count_cache( $post_before->post_author, $post_type );
+	}
+}
+
+/**
  * Gets the number of posts a user has written.
  *
  * @since 3.0.0
@@ -576,17 +615,38 @@ function wp_validate_logged_in_cookie( $user_id ) {
  *
  * @global wpdb $wpdb WordPress database abstraction object.
  *
- * @param int          $userid      User ID.
- * @param array|string $post_type   Optional. Single post type or array of post types to count the number of posts for. Default 'post'.
+ * @param int          $user_id     User ID.
+ * @param array|string $post_types  Optional. Single post type or array of post types to count the number of posts for. Default 'post'.
  * @param bool         $public_only Optional. Whether to only return counts for public posts. Default false.
- * @return string Number of posts the user has written in this post type.
+ * @return int Number of posts the user has written in this post type.
  */
-function count_user_posts( $userid, $post_type = 'post', $public_only = false ) {
+function count_user_posts( $user_id, $post_types = 'post', $public_only = false ) {
 	global $wpdb;
 
-	$where = get_posts_by_author_sql( $post_type, true, $userid, $public_only );
+	if ( is_string( $post_types ) ) {
+		$post_types = array( $post_types );
+	}
 
-	$count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" );
+	$cache_group = $public_only ? 'user_posts_count_public' : 'user_posts_count';
+
+	$count = 0;
+
+	foreach ( $post_types as $post_type ) {
+		$where     = get_posts_by_author_sql( $post_type, true, $user_id, $public_only );
+		$cache_key = "count_user_{$post_type}_{$user_id}";
+
+		// Try to get count from cache.
+		$post_type_count = wp_cache_get( $cache_key, $cache_group );
+
+		// If cache is empty, query the database.
+		if ( false === $post_type_count ) {
+			$post_type_count = absint( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts $where" ) );
+
+			wp_cache_add( $cache_key, $post_type_count, $cache_group );
+		}
+
+		$count += $post_type_count;
+	}
 
 	/**
 	 * Filters the number of posts a user has written.
@@ -595,12 +655,12 @@ function count_user_posts( $userid, $post_type = 'post', $public_only = false ) 
 	 * @since 4.1.0 Added `$post_type` argument.
 	 * @since 4.3.1 Added `$public_only` argument.
 	 *
-	 * @param int          $count       The user's post count.
-	 * @param int          $userid      User ID.
-	 * @param string|array $post_type   Single post type or array of post types to count the number of posts for.
-	 * @param bool         $public_only Whether to limit counted posts to public posts.
+	 * @param int   $count       The user's post count.
+	 * @param int   $user_id     User ID.
+	 * @param array $post_type   Array of post types to count the number of posts for.
+	 * @param bool  $public_only Whether to limit counted posts to public posts.
 	 */
-	return apply_filters( 'get_usernumposts', $count, $userid, $post_type, $public_only );
+	return apply_filters( 'get_usernumposts', $count, $user_id, $post_type, $public_only );
 }
 
 /**
@@ -616,19 +676,13 @@ function count_user_posts( $userid, $post_type = 'post', $public_only = false ) 
  * @return string[] Amount of posts each user has written, as strings, keyed by user ID.
  */
 function count_many_users_posts( $users, $post_type = 'post', $public_only = false ) {
-	global $wpdb;
-
 	$count = array();
 	if ( empty( $users ) || ! is_array( $users ) ) {
 		return $count;
 	}
 
-	$userlist = implode( ',', array_map( 'absint', $users ) );
-	$where    = get_posts_by_author_sql( $post_type, true, null, $public_only );
-
-	$result = $wpdb->get_results( "SELECT post_author, COUNT(*) FROM $wpdb->posts $where AND post_author IN ($userlist) GROUP BY post_author", ARRAY_N );
-	foreach ( $result as $row ) {
-		$count[ $row[0] ] = $row[1];
+	foreach ( $users as $user_id ) {
+		$count[ $user_id ] = count_user_posts( $user_id, $post_type, $public_only );
 	}
 
 	foreach ( $users as $id ) {
