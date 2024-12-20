@@ -262,6 +262,7 @@ function wp_date( $format, $timestamp = null, $timezone = null ) {
 		$format_length = strlen( $format );
 		$month         = $wp_locale->get_month( $datetime->format( 'm' ) );
 		$weekday       = $wp_locale->get_weekday( $datetime->format( 'w' ) );
+		$prev          = '';
 
 		for ( $i = 0; $i < $format_length; $i++ ) {
 			switch ( $format[ $i ] ) {
@@ -283,6 +284,16 @@ function wp_date( $format, $timestamp = null, $timezone = null ) {
 				case 'A':
 					$new_format .= addcslashes( $wp_locale->get_meridiem( $datetime->format( 'A' ) ), '\\A..Za..z' );
 					break;
+				case 'S':
+					// NumberFormatter can localize and format input numbers, producing results with ordinal suffixes
+					if ( 'j' === $prev && class_exists( '\NumberFormatter' ) ) {
+						$ordinal_formatter = new \NumberFormatter( get_user_locale(), \NumberFormatter::ORDINAL );
+						$ordinal_day       = $ordinal_formatter->format( (int) $datetime->format( 'j' ) );
+						$new_format        = substr( $new_format, 0, -1 ) . addcslashes( $ordinal_day, '\\A..Za..z' );
+					} else {
+						$new_format .= $format[ $i ];
+					}
+					break;
 				case '\\':
 					$new_format .= $format[ $i ];
 
@@ -295,6 +306,7 @@ function wp_date( $format, $timestamp = null, $timezone = null ) {
 					$new_format .= $format[ $i ];
 					break;
 			}
+			$prev = $format[ $i ];
 		}
 
 		$date = $datetime->format( $new_format );
