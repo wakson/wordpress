@@ -586,7 +586,7 @@ class Tests_Blocks_wpBlockType extends WP_UnitTestCase {
 	/**
 	 * Test filter function for get_block_type_variations filter.
 	 *
-	 * @param array $variations Block variations before filter.
+	 * @param array         $variations Block variations before filter.
 	 * @param WP_Block_Type $block_type Block type.
 	 *
 	 * @return array Block variations after filter.
@@ -650,6 +650,307 @@ class Tests_Blocks_wpBlockType extends WP_UnitTestCase {
 		return array(
 			array( 'name' => 'var1' ),
 			array( 'name' => 'var2' ),
+		);
+	}
+
+	/**
+	 * Tests stabilization of experimental block supports.
+	 *
+	 * @ticket 61728
+	 * @covers WP_Block_Type::stabilize_supports
+	 */
+	public function test_stabilize_block_supports() {
+		$reflection = new ReflectionClass( WP_Block_Type::class );
+		$method     = $reflection->getMethod( 'stabilize_supports' );
+		$method->setAccessible( true );
+		$block_type = new WP_Block_Type( 'test/block' );
+
+		$supports = array(
+			'__experimentalBorder' => array(
+				'color'                           => true,
+				'radius'                          => true,
+				'width'                           => true,
+				'style'                           => true,
+				'__experimentalSkipSerialization' => true,
+				'__experimentalDefaultControls'   => array(
+					'color'  => true,
+					'radius' => true,
+					'width'  => true,
+				),
+			),
+			'typography'           => array(
+				'fontSize'                        => true,
+				'__experimentalFontFamily'        => true,
+				'__experimentalFontStyle'         => true,
+				'__experimentalFontWeight'        => true,
+				'__experimentalLetterSpacing'     => true,
+				'__experimentalTextTransform'     => true,
+				'__experimentalTextDecoration'    => true,
+				'__experimentalSkipSerialization' => true,
+				'__experimentalDefaultControls'   => array(
+					'fontFamily'    => true,
+					'fontSize'      => true,
+					'letterSpacing' => true,
+				),
+			),
+		);
+
+		$actual   = $method->invoke( $block_type, $supports );
+		$expected = array(
+			'border'     => array(
+				'color'             => true,
+				'radius'            => true,
+				'width'             => true,
+				'style'             => true,
+				'skipSerialization' => true,
+				'defaultControls'   => array(
+					'color'  => true,
+					'radius' => true,
+					'width'  => true,
+				),
+			),
+			'typography' => array(
+				'fontSize'          => true,
+				'fontFamily'        => true,
+				'fontStyle'         => true,
+				'fontWeight'        => true,
+				'letterSpacing'     => true,
+				'textTransform'     => true,
+				'textDecoration'    => true,
+				'skipSerialization' => true,
+				'defaultControls'   => array(
+					'fontFamily'    => true,
+					'fontSize'      => true,
+					'letterSpacing' => true,
+				),
+			),
+		);
+
+		$this->assertSameSetsWithIndex( $expected, $actual );
+	}
+
+	/**
+	 * Tests that experimental and stable block supports can be merged based on definition order.
+	 *
+	 * If a plugin or theme overrides the support config with the `register_block_type_args`
+	 * filter, both experimental and stable configs may be present. In that case, use the
+	 * order keys are defined in to determine the final value:
+	 *    - If config is an array, merge the arrays in their order of definition.
+	 *    - If config is not an array, use the value defined last.
+	 *
+	 * The reason for preferring the last defined key is that after filters are applied,
+	 * the last inserted key is likely the most up-to-date value. We cannot determine
+	 * with certainty which value was "last modified" so the insertion order is the
+	 * best guess.
+	 *
+	 * @ticket 61728
+	 * @covers WP_Block_Type::stabilize_supports
+	 */
+	public function test_stabilize_block_supports_merges_by_order() {
+		$reflection = new ReflectionClass( WP_Block_Type::class );
+		$method     = $reflection->getMethod( 'stabilize_supports' );
+		$method->setAccessible( true );
+		$block_type = new WP_Block_Type( 'test/block' );
+
+		// Test with experimental config first.
+		$experimental_first = array(
+			'__experimentalBorder' => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => true,
+				'width'             => true,
+				'skipSerialization' => false,
+				'defaultControls'   => array(
+					'color'  => true,
+					'radius' => false,
+					'style'  => true,
+					'width'  => true,
+				),
+			),
+			'border'               => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => false,
+				'width'             => true,
+				'skipSerialization' => true,
+				'defaultControls'   => array(
+					'color'  => false,
+					'radius' => false,
+					'style'  => false,
+					'width'  => false,
+				),
+			),
+		);
+
+		$actual   = $method->invoke( $block_type, $experimental_first );
+		$expected = array(
+			'border' => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => false,
+				'width'             => true,
+				'skipSerialization' => true,
+				'defaultControls'   => array(
+					'color'  => false,
+					'radius' => false,
+					'style'  => false,
+					'width'  => false,
+				),
+			),
+		);
+
+		$this->assertSameSetsWithIndex( $expected, $actual, 'Merged stabilized block support config does not match when experimental keys are first.' );
+
+		// Test with stable config first.
+		$stable_first = array(
+			'border'               => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => false,
+				'width'             => true,
+				'skipSerialization' => true,
+				'defaultControls'   => array(
+					'color'  => false,
+					'radius' => false,
+					'style'  => false,
+					'width'  => false,
+				),
+			),
+			'__experimentalBorder' => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => true,
+				'width'             => true,
+				'skipSerialization' => false,
+				'defaultControls'   => array(
+					'color'  => true,
+					'radius' => false,
+					'style'  => true,
+					'width'  => true,
+				),
+			),
+		);
+
+		$actual   = $method->invoke( $block_type, $stable_first );
+		$expected = array(
+			'border' => array(
+				'color'             => true,
+				'radius'            => true,
+				'style'             => true,
+				'width'             => true,
+				'skipSerialization' => false,
+				'defaultControls'   => array(
+					'color'  => true,
+					'radius' => false,
+					'style'  => true,
+					'width'  => true,
+				),
+			),
+		);
+
+		$this->assertSameSetsWithIndex( $expected, $actual, 'Merged stabilized block support config does not match when stable keys are first.' );
+	}
+
+	/**
+	 * Tests that boolean block support configurations are handled correctly.
+	 *
+	 * @ticket 61728
+	 * @covers WP_Block_Type::stabilize_supports
+	 * @dataProvider data_boolean_block_supports
+	 *
+	 * @param array         $supports       The supports configuration to test.
+	 * @param boolean|array $expected_value The expected final border support value.
+	 */
+	public function test_should_handle_boolean_block_supports( $supports, $expected_value ) {
+		$reflection = new ReflectionClass( WP_Block_Type::class );
+		$method     = $reflection->getMethod( 'stabilize_supports' );
+		$method->setAccessible( true );
+		$block_type = new WP_Block_Type( 'test/block' );
+
+		$actual = $method->invoke( $block_type, $supports );
+
+		$this->assertSame( $expected_value, $actual['border'] );
+	}
+
+	/**
+	 * Data provider for boolean block support tests.
+	 *
+	 * @return array Test parameters.
+	 */
+	public function data_boolean_block_supports() {
+		return array(
+			'experimental true only'                   => array(
+				array(
+					'__experimentalBorder' => true,
+				),
+				true,
+			),
+			'experimental false only'                  => array(
+				array(
+					'__experimentalBorder' => false,
+				),
+				false,
+			),
+			'experimental true before stable false'    => array(
+				array(
+					'__experimentalBorder' => true,
+					'border'               => false,
+				),
+				false,
+			),
+			'stable true before experimental false'    => array(
+				array(
+					'border'               => true,
+					'__experimentalBorder' => false,
+				),
+				false,
+			),
+			'experimental array before stable boolean' => array(
+				array(
+					'__experimentalBorder' => array(
+						'color' => true,
+						'width' => true,
+					),
+					'border'               => false,
+				),
+				false,
+			),
+			'stable array before experimental boolean' => array(
+				array(
+					'border'               => array(
+						'color' => true,
+						'width' => true,
+					),
+					'__experimentalBorder' => true,
+				),
+				true,
+			),
+			'experimental boolean before stable array' => array(
+				array(
+					'__experimentalBorder' => true,
+					'border'               => array(
+						'color' => true,
+						'width' => true,
+					),
+				),
+				array(
+					'color' => true,
+					'width' => true,
+				),
+			),
+			'stable boolean before experimental array' => array(
+				array(
+					'border'               => false,
+					'__experimentalBorder' => array(
+						'color' => true,
+						'width' => true,
+					),
+				),
+				array(
+					'color' => true,
+					'width' => true,
+				),
+			),
 		);
 	}
 }
