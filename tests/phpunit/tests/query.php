@@ -746,6 +746,38 @@ class Tests_Query extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @ticket 56992
+	 */
+	public function test_the_loop_when_querying_post_parents_only() {
+		$parent = self::factory()->post->create(
+			array(
+				'post_type' => 'page',
+			)
+		);
+
+		$child = self::factory()->post->create(
+			array(
+				'post_type'   => 'page',
+				'post_parent' => $parent,
+			)
+		);
+
+		$query = new WP_Query(
+			array(
+				'fields'    => 'id=>parent',
+				'post_type' => 'page',
+				'page_id'   => $child,
+			)
+		);
+
+		$query->the_post();
+		$global_post   = get_post( null, ARRAY_A );
+		$specific_post = get_post( $child, ARRAY_A );
+
+		$this->assertEqualSetsWithIndex( $global_post, $specific_post );
+	}
+
+	/**
 	 * Tests that the `posts_clauses_request` filter receives an array of clauses
 	 * with the other `posts_*_request` filters applied, e.g. `posts_join_request`.
 	 *
