@@ -157,9 +157,9 @@ function update_post_thumbnail_cache( $wp_query = null ) {
  * @since 4.4.0 `$post` can be a post ID or WP_Post object.
  *
  * @param int|WP_Post|null  $post Optional. Post ID or WP_Post object.  Default is global `$post`.
- * @param string|int[] 		  $size Optional. Image size. Accepts any registered image size name, or an array of
+ * @param string|int[]      $size Optional. Image size. Accepts any registered image size name, or an array of
  *                          width and height values in pixels (in that order). Default 'post-thumbnail'.
- * @param string|array 			$attr Optional. Query string or array of attributes. Default empty.
+ * @param string|array      $attr Optional. Query string or array of attributes. Default empty.
  * @return string The post thumbnail image tag.
  */
 function get_the_post_thumbnail( $post = null, $size = 'post-thumbnail', $attr = '' ) {
@@ -242,7 +242,7 @@ function get_the_post_thumbnail( $post = null, $size = 'post-thumbnail', $attr =
  * @since 4.4.0
  *
  * @param int|WP_Post|null  $post Optional. Post ID or WP_Post object.  Default is global `$post`.
- * @param string|int[] 			$size Optional. Registered image size to retrieve the source for or a flat array
+ * @param string|int[]      $size Optional. Registered image size to retrieve the source for or a flat array
  *                          of height and width dimensions. Default 'post-thumbnail'.
  * @return string|false Post thumbnail URL or false if no image is available. If `$size` does not match
  *                      any registered image size, the original image URL will be returned.
