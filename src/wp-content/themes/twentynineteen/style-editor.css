@@ -1100,7 +1100,7 @@ figcaption,
 }
 
 .wp-block-pullquote:not(.is-style-solid-color) .wp-block-pullquote__citation {
-  color: #767676;
+  color: inherit;
 }
 
 .wp-block-pullquote.is-style-solid-color blockquote {
